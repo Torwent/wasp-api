@@ -5,7 +5,7 @@ declare global {
       SB_ANON_KEY: string
       SERVICE_USER: string
       SERVICE_PASS: string
-      ENVIRONMENT: "dev" | "prod" | "debug"
+      ENVIRONMENT: "dev" | "production" | "debug"
     }
   }
 }

@@ -2,11 +2,18 @@ import express from "express"
 import fs from "fs"
 import swaggerJsDoc from "swagger-jsdoc"
 import swaggerUi from "swagger-ui-express"
+import env from "./lib/env"
 
 const server = express()
 const PORT = 8080
 
 //Extended: https://swagger.io/specification/#infoObject
+
+const apis =
+  env.ENVIRONMENT === "production"
+    ? ["./build/index.js", "./build/routes/*.js"]
+    : ["./src/index.ts", "./src/routes/*.ts"]
+
 const swaggerOpions = {
   definition: {
     openapi: "3.0.2",
@@ -32,7 +39,7 @@ const swaggerOpions = {
       },
     ],
   },
-  apis: ["./src/index.ts", "./src/routes/*.ts"],
+  apis: apis,
 }
 
 const swaggerUiOptions = { customSiteTitle: "WaspScripts API" }
