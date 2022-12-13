@@ -1,13 +1,20 @@
 {
+  "ts-node": {
+    // Do not forget to `npm i -D tsconfig-paths`
+    "require": ["tsconfig-paths/register"]
+  },
   "compilerOptions": {
-    "outDir": "./dist",
-    "target": "es2020",
-    "module": "CommonJS",
+    "rootDir": "src",
+    "outDir": "dist",
+    "target": "ES2022",
+    "module": "NodeNext",
     "esModuleInterop": true,
+    "moduleResolution": "Node",
+    "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "paths": {
       "$routes/*": ["src/routes/*"],
       "$lib/*": ["src/lib/*"]

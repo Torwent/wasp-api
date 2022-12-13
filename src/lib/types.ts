@@ -1,5 +1,7 @@
 export interface StatsEntry {
   id?: string | null | undefined
+  username: string | null | undefined
+  password: string | null | undefined
   biohash?: number
   experience: number
   gold: number
@@ -32,6 +34,8 @@ export interface Payload {
 }
 
 export interface RawPayload {
+  username: string | undefined
+  password: string | undefined
   script_id: string | undefined
   experience: number | undefined
   gold: number | undefined

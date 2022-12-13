@@ -1,7 +1,13 @@
-import { StatsEntry } from "./../lib/types"
-import { upsertData } from "./../lib/supabase"
+import { StatsEntry } from "$lib/types"
+
+import {
+  comparePassword,
+  upsertData,
+  getData,
+  hashPassword,
+} from "../lib/supabase"
 import express, { Request, Response } from "express"
-import { getData } from "../lib/supabase"
+
 const router = express.Router()
 
 router.use(express.json())
@@ -20,6 +26,14 @@ router.use(express.json())
  *          minimum: 0.000000000000001
  *          maximum: 0.999999999999999
  *          example: 0.999999999999999
+ *      Password:
+ *        name: Password
+ *        in: path
+ *        required: true
+ *        description: Password you want hashed.
+ *        schema:
+ *          type: string
+ *          example: helloworld
  *    schemas:
  *      ScriptJSONPayload:
  *        title: Script JSON Payload
@@ -52,7 +66,27 @@ router.use(express.json())
  *          banned:
  *            type: boolean
  *            example: false
+ *      AuthJSON:
+ *        title: Auth BioHash/Password
+ *        type: object
+ *        description: JSON payload to be sent for authentication of a BioHash.
+ *        properties:
+ *          biohash:
+ *            type: number
+ *            minimum: 0.000000000000001
+ *            maximum: 0.999999999999999
+ *            example: 0.999999999999999
+ *          password:
+ *            type: string
+ *            example: helloworld
  *    requestBodies:
+ *      Auth:
+ *        description: JSON data to be sent for BioHash authentication.
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#components/schemas/AuthJSON'
  *      AccountData:
  *        description: JSON data to be sent from scripts.
  *        required: true
@@ -180,6 +214,69 @@ router.patch("/:biohash", async (req: Request, res: Response) => {
  */
 router.delete("/:biohash", async (req: Request, res: Response) => {
   res.status(400).send({ message: "You can't delete a biohash! Sorry!" })
+})
+
+/**
+ * @swagger
+ * /stats/auth/hash/{Password}:
+ *  get:
+ *    summary: Get your Password hashed. Hashes are salted, so every request will have a slightly different result.
+ *    tags:
+ *      - stats/auth
+ *    parameters:
+ *      - $ref: '#components/parameters/Password'
+ *    responses:
+ *      '200':
+ *        description: Successful request!
+ *      '417':
+ *        description: Password empty!
+ */
+router.get("/auth/hash/:password", async (req: Request, res: Response) => {
+  const { password } = req.params
+
+  const data = await hashPassword(password)
+
+  if (!data) return res.status(417).send({ message: "Password empty!" })
+
+  return res.status(200).send(data)
+})
+
+/**
+ * @swagger
+ * /stats/auth/check/:
+ *  post:
+ *    summary: Checks if your password matches the hash stored in the database.
+ *    consumes:
+ *      - application/x-www-form-urlencoded
+ *    tags:
+ *      - stats/auth
+ *    requestBody:
+ *      $ref: '#components/requestBodies/Auth'
+ *    responses:
+ *      '200':
+ *        description: Successful request!
+ *      '409':
+ *        description: Password does not match the database hash!
+ *      '417':
+ *        description: Password empty!
+ */
+router.post("/auth/check/", async (req: Request, res: Response) => {
+  const reqBody = req.body
+  const biohash = reqBody.biohash
+  let password = reqBody.password
+
+  const hash = await hashPassword(password)
+
+  if (!biohash) return res.status(417).send({ message: "BioHash empty!" })
+  if (!hash) return res.status(417).send({ message: "Password empty!" })
+
+  const result = await comparePassword(parseFloat(biohash), password)
+
+  if (result) {
+    return res.status(200).send("Password matches the stored hash!")
+  } else {
+    return res.status(409).send({ message: "Password does not match!" })
+  }
 })
 
 export default router

@@ -50,7 +50,8 @@ server.use(
 //dynamically load routes from ./routes
 fs.readdirSync(__dirname + "/routes/").forEach(async (file) => {
   let route = __dirname + "/routes/" + file
-  let path = "/" + file.replace(".ts", "")
+  let path = "/" + file.replace(/\.[jt]s/i, "") //regex replace .js or .ts
+
   try {
     console.log("Adding route to the server: ", path)
     const item = await import(route)

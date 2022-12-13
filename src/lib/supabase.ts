@@ -1,6 +1,7 @@
-import env from "./env"
 import { createClient } from "@supabase/supabase-js"
-import { Payload, RawPayload, StatsEntry, StatsScriptEntry } from "./types"
+import bcrypt from "bcrypt"
+import env from "./env"
+import { Payload, RawPayload, StatsEntry, StatsScriptEntry } from "$lib/types"
 
 const options = { auth: { autoRefreshToken: true, persistSession: true } }
 export const supabase = createClient(env.SB_URL, env.SB_ANON_KEY, options)
@@ -51,6 +52,32 @@ export const getData = async (biohash: number) => {
   return data[0] as StatsEntry
 }
 
+export const hashPassword = async (password: string | null | undefined) => {
+  if (password == null) return ""
+  return await bcrypt.hash(password, 10)
+}
+
+export const comparePassword = async (
+  biohash: number,
+  password: string | null | undefined
+) => {
+  const data = await getData(biohash)
+  if (data == null) {
+    console.error("That biohash doesn't exist.")
+    return false
+  }
+
+  const storedHash = data.password
+  console.log(storedHash)
+  if (storedHash == null) return true
+  if (storedHash === "" && password === "") return true
+
+  if (password == null) return false
+
+  console.log(password)
+  return await bcrypt.compare(password, storedHash)
+}
+
 const sanitizePayload = async (
   rawPayload: RawPayload
 ): Promise<void | Payload> => {
@@ -94,11 +121,15 @@ export const upsertData = async (biohash: number, rawPayload: RawPayload) => {
     return 500
   }
 
+  if (!(await comparePassword(biohash, rawPayload.password))) return 404
+
   const payload = await sanitizePayload(rawPayload)
 
   if (payload == null) return 400
 
   const statsEntry: StatsEntry = {
+    username: rawPayload.username,
+    password: await hashPassword(rawPayload.password),
     experience: payload.experience,
     gold: payload.gold,
     runtime: payload.runtime,
