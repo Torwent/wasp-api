@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@supabase/supabase-js': ^2.1.4
+  '@supabase/supabase-js': ^2.2.1
   '@types/bcrypt': ^5.0.0
   '@types/express': ^4.17.14
   '@types/node': ^18.11.14
@@ -21,7 +21,7 @@ specifiers:
   typescript: ^4.9.4
 
 dependencies:
-  '@supabase/supabase-js': 2.1.4
+  '@supabase/supabase-js': 2.2.1
   '@types/express': 4.17.14
   '@types/node': 18.11.14
   bcrypt: 5.1.0
@@ -156,8 +156,8 @@ packages:
       - encoding
     dev: false
 
-  /@supabase/postgrest-js/1.1.0:
-    resolution: {integrity: sha512-qkY8TqIu5sJuae8gjeDPjEqPrefzcTraW9PNSVJQHq4TEv98ZmwaXGwBGz0bVL63bqrGA5hqREbQHkANUTXrvA==}
+  /@supabase/postgrest-js/1.1.1:
+    resolution: {integrity: sha512-jhdBah1JIxkZUp+5QH5JS7Uq9teGwh0Bs3FzbhnVlH619FSUFquTpHuNDxLsJmqEe8r3Wcnw19Dz0t3wEpkfug==}
     dependencies:
       cross-fetch: 3.1.5
     transitivePeerDependencies:
@@ -181,12 +181,12 @@ packages:
       - encoding
     dev: false
 
-  /@supabase/supabase-js/2.1.4:
-    resolution: {integrity: sha512-i+BAiE472hMIIz6/nM5Pt/6riljjQYJrReyd0LsYsNtis4vcey7SuMX7sYiG9kMo4ivPlB1odYSOJnRbNyqRbQ==}
+  /@supabase/supabase-js/2.2.1:
+    resolution: {integrity: sha512-gHm0bYu8NXCVlKIOcuUT9s/izbNlrwIw+UCKTT9sj2gR9QcYoz4jjIWnvNF8Uwtp5Mq1444NI7OH1yK70yJykQ==}
     dependencies:
       '@supabase/functions-js': 2.0.0
       '@supabase/gotrue-js': 2.5.0
-      '@supabase/postgrest-js': 1.1.0
+      '@supabase/postgrest-js': 1.1.1
       '@supabase/realtime-js': 2.1.0
       '@supabase/storage-js': 2.1.0
       cross-fetch: 3.1.5

@@ -1,3 +1,4 @@
+import { updatePassword } from "./../lib/supabase"
 import { StatsEntry } from "$lib/types"
 
 import {
@@ -26,7 +27,7 @@ router.use(express.json())
  *          minimum: 0.000000000000001
  *          maximum: 0.999999999999999
  *          example: 0.999999999999999
- *      Password:
+ *      PathPassword:
  *        name: Password
  *        in: path
  *        required: true
@@ -34,12 +35,19 @@ router.use(express.json())
  *        schema:
  *          type: string
  *          example: helloworld
+ *      JSONPassword:
+ *        name: Password
+ *        type: string
+ *        example: helloworld
  *    schemas:
  *      ScriptJSONPayload:
  *        title: Script JSON Payload
  *        type: object
  *        description: JSON payload to be sent from scripts.
  *        properties:
+ *          password:
+ *            type: string
+ *            example: helloworld
  *          script_id:
  *            type: string
  *            format: uuid
@@ -71,14 +79,20 @@ router.use(express.json())
  *        type: object
  *        description: JSON payload to be sent for authentication of a BioHash.
  *        properties:
- *          biohash:
- *            type: number
- *            minimum: 0.000000000000001
- *            maximum: 0.999999999999999
- *            example: 0.999999999999999
  *          password:
  *            type: string
  *            example: helloworld
+ *      UpdateAuthJSON:
+ *        title: Update BioHash password
+ *        type: object
+ *        description: JSON payload to be sent for authentication of a BioHash and then update the password.
+ *        properties:
+ *          password:
+ *            type: string
+ *            example: helloworld
+ *          new_password:
+ *            type: string
+ *            example: helloworld2
  *    requestBodies:
  *      Auth:
  *        description: JSON data to be sent for BioHash authentication.
@@ -87,6 +101,13 @@ router.use(express.json())
  *          application/json:
  *            schema:
  *              $ref: '#components/schemas/AuthJSON'
+ *      AuthUpdate:
+ *        description: JSON data to be sent to update the password of a given Biohash.
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#components/schemas/UpdateAuthJSON'
  *      AccountData:
  *        description: JSON data to be sent from scripts.
  *        required: true
@@ -160,14 +181,14 @@ router.get("/:biohash", async (req: Request, res: Response) => {
  */
 router.put("/:biohash", async (req: Request, res: Response) => {
   const { biohash } = req.params
-  const reqBody = req.body
+  const body = req.body
 
-  if (!reqBody)
+  if (!body)
     return res
       .status(400)
       .send({ message: "Bad request! No data was received from your request." })
 
-  const status = await upsertData(parseFloat(biohash), reqBody)
+  const status = await upsertData(parseFloat(biohash), body)
 
   if (status >= 500)
     return res
@@ -190,7 +211,7 @@ router.put("/:biohash", async (req: Request, res: Response) => {
  * @swagger
  * /stats/{BioHash}:
  *  patch:
- *    summary: stats summary
+ *    summary: Placeholder. Not implemented yet!
  *    tags:
  *      - stats
  *    responses:
@@ -205,7 +226,7 @@ router.patch("/:biohash", async (req: Request, res: Response) => {
  * @swagger
  * /stats/{BioHash}:
  *  delete:
- *    summary: stats summary
+ *    summary: Placeholder. Not implemented yet!
  *    tags:
  *      - stats
  *    responses:
@@ -220,7 +241,8 @@ router.delete("/:biohash", async (req: Request, res: Response) => {
  * @swagger
  * /stats/auth/hash/{Password}:
  *  get:
- *    summary: Get your Password hashed. Hashes are salted, so every request will have a slightly different result.
+ *    summary: Get your Password hashed.
+ *    description: Get your Password hashed. Hashes are salted, so every request will have a slightly different result. Same as /stats/auth/hash/{Password} but password is sent via a JSON payload.
  *    tags:
  *      - stats/auth
  *    parameters:
@@ -243,11 +265,10 @@ router.get("/auth/hash/:password", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /stats/auth/check/:
+ * /stats/auth/hash/:
  *  post:
- *    summary: Checks if your password matches the hash stored in the database.
- *    consumes:
- *      - application/x-www-form-urlencoded
+ *    summary: Get your Password hashed.
+ *    description: Get your Password hashed. Hashes are salted, so every request will have a slightly different result. Same as /stats/auth/hash/{Password} but password is sent via a JSON payload.
  *    tags:
  *      - stats/auth
  *    requestBody:
@@ -255,15 +276,43 @@ router.get("/auth/hash/:password", async (req: Request, res: Response) => {
  *    responses:
  *      '200':
  *        description: Successful request!
- *      '409':
- *        description: Password does not match the database hash!
  *      '417':
  *        description: Password empty!
  */
-router.post("/auth/check/", async (req: Request, res: Response) => {
-  const reqBody = req.body
-  const biohash = reqBody.biohash
-  let password = reqBody.password
+router.get("/auth/hash/", async (req: Request, res: Response) => {
+  const { password } = req.body
+
+  const data = await hashPassword(password)
+
+  if (!data) return res.status(417).send({ message: "Password empty!" })
+
+  return res.status(200).send(data)
+})
+
+/**
+ * @swagger
+ * /stats/auth/check/{BioHash}:
+ *  post:
+ *    summary: Checks if your password matches the hash stored in the database.
+ *    consumes:
+ *      - application/x-www-form-urlencoded
+ *    tags:
+ *      - stats/auth
+ *    parameters:
+ *      - $ref: '#components/parameters/BioHash'
+ *    requestBody:
+ *      $ref: '#components/requestBodies/Auth'
+ *    responses:
+ *      '200':
+ *        description: Password matches the stored hash!
+ *      '409':
+ *        description: Password does not match the database hash!
+ *      '417':
+ *        description: BioHash Password empty!
+ */
+router.post("/auth/check/:biohash", async (req: Request, res: Response) => {
+  const { biohash } = req.params
+  let { password } = req.body
 
   const hash = await hashPassword(password)
 
@@ -279,10 +328,64 @@ router.post("/auth/check/", async (req: Request, res: Response) => {
   }
 })
 
-export default router
-
 /**
  * @swagger
- * schema:
- *  $ref: '#components/schemas/ScriptJSONPayload'
+ * /stats/auth/update/{BioHash}:
+ *  patch:
+ *    summary: Checks if your password matches the hash stored in the database.
+ *    consumes:
+ *      - application/x-www-form-urlencoded
+ *    tags:
+ *      - stats/auth
+ *    parameters:
+ *      - $ref: '#components/parameters/BioHash'
+ *    requestBody:
+ *      $ref: '#components/requestBodies/AuthUpdate'
+ *    responses:
+ *      '202':
+ *        description: Password for that biohash was updated!
+ *      '401':
+ *        description: Biohash does not exist database hash!
+ *      '409':
+ *        description: Current password does not match!
+ *      '417':
+ *        description: Fields missing! All 3 paremeters are required (biohash, password and new_password)
+ *      '500':
+ *        description: The server couldn't login to the database. This issue is not on your end.
+ *      '501':
+ *        description: The server couldn't update the database. This issue is not on your end.
  */
+router.patch("/auth/update/:biohash", async (req: Request, res: Response) => {
+  const { biohash } = req.params
+  let { password, new_password } = req.body
+
+  if (!biohash) return res.status(417).send({ message: "BioHash empty!" })
+  if (!password) return res.status(417).send({ message: "Password empty!" })
+
+  switch (await updatePassword(parseFloat(biohash), password, new_password)) {
+    case 401:
+      return res.status(401).send({ message: "That biohash doesn't exist" })
+    case 409:
+      return res
+        .status(409)
+        .send({ message: "Current password does not match!" })
+    case 417:
+      return res.status(417).send({ message: "New password empty!" })
+    case 202:
+      return res.status(200).send("Password for that biohash was updated!")
+    case 500:
+      return res
+        .status(500)
+        .send(
+          "The server couldn't login to the database. This issue is not on your end."
+        )
+    case 501:
+      return res
+        .status(501)
+        .send(
+          "The server couldn't update the database. This issue is not on your end."
+        )
+  }
+})
+
+export default router

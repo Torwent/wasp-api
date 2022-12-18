@@ -42,7 +42,14 @@ const swaggerOpions = {
   apis: apis,
 }
 
-const swaggerUiOptions = { customSiteTitle: "WaspScripts API" }
+const swaggerUiOptions = {
+  customSiteTitle: "WaspScripts API",
+  customfavIcon: "https://waspscripts.com/favicon.svg",
+  customCss: `
+  .topbar-wrapper img {content:url(https://enqlpchobniylwpsjcqc.supabase.co/storage/v1/object/public/imgs/logos/multi-color-l.png); height:2.7rem;}
+  .swagger-ui .topbar { border-bottom: 1px solid #2a2625; }
+  .topbar { position: sticky; top: 0px; z-index: 50 }`,
+}
 
 const swaggerDocs = swaggerJsDoc(swaggerOpions)
 

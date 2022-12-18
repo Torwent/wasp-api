@@ -3,18 +3,23 @@ import bcrypt from "bcrypt"
 import env from "./env"
 import { Payload, RawPayload, StatsEntry, StatsScriptEntry } from "$lib/types"
 
-const options = { auth: { autoRefreshToken: true, persistSession: true } }
-export const supabase = createClient(env.SB_URL, env.SB_ANON_KEY, options)
+const options = { auth: { autoRefreshToken: true, persistSession: false } }
+const supabase = createClient(env.SB_URL, env.SB_ANON_KEY, options)
 
 const login = async () => {
-  const session = await supabase.auth.getSession()
+  const { data, error } = await supabase.auth.getSession()
 
-  if (session == null) {
+  if (error) {
+    console.error(error)
+    return false
+  }
+
+  if (data.session == null) {
+    console.log("here")
     const { error } = await supabase.auth.signInWithPassword({
       email: env.SERVICE_USER,
       password: env.SERVICE_PASS,
     })
-
     if (error) {
       console.error(error)
       return false
@@ -62,19 +67,14 @@ export const comparePassword = async (
   password: string | null | undefined
 ) => {
   const data = await getData(biohash)
-  if (data == null) {
-    console.error("That biohash doesn't exist.")
-    return false
-  }
+  if (data == null) return true
 
   const storedHash = data.password
-  console.log(storedHash)
   if (storedHash == null) return true
   if (storedHash === "" && password === "") return true
 
   if (password == null) return false
 
-  console.log(password)
   return await bcrypt.compare(password, storedHash)
 }
 
@@ -128,8 +128,7 @@ export const upsertData = async (biohash: number, rawPayload: RawPayload) => {
   if (payload == null) return 400
 
   const statsEntry: StatsEntry = {
-    username: rawPayload.username,
-    password: await hashPassword(rawPayload.password),
+    biohash: biohash,
     experience: payload.experience,
     gold: payload.gold,
     runtime: payload.runtime,
@@ -137,15 +136,18 @@ export const upsertData = async (biohash: number, rawPayload: RawPayload) => {
     banned: payload.banned,
   }
 
+  if (rawPayload.username) statsEntry.username = rawPayload.username
   const oldData = await getData(biohash)
 
   if (!oldData) {
-    statsEntry.biohash = biohash
+    if (rawPayload.password != null)
+      statsEntry.password = await hashPassword(rawPayload.password)
     const { error } = await supabase.from("stats_protected").insert(statsEntry)
     if (error) {
       console.error(error)
       return 401
     }
+    console.log("here")
     return 201
   }
 
@@ -164,6 +166,35 @@ export const upsertData = async (biohash: number, rawPayload: RawPayload) => {
   if (error) {
     console.error(error)
     return 401
+  }
+
+  return 202
+}
+
+export const updatePassword = async (
+  biohash: number,
+  password: string,
+  new_password: string
+) => {
+  if (!(await login())) return 500
+
+  if (!(await comparePassword(biohash, password))) return 409
+
+  const oldData = await getData(biohash)
+
+  if (!oldData) return 401
+
+  new_password = await hashPassword(new_password)
+  if (new_password == null) return 417
+
+  const { error } = await supabase
+    .from("stats_protected")
+    .update({ password: new_password })
+    .eq("biohash", biohash)
+
+  if (error) {
+    console.error(error)
+    return 501
   }
 
   return 202
