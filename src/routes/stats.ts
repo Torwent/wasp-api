@@ -153,7 +153,7 @@ router.get("/:biohash", async (req: Request, res: Response) => {
 /**
  * @swagger
  * /stats/{BioHash}:
- *  put:
+ *  post:
  *    summary: Push information about a particular BioHash.
  *    consumes:
  *      - application/x-www-form-urlencoded
@@ -179,7 +179,7 @@ router.get("/:biohash", async (req: Request, res: Response) => {
  *      '500':
  *        description: Server couldn't login to the database for some reason!
  */
-router.put("/:biohash", async (req: Request, res: Response) => {
+router.post("/:biohash", async (req: Request, res: Response) => {
   const { biohash } = req.params
   const body = req.body
 
@@ -205,36 +205,6 @@ router.put("/:biohash", async (req: Request, res: Response) => {
         ? "The account was added to the database successfully!"
         : "The account was updated succesffully"
     )
-})
-
-/**
- * @swagger
- * /stats/{BioHash}:
- *  patch:
- *    summary: Placeholder. Not implemented yet!
- *    tags:
- *      - stats
- *    responses:
- *      '400':
- *        description: You can't edit a biohash! Sorry!
- */
-router.patch("/:biohash", async (req: Request, res: Response) => {
-  res.status(400).send({ message: "You can't edit a biohash! Sorry!" })
-})
-
-/**
- * @swagger
- * /stats/{BioHash}:
- *  delete:
- *    summary: Placeholder. Not implemented yet!
- *    tags:
- *      - stats
- *    responses:
- *      '400':
- *        description: You can't delete a biohash! Sorry!
- */
-router.delete("/:biohash", async (req: Request, res: Response) => {
-  res.status(400).send({ message: "You can't delete a biohash! Sorry!" })
 })
 
 /**
@@ -331,7 +301,7 @@ router.post("/auth/check/:biohash", async (req: Request, res: Response) => {
 /**
  * @swagger
  * /stats/auth/update/{BioHash}:
- *  patch:
+ *  post:
  *    summary: Checks if your password matches the hash stored in the database.
  *    consumes:
  *      - application/x-www-form-urlencoded
@@ -355,7 +325,7 @@ router.post("/auth/check/:biohash", async (req: Request, res: Response) => {
  *      '501':
  *        description: The server couldn't update the database. This issue is not on your end.
  */
-router.patch("/auth/update/:biohash", async (req: Request, res: Response) => {
+router.post("/auth/update/:biohash", async (req: Request, res: Response) => {
   const { biohash } = req.params
   let { password, new_password } = req.body
 
