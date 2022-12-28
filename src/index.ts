@@ -7,12 +7,31 @@ import env from "./lib/env"
 const server = express()
 const PORT = 8080
 
-//Extended: https://swagger.io/specification/#infoObject
+//https://swagger.io/specification/#infoObject
 
 const apis =
   env.ENVIRONMENT === "production"
     ? ["./build/index.js", "./build/routes/*.js"]
     : ["./src/index.ts", "./src/routes/*.ts"]
+
+const servers =
+  env.ENVIRONMENT === "production"
+    ? [
+        {
+          url: "https://api.waspscripts.com",
+          description: "Live production server",
+        },
+      ]
+    : [
+        {
+          url: "http://localhost:8080",
+          description: "Development local server",
+        },
+        {
+          url: "https://api.waspscripts.com",
+          description: "Live production server",
+        },
+      ]
 
 const swaggerOpions = {
   definition: {
@@ -28,16 +47,7 @@ const swaggerOpions = {
         name: "GPLv3",
       },
     },
-    servers: [
-      {
-        url: "http://localhost:8080",
-        description: "Development local server",
-      },
-      {
-        url: "https://api.waspscripts.com",
-        description: "Live production server",
-      },
-    ],
+    servers: servers,
   },
   apis: apis,
 }
