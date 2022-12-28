@@ -224,6 +224,8 @@ router.post("/:biohash", async (req: Request, res: Response) => {
  *        description: Password empty!
  */
 router.post("/auth/hash/", async (req: Request, res: Response) => {
+  console.log(req)
+
   const { password } = req.body
 
   const data = await hashPassword(password)
