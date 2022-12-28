@@ -209,32 +209,6 @@ router.post("/:biohash", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /stats/auth/hash/{Password}:
- *  get:
- *    summary: Get your Password hashed.
- *    description: Get your Password hashed. Hashes are salted, so every request will have a slightly different result. Same as /stats/auth/hash/{Password} but password is sent via a JSON payload.
- *    tags:
- *      - stats/auth
- *    parameters:
- *      - $ref: '#components/parameters/Password'
- *    responses:
- *      '200':
- *        description: Successful request!
- *      '417':
- *        description: Password empty!
- */
-router.get("/auth/hash/:password", async (req: Request, res: Response) => {
-  const { password } = req.params
-
-  const data = await hashPassword(password)
-
-  if (!data) return res.status(417).send({ message: "Password empty!" })
-
-  return res.status(200).send(data)
-})
-
-/**
- * @swagger
  * /stats/auth/hash/:
  *  post:
  *    summary: Get your Password hashed.
@@ -249,7 +223,7 @@ router.get("/auth/hash/:password", async (req: Request, res: Response) => {
  *      '417':
  *        description: Password empty!
  */
-router.get("/auth/hash/", async (req: Request, res: Response) => {
+router.post("/auth/hash/", async (req: Request, res: Response) => {
   const { password } = req.body
 
   const data = await hashPassword(password)
