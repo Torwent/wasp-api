@@ -69,7 +69,7 @@ export const comparePassword = async (
   if (data == null) return true
 
   const storedHash = data.password
-  if (storedHash == null) return true
+  if (storedHash == null || storedHash === "") return true
   if (storedHash === "" && password === "") return true
 
   if (password == null) return false
@@ -112,7 +112,7 @@ const sanitizePayload = async (
   if (rawPayload.runtime == null) rawPayload.runtime = 5000
   rawPayload.runtime = Number(rawPayload.runtime)
 
-  if (rawPayload.runtime <= 4500)
+  if (rawPayload.runtime <= 1000)
     return console.error("The runtime submited is abnormally low!")
 
   if (rawPayload.runtime >= 15 * 60 * 1000)
