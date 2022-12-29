@@ -3,6 +3,7 @@ import fs from "fs"
 import swaggerJsDoc from "swagger-jsdoc"
 import swaggerUi from "swagger-ui-express"
 import env from "./lib/env"
+import rateLimiter from "express-rate-limit"
 
 const server = express()
 const PORT = 8080
@@ -63,13 +64,24 @@ const swaggerUiOptions = {
 
 const swaggerDocs = swaggerJsDoc(swaggerOpions)
 
-server.use(express.json())
+server.use(express.urlencoded())
 
 server.use(
   "/docs",
   swaggerUi.serve,
   swaggerUi.setup(swaggerDocs, swaggerUiOptions)
 )
+
+// set a rate limit of 200 reqs/min
+const rateLimit = rateLimiter({
+  max: 20, // the rate limit in reqs
+  windowMs: 60 * 1000, // time where limit applies
+  message: "You've reached the 200 requests/min limit.",
+  statusCode: 429,
+  headers: true,
+})
+
+server.use(rateLimit)
 
 //dynamically load routes from ./routes
 fs.readdirSync(__dirname + "/routes/").forEach(async (file) => {

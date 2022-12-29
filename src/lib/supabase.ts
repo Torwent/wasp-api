@@ -15,7 +15,6 @@ const login = async () => {
   }
 
   if (data.session == null) {
-    console.log("here")
     const { error } = await supabase.auth.signInWithPassword({
       email: env.SERVICE_USER,
       password: env.SERVICE_PASS,
@@ -89,7 +88,10 @@ const sanitizePayload = async (
   if (scriptLimits == null) return console.error("Script doesn't exist.")
 
   if (rawPayload.experience == null) rawPayload.experience = 0
+  rawPayload.experience = Number(rawPayload.experience)
+
   if (rawPayload.gold == null) rawPayload.gold = 0
+  rawPayload.gold = Number(rawPayload.gold)
 
   if (rawPayload.experience > scriptLimits.xp_req_limit)
     return console.error(
@@ -107,10 +109,20 @@ const sanitizePayload = async (
         scriptLimits.gp_req_limit.toString()
     )
 
-  if (rawPayload.runtime == null || rawPayload.runtime <= 5000)
-    rawPayload.runtime = 5000
+  if (rawPayload.runtime == null) rawPayload.runtime = 5000
+  rawPayload.runtime = Number(rawPayload.runtime)
+
+  if (rawPayload.runtime <= 4500)
+    return console.error("The runtime submited is abnormally low!")
+
+  if (rawPayload.runtime >= 15 * 60 * 1000)
+    return console.error("The runtime submited is abnormally high!")
+
   if (rawPayload.levels == null) rawPayload.levels = 0
+  rawPayload.levels = Number(rawPayload.levels)
+
   if (rawPayload.banned == null) rawPayload.banned = false
+  rawPayload.banned = Boolean(rawPayload.banned)
 
   return rawPayload as Payload
 }
@@ -147,7 +159,7 @@ export const upsertData = async (biohash: number, rawPayload: RawPayload) => {
       console.error(error)
       return 401
     }
-    console.log("here")
+
     return 201
   }
 

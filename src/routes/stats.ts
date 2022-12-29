@@ -9,9 +9,19 @@ import {
 } from "../lib/supabase"
 import express, { Request, Response } from "express"
 
+import rateLimiter from "express-rate-limit"
+
 const router = express.Router()
 
 router.use(express.json())
+
+const rateLimit = rateLimiter({
+  max: 1, // the rate limit in reqs
+  windowMs: 5 * 60 * 1000, // time where limit applies
+  message: "You've reached the 1 request limit ",
+  statusCode: 429,
+  headers: true,
+})
 
 /**
  * @swagger
@@ -179,7 +189,7 @@ router.get("/:biohash", async (req: Request, res: Response) => {
  *      '500':
  *        description: Server couldn't login to the database for some reason!
  */
-router.post("/:biohash", async (req: Request, res: Response) => {
+router.post("/:biohash", rateLimit, async (req: Request, res: Response) => {
   const { biohash } = req.params
   const body = req.body
 
@@ -224,8 +234,6 @@ router.post("/:biohash", async (req: Request, res: Response) => {
  *        description: Password empty!
  */
 router.post("/auth/hash/", async (req: Request, res: Response) => {
-  console.log(req)
-
   const { password } = req.body
 
   const data = await hashPassword(password)
