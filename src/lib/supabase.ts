@@ -122,7 +122,7 @@ const sanitizePayload = async (
   rawPayload.levels = Number(rawPayload.levels)
 
   if (rawPayload.banned == null) rawPayload.banned = false
-  rawPayload.banned = Boolean(rawPayload.banned)
+  rawPayload.banned = false
 
   return rawPayload as Payload
 }
