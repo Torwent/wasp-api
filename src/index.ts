@@ -74,9 +74,9 @@ server.use(
 
 // set a rate limit of 200 reqs/min
 const rateLimit = rateLimiter({
-  max: 20, // the rate limit in reqs
+  max: 100, // the rate limit in reqs
   windowMs: 60 * 1000, // time where limit applies
-  message: "You've reached the 200 requests/min limit.",
+  message: "You've reached the 100 requests/min limit.",
   statusCode: 429,
   headers: true,
 })

@@ -18,7 +18,8 @@ router.use(express.json())
 const rateLimit = rateLimiter({
   max: 1, // the rate limit in reqs
   windowMs: 5 * 60 * 1000, // time where limit applies
-  message: "You've reached the 1 request limit ",
+  message:
+    "You've reached the 1 request per minute limit for stats submissions!",
   statusCode: 429,
   headers: true,
 })
