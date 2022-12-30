@@ -79,6 +79,11 @@ const rateLimit = rateLimiter({
   message: "You've reached the 100 requests/min limit.",
   statusCode: 429,
   headers: true,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: function (req: any) {
+    return req.headers["x-forwarded-for"] || req.connection.remoteAddress
+  },
 })
 
 server.use(rateLimit)

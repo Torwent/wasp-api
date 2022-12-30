@@ -18,10 +18,14 @@ router.use(express.json())
 const rateLimit = rateLimiter({
   max: 1, // the rate limit in reqs
   windowMs: 5 * 60 * 1000, // time where limit applies
-  message:
-    "You've reached the 1 request per minute limit for stats submissions!",
+  message: "You've reached the 1 requests/min limit for stats submissions.",
   statusCode: 429,
   headers: true,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: function (req: any) {
+    return req.headers["x-forwarded-for"] || req.connection.remoteAddress
+  },
 })
 
 /**
