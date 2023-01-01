@@ -64,7 +64,11 @@ const swaggerUiOptions = {
 
 const swaggerDocs = swaggerJsDoc(swaggerOpions)
 
-server.use(express.urlencoded())
+server.use(
+  express.urlencoded({
+    extended: true,
+  })
+)
 
 server.use(
   "/docs",

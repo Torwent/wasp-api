@@ -77,46 +77,26 @@ export const comparePassword = async (
   return await bcrypt.compare(password, storedHash)
 }
 
-const sanitizePayload = async (
+async function sanitizePayload(
   rawPayload: RawPayload
-): Promise<void | Payload> => {
-  if (rawPayload.script_id == null)
-    return console.error("Payload is missing the script id.")
+): Promise<number | Payload> {
+  if (rawPayload.script_id == null) return 401
 
   const scriptLimits = await getScriptData(rawPayload.script_id)
-
-  if (scriptLimits == null) return console.error("Script doesn't exist.")
+  if (scriptLimits == null) return 402
 
   if (rawPayload.experience == null) rawPayload.experience = 0
   rawPayload.experience = Number(rawPayload.experience)
+  if (rawPayload.experience > scriptLimits.xp_req_limit) return 403
 
   if (rawPayload.gold == null) rawPayload.gold = 0
   rawPayload.gold = Number(rawPayload.gold)
-
-  if (rawPayload.experience > scriptLimits.xp_req_limit)
-    return console.error(
-      "More experience than allowed was submited. Value: " +
-        rawPayload.experience.toString() +
-        " Limit: " +
-        scriptLimits.xp_req_limit.toString()
-    )
-
-  if (rawPayload.gold > scriptLimits.gp_req_limit)
-    return console.error(
-      "More gold than allowed was submited. Value: " +
-        rawPayload.gold.toString() +
-        " Limit: " +
-        scriptLimits.gp_req_limit.toString()
-    )
+  if (rawPayload.gold > scriptLimits.gp_req_limit) return 404
 
   if (rawPayload.runtime == null) rawPayload.runtime = 5000
   rawPayload.runtime = Number(rawPayload.runtime)
-
-  if (rawPayload.runtime <= 1000)
-    return console.error("The runtime submited is abnormally low!")
-
-  if (rawPayload.runtime >= 15 * 60 * 1000)
-    return console.error("The runtime submited is abnormally high!")
+  if (rawPayload.runtime <= 1000) return 405
+  if (rawPayload.runtime >= 15 * 60 * 1000) return 406
 
   if (rawPayload.levels == null) rawPayload.levels = 0
   rawPayload.levels = Number(rawPayload.levels)
@@ -128,16 +108,13 @@ const sanitizePayload = async (
 }
 
 export const upsertData = async (biohash: number, rawPayload: RawPayload) => {
-  if (!(await login())) {
-    console.error("Couldn't login to the database!")
-    return 500
-  }
+  if (!(await login())) return 500
+  if (!(await comparePassword(biohash, rawPayload.password))) return 400
 
-  if (!(await comparePassword(biohash, rawPayload.password))) return 404
+  let payload = await sanitizePayload(rawPayload)
 
-  const payload = await sanitizePayload(rawPayload)
-
-  if (payload == null) return 400
+  if (Number.isInteger(payload)) return payload as number
+  payload = payload as Payload
 
   const statsEntry: StatsEntry = {
     biohash: biohash,
@@ -156,14 +133,13 @@ export const upsertData = async (biohash: number, rawPayload: RawPayload) => {
       statsEntry.password = await hashPassword(rawPayload.password)
     const { error } = await supabase.from("stats_protected").insert(statsEntry)
     if (error) {
-      console.error(error)
-      return 401
+      return 501
     }
 
     return 201
   }
 
-  if (oldData.banned && statsEntry.banned) return 428
+  if (oldData.banned && statsEntry.banned) return 407
 
   statsEntry.experience += oldData.experience
   statsEntry.gold += oldData.gold
@@ -176,8 +152,7 @@ export const upsertData = async (biohash: number, rawPayload: RawPayload) => {
     .eq("biohash", biohash)
 
   if (error) {
-    console.error(error)
-    return 401
+    return 502
   }
 
   return 202

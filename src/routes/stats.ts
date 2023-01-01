@@ -147,10 +147,18 @@ const rateLimit = rateLimiter({
  *    tags:
  *      - stats
  *    responses:
- *      '200':
- *        description: Successful request!
- *      '417':
- *        description: BioHash not found!
+ *      '201':
+ *        description: The account was added to the database successfully!
+ *      '202':
+ *        description: The account was updated succesffully!
+ *      '400':
+ *        description: Bad request! {INFO ON WHAT WENT WRONG}
+ *      '401':
+ *        description: Unauthorized! Your password doesn't match the one in the database for this biohash.
+ *      '412':
+ *        description: Your account is banned. No more data is accepted until it's reported unbanned.
+ *      '500':
+ *        description: Server error! {INFO ON WHAT WENT WRONG}. This is not an issue on your end.
  */
 router.get("/:biohash", async (req: Request, res: Response) => {
   const { biohash } = req.params
@@ -201,25 +209,76 @@ router.post("/:biohash", rateLimit, async (req: Request, res: Response) => {
   if (!body)
     return res
       .status(400)
-      .send({ message: "Bad request! No data was received from your request." })
+      .send({ message: "Bad request! The server didn't receive any payload." })
 
   const status = await upsertData(parseFloat(biohash), body)
 
-  if (status >= 500)
-    return res
-      .status(status)
-      .send(
-        "Server couldn't login to the database! This is not an issue on your end."
-      )
-  if (status >= 400) return res.status(status).send("Bad request!")
+  switch (status) {
+    case 201:
+      return res
+        .status(201)
+        .send("The account was added to the database successfully!")
+    case 202:
+      return res.status(202).send("The account was updated succesffully!")
 
-  return res
-    .status(status)
-    .send(
-      status === 201
-        ? "The account was added to the database successfully!"
-        : "The account was updated succesffully"
-    )
+    case 400:
+      return res
+        .status(401)
+        .send(
+          "Unauthorized! Your password doesn't match the one in the database for this biohash."
+        )
+    case 401:
+      return res.status(400).send("Bad request! script_id is missing.")
+    case 402:
+      return res
+        .status(400)
+        .send("Bad request! script_id doesn't match any in waspscripts.")
+    case 403:
+      return res
+        .status(400)
+        .send(
+          "Bad request! Your reported experience is over the script request limit."
+        )
+    case 404:
+      return res
+        .status(400)
+        .send(
+          "Bad request! Your reported gold is over the script request limit."
+        )
+    case 405:
+      return res
+        .status(400)
+        .send("Bad request! Your reported runtime is lower than 1000.")
+    case 406:
+      return res
+        .status(400)
+        .send("Bad request! Your report runtime is higher than 15mins.")
+    case 407:
+      return res
+        .status(412)
+        .send(
+          "Your account is banned. No more data is accepted until it's reported unbanned."
+        )
+
+    case 500:
+      return res
+        .status(500)
+        .send(
+          "Server error! The server couldn't login to the database! This is not an issue on your end."
+        )
+    case 501:
+      return res
+        .status(500)
+        .send(
+          "Server error! The server couldn't insert your row into stats_protected table. This is not an issue on your end."
+        )
+    case 502:
+      return res
+        .status(500)
+        .send(
+          "Server error! The server couldn't update your row in stats_protected table. This is not an issue on your end."
+        )
+  }
 })
 
 /**
