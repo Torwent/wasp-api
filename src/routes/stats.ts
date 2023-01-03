@@ -147,18 +147,10 @@ const rateLimit = rateLimiter({
  *    tags:
  *      - stats
  *    responses:
- *      '201':
- *        description: The account was added to the database successfully!
- *      '202':
- *        description: The account was updated succesffully!
- *      '400':
- *        description: Bad request! {INFO ON WHAT WENT WRONG}
- *      '401':
- *        description: Unauthorized! Your password doesn't match the one in the database for this biohash.
- *      '412':
- *        description: Your account is banned. No more data is accepted until it's reported unbanned.
- *      '500':
- *        description: Server error! {INFO ON WHAT WENT WRONG}. This is not an issue on your end.
+ *      '200':
+ *        description: The account was returned successfully!
+ *      '417':
+ *        description: That biohash does not exist in waspscripts stats database!
  */
 router.get("/:biohash", async (req: Request, res: Response) => {
   const { biohash } = req.params
@@ -166,9 +158,9 @@ router.get("/:biohash", async (req: Request, res: Response) => {
   const data: StatsEntry | void = await getData(parseFloat(biohash))
 
   if (!data)
-    return res
-      .status(417)
-      .send({ message: "That biohash does not exist on the database!" })
+    return res.status(417).send({
+      message: "That biohash does not exist in waspscripts stats database!",
+    })
 
   if (data.password != null) {
     data.password = undefined
