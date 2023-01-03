@@ -1,3 +1,12 @@
+## [0.1.2](https://github.com/Torwent/wasp-api/compare/v0.1.1...v0.1.2) (2023-01-03)
+
+
+### Bug Fixes
+
+* minor fixes to the docs. ([0d4c944](https://github.com/Torwent/wasp-api/commit/0d4c944165c1de38a887d62aef2318fbd990375c))
+
+
+
 ## [0.1.1](https://github.com/Torwent/wasp-api/compare/v0.1.0...v0.1.1) (2023-01-03)
 
 
