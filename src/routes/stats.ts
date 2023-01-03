@@ -170,6 +170,10 @@ router.get("/:biohash", async (req: Request, res: Response) => {
       .status(417)
       .send({ message: "That biohash does not exist on the database!" })
 
+  if (data.password != null) {
+    data.password = undefined
+  }
+
   return res.status(200).send(data)
 })
 
