@@ -1,4 +1,13 @@
-# 0.1.0 (2023-01-01)
+## [0.1.1](https://github.com/Torwent/wasp-api/compare/v0.1.0...v0.1.1) (2023-01-03)
+
+
+### Bug Fixes
+
+* solved data leak in the api server ([10abc97](https://github.com/Torwent/wasp-api/commit/10abc9717df08d744a7c68f7bb5e2e011bb64b4d))
+
+
+
+# [0.1.0](https://github.com/Torwent/wasp-api/compare/384b9b587a671170fb991ea4b116cd7dd3d45ec0...v0.1.0) (2023-01-01)
 
 
 ### Bug Fixes
