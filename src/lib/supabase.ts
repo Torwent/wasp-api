@@ -6,7 +6,7 @@ import { Payload, RawPayload, StatsEntry, StatsScriptEntry } from "$lib/types"
 const options = { auth: { autoRefreshToken: true, persistSession: false } }
 const supabase = createClient(env.SB_URL, env.SB_ANON_KEY, options)
 
-const login = async () => {
+async function login() {
   const { data, error } = await supabase.auth.getSession()
 
   if (error) {
@@ -28,9 +28,11 @@ const login = async () => {
   return true
 }
 
-const logout = async () => await supabase.auth.signOut()
+async function logout() {
+  await supabase.auth.signOut()
+}
 
-export const getScriptData = async (id: string) => {
+export async function getScriptData(id: string) {
   if (!(await login())) return console.error("Couldn't login to the database!")
 
   const { data, error } = await supabase
@@ -43,7 +45,7 @@ export const getScriptData = async (id: string) => {
   return data[0] as StatsScriptEntry
 }
 
-export const getData = async (biohash: number) => {
+export async function getData(biohash: number) {
   if (!(await login())) return console.error("Couldn't login to the database!")
 
   const { data, error } = await supabase
@@ -56,15 +58,15 @@ export const getData = async (biohash: number) => {
   return data[0] as StatsEntry
 }
 
-export const hashPassword = async (password: string | null | undefined) => {
+export async function hashPassword(password: string | null | undefined) {
   if (password == null) return ""
   return await bcrypt.hash(password, 10)
 }
 
-export const comparePassword = async (
+export async function comparePassword(
   biohash: number,
   password: string | null | undefined
-) => {
+) {
   const data = await getData(biohash)
   if (data == null) return true
 
@@ -77,6 +79,20 @@ export const comparePassword = async (
   return await bcrypt.compare(password, storedHash)
 }
 
+async function parseNumber(n: any) {
+  if (n == null) n = 0
+  return Number(n)
+}
+
+async function parseBoolean(value: any) {
+  if (typeof value === "string") {
+    if (value.toLowerCase() === "false") return false
+    return true
+  }
+  if (value == null) return false
+  return Boolean(value)
+}
+
 async function sanitizePayload(
   rawPayload: RawPayload
 ): Promise<number | Payload> {
@@ -85,29 +101,25 @@ async function sanitizePayload(
   const scriptLimits = await getScriptData(rawPayload.script_id)
   if (scriptLimits == null) return 402
 
-  if (rawPayload.experience == null) rawPayload.experience = 0
-  rawPayload.experience = Number(rawPayload.experience)
-  if (rawPayload.experience > scriptLimits.xp_req_limit) return 403
+  rawPayload.experience = await parseNumber(rawPayload.experience)
+  if (rawPayload.experience > scriptLimits.min_xp) return 403
+  if (rawPayload.experience > scriptLimits.max_xp) return 404
 
-  if (rawPayload.gold == null) rawPayload.gold = 0
-  rawPayload.gold = Number(rawPayload.gold)
-  if (rawPayload.gold > scriptLimits.gp_req_limit) return 404
+  rawPayload.gold = await parseNumber(rawPayload.gold)
+  if (rawPayload.gold > scriptLimits.min_gp) return 405
+  if (rawPayload.gold > scriptLimits.max_gp) return 406
 
   if (rawPayload.runtime == null) rawPayload.runtime = 5000
   rawPayload.runtime = Number(rawPayload.runtime)
-  if (rawPayload.runtime <= 1000) return 405
-  if (rawPayload.runtime >= 15 * 60 * 1000) return 406
+  if (rawPayload.runtime <= 1000) return 407
+  if (rawPayload.runtime >= 15 * 60 * 1000) return 408
 
-  if (rawPayload.levels == null) rawPayload.levels = 0
-  rawPayload.levels = Number(rawPayload.levels)
-
-  if (rawPayload.banned == null) rawPayload.banned = false
-  rawPayload.banned = false
+  rawPayload.banned = await parseBoolean(rawPayload.banned)
 
   return rawPayload as Payload
 }
 
-export const upsertData = async (biohash: number, rawPayload: RawPayload) => {
+export async function upsertData(biohash: number, rawPayload: RawPayload) {
   if (!(await login())) return 500
   if (!(await comparePassword(biohash, rawPayload.password))) return 400
 
@@ -118,10 +130,10 @@ export const upsertData = async (biohash: number, rawPayload: RawPayload) => {
 
   const statsEntry: StatsEntry = {
     biohash: biohash,
+    username: payload.username,
     experience: payload.experience,
     gold: payload.gold,
     runtime: payload.runtime,
-    levels: payload.levels,
     banned: payload.banned,
   }
 
@@ -144,7 +156,6 @@ export const upsertData = async (biohash: number, rawPayload: RawPayload) => {
   statsEntry.experience += oldData.experience
   statsEntry.gold += oldData.gold
   statsEntry.runtime += oldData.runtime
-  statsEntry.levels += oldData.levels
 
   const { error } = await supabase
     .from("stats_protected")
@@ -158,11 +169,11 @@ export const upsertData = async (biohash: number, rawPayload: RawPayload) => {
   return 202
 }
 
-export const updatePassword = async (
+export async function updatePassword(
   biohash: number,
   password: string,
   new_password: string
-) => {
+) {
   if (!(await login())) return 500
 
   if (!(await comparePassword(biohash, password))) return 409
@@ -185,4 +196,18 @@ export const updatePassword = async (
   }
 
   return 202
+}
+
+export async function deleteData(biohash: number, password: string) {
+  if (!(await login())) return 500
+  if (!(await comparePassword(biohash, password))) return 400
+
+  const { error } = await supabase
+    .from("stats_protected")
+    .delete()
+    .eq("biohash", biohash)
+
+  if (error) return 501
+
+  return 200
 }

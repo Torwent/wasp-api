@@ -1,4 +1,4 @@
-import { updatePassword } from "./../lib/supabase"
+import { deleteData, updatePassword } from "./../lib/supabase"
 import { StatsEntry } from "$lib/types"
 
 import {
@@ -16,8 +16,8 @@ const router = express.Router()
 router.use(express.json())
 
 const rateLimit = rateLimiter({
-  max: 1, // the rate limit in reqs
-  windowMs: 5 * 60 * 1000, // time where limit applies
+  max: 3, // the rate limit in reqs
+  windowMs: 3 * 60 * 1000, // time where limit applies
   message: "You've reached the 1 requests/min limit for stats submissions.",
   statusCode: 429,
   headers: true,
@@ -229,27 +229,42 @@ router.post("/:biohash", rateLimit, async (req: Request, res: Response) => {
       return res
         .status(400)
         .send("Bad request! script_id doesn't match any in waspscripts.")
+
     case 403:
       return res
         .status(400)
         .send(
-          "Bad request! Your reported experience is over the script request limit."
+          "Bad request! Your reported experience is less than the script request minimum limit."
         )
     case 404:
       return res
         .status(400)
         .send(
-          "Bad request! Your reported gold is over the script request limit."
+          "Bad request! Your reported experience is more than the script request maximum limit."
         )
+
     case 405:
       return res
         .status(400)
-        .send("Bad request! Your reported runtime is lower than 1000.")
+        .send(
+          "Bad request! Your reported gold is less than the script request minimum limit."
+        )
     case 406:
       return res
         .status(400)
-        .send("Bad request! Your report runtime is higher than 15mins.")
+        .send(
+          "Bad request! Your reported gold is more than the script request maximum limit."
+        )
+
     case 407:
+      return res
+        .status(400)
+        .send("Bad request! Your reported runtime is lower than 1000.")
+    case 408:
+      return res
+        .status(400)
+        .send("Bad request! Your report runtime is higher than 15mins.")
+    case 409:
       return res
         .status(412)
         .send(
@@ -398,6 +413,62 @@ router.post("/auth/update/:biohash", async (req: Request, res: Response) => {
         .status(501)
         .send(
           "The server couldn't update the database. This issue is not on your end."
+        )
+  }
+})
+
+/**
+ * @swagger
+ * /delete/{BioHash}:
+ *  post:
+ *    summary: Deletes an entry from the database if the password matches.
+ *    consumes:
+ *      - application/x-www-form-urlencoded
+ *    tags:
+ *      - stats/auth
+ *    parameters:
+ *      - $ref: '#components/parameters/BioHash'
+ *    requestBody:
+ *      $ref: '#components/requestBodies/Auth'
+ *    responses:
+ *      '200':
+ *        description: Entry deleted!
+ *      '409':
+ *        description: Password does not match!
+ *      '417':
+ *        description: BioHash/Password empty!
+ *      '500':
+ *        description: Server error! The server couldn't login to the database! This is not an issue on your end.
+ *      '501':
+ *        description: Server error! The server couldn't delete the entry from the database! This is not an issue on your end.
+ */
+router.post("/delete/:biohash", async (req: Request, res: Response) => {
+  const { biohash } = req.params
+  let { password } = req.body
+
+  const hash = await hashPassword(password)
+
+  if (!biohash) return res.status(417).send({ message: "BioHash empty!" })
+  if (!hash) return res.status(417).send({ message: "Password empty!" })
+
+  const status = await deleteData(parseFloat(biohash), password)
+
+  switch (status) {
+    case 200:
+      return res.status(200).send("Entry deleted!")
+    case 400:
+      return res.status(400).send("Password does not match!")
+    case 500:
+      return res
+        .status(500)
+        .send(
+          "Server error! The server couldn't login to the database! This is not an issue on your end."
+        )
+    case 501:
+      return res
+        .status(501)
+        .send(
+          "Server error! The server couldn't delete the entry from the database! This is not an issue on your end."
         )
   }
 })

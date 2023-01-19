@@ -6,7 +6,6 @@ export interface StatsEntry {
   experience: number
   gold: number
   runtime: number
-  levels: number
   banned: boolean
 }
 
@@ -22,14 +21,18 @@ export interface StatsScriptEntry {
   current_users?: number[]
   xp_req_limit: number
   gp_req_limit: number
+  min_xp: number
+  min_gp: number
+  max_xp: number
+  max_gp: number
 }
 
 export interface Payload {
   script_id: string
+  username: string
   experience: number
   gold: number
   runtime: number
-  levels: number
   banned: boolean
 }
 
@@ -40,6 +43,5 @@ export interface RawPayload {
   experience: number | undefined
   gold: number | undefined
   runtime: number | undefined
-  levels: number | undefined
   banned: boolean | undefined
 }
