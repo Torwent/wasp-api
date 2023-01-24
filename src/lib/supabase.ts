@@ -37,7 +37,7 @@ export async function getScriptData(id: string) {
 
   const { data, error } = await supabase
     .from("stats_scripts_protected")
-    .select("xp_req_limit, gp_req_limit")
+    .select("min_xp, max_xp, min_gp, max_gp")
     .eq("id", id)
 
   if (error) return console.error(error)
