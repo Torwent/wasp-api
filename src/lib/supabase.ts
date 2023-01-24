@@ -102,11 +102,11 @@ async function sanitizePayload(
   if (scriptLimits == null) return 402
 
   rawPayload.experience = await parseNumber(rawPayload.experience)
-  if (rawPayload.experience > scriptLimits.min_xp) return 403
+  if (rawPayload.experience < scriptLimits.min_xp) return 403
   if (rawPayload.experience > scriptLimits.max_xp) return 404
 
   rawPayload.gold = await parseNumber(rawPayload.gold)
-  if (rawPayload.gold > scriptLimits.min_gp) return 405
+  if (rawPayload.gold < scriptLimits.min_gp) return 405
   if (rawPayload.gold > scriptLimits.max_gp) return 406
 
   if (rawPayload.runtime == null) rawPayload.runtime = 5000
