@@ -1,3 +1,12 @@
+## [0.1.4](https://github.com/Torwent/wasp-api/compare/v0.1.3...v0.1.4) (2023-01-24)
+
+
+### Bug Fixes
+
+* forgot to change this to match the database ([3d1e9f0](https://github.com/Torwent/wasp-api/commit/3d1e9f0e42497ef25b19de4c0939665f5557918a))
+
+
+
 ## [0.1.3](https://github.com/Torwent/wasp-api/compare/v0.1.2...v0.1.3) (2023-01-19)
 
 
