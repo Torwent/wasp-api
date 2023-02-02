@@ -2,6 +2,7 @@ import express from "express"
 import fs from "fs"
 import swaggerJsDoc from "swagger-jsdoc"
 import swaggerUi from "swagger-ui-express"
+import morgan from "morgan"
 import env from "./lib/env"
 import rateLimiter from "express-rate-limit"
 
@@ -91,6 +92,9 @@ const rateLimit = rateLimiter({
 })
 
 server.use(rateLimit)
+server.use(
+  morgan(":method :url :status :res[content-length] - :response-time ms")
+)
 
 //dynamically load routes from ./routes
 fs.readdirSync(__dirname + "/routes/").forEach(async (file) => {

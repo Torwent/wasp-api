@@ -33,8 +33,6 @@ async function logout() {
 }
 
 export async function getScriptData(id: string) {
-  if (!(await login())) return console.error("Couldn't login to the database!")
-
   const { data, error } = await supabase
     .from("stats_scripts_protected")
     .select("min_xp, max_xp, min_gp, max_gp")
@@ -46,8 +44,6 @@ export async function getScriptData(id: string) {
 }
 
 export async function getData(biohash: number) {
-  if (!(await login())) return console.error("Couldn't login to the database!")
-
   const { data, error } = await supabase
     .from("stats_protected")
     .select()
@@ -60,7 +56,7 @@ export async function getData(biohash: number) {
 
 export async function hashPassword(password: string | null | undefined) {
   if (password == null) return ""
-  return await bcrypt.hash(password, 10)
+  return bcrypt.hash(password, 10)
 }
 
 export async function comparePassword(
@@ -76,7 +72,19 @@ export async function comparePassword(
 
   if (password == null) return false
 
-  return await bcrypt.compare(password, storedHash)
+  return bcrypt.compare(password, storedHash)
+}
+
+export async function comparePasswordFast(
+  currentPassword: string | null | undefined,
+  newPassword: string | null | undefined
+) {
+  if (currentPassword == null || currentPassword === "") return true
+  if (currentPassword === "" && newPassword === "") return true
+
+  if (newPassword == null) return false
+
+  return bcrypt.compare(newPassword, currentPassword)
 }
 
 async function parseNumber(n: any) {
@@ -98,14 +106,21 @@ async function sanitizePayload(
 ): Promise<number | Payload> {
   if (rawPayload.script_id == null) return 401
 
-  const scriptLimits = await getScriptData(rawPayload.script_id)
-  if (scriptLimits == null) return 402
+  const results = await Promise.all([
+    getScriptData(rawPayload.script_id),
+    parseNumber(rawPayload.experience),
+    parseNumber(rawPayload.gold),
+    parseBoolean(rawPayload.banned),
+  ])
 
-  rawPayload.experience = await parseNumber(rawPayload.experience)
+  const scriptLimits = results[0]
+  rawPayload.experience = results[1]
+  rawPayload.gold = results[2]
+  rawPayload.banned = results[3]
+
+  if (scriptLimits == null) return 402
   if (rawPayload.experience < scriptLimits.min_xp) return 403
   if (rawPayload.experience > scriptLimits.max_xp) return 404
-
-  rawPayload.gold = await parseNumber(rawPayload.gold)
   if (rawPayload.gold < scriptLimits.min_gp) return 405
   if (rawPayload.gold > scriptLimits.max_gp) return 406
 
@@ -114,14 +129,16 @@ async function sanitizePayload(
   if (rawPayload.runtime <= 1000) return 407
   if (rawPayload.runtime >= 15 * 60 * 1000) return 408
 
-  rawPayload.banned = await parseBoolean(rawPayload.banned)
-
   return rawPayload as Payload
 }
 
 export async function upsertData(biohash: number, rawPayload: RawPayload) {
   if (!(await login())) return 500
-  if (!(await comparePassword(biohash, rawPayload.password))) return 400
+
+  const oldData = await getData(biohash)
+  if (oldData != null)
+    if (!(await comparePasswordFast(oldData.password, rawPayload.password)))
+      return 400
 
   let payload = await sanitizePayload(rawPayload)
 
@@ -138,16 +155,13 @@ export async function upsertData(biohash: number, rawPayload: RawPayload) {
   }
 
   if (rawPayload.username) statsEntry.username = rawPayload.username
-  const oldData = await getData(biohash)
 
   if (!oldData) {
     if (rawPayload.password != null)
       statsEntry.password = await hashPassword(rawPayload.password)
-    const { error } = await supabase.from("stats_protected").insert(statsEntry)
-    if (error) {
-      return 501
-    }
 
+    const { error } = await supabase.from("stats_protected").insert(statsEntry)
+    if (error) return 501
     return 201
   }
 
@@ -162,10 +176,7 @@ export async function upsertData(biohash: number, rawPayload: RawPayload) {
     .update(statsEntry)
     .eq("biohash", biohash)
 
-  if (error) {
-    return 502
-  }
-
+  if (error) return 502
   return 202
 }
 
@@ -175,20 +186,23 @@ export async function updatePassword(
   new_password: string
 ) {
   if (!(await login())) return 500
-
-  if (!(await comparePassword(biohash, password))) return 409
-
   const oldData = await getData(biohash)
-
   if (!oldData) return 401
 
-  new_password = await hashPassword(new_password)
+  const results = await Promise.all([
+    comparePasswordFast(oldData.password, password),
+    hashPassword(new_password),
+    supabase
+      .from("stats_protected")
+      .update({ password: new_password })
+      .eq("biohash", biohash),
+  ])
+
+  if (!results[0]) return 409
+  new_password = results[1]
   if (new_password == null) return 417
 
-  const { error } = await supabase
-    .from("stats_protected")
-    .update({ password: new_password })
-    .eq("biohash", biohash)
+  const { error } = results[2]
 
   if (error) {
     console.error(error)
