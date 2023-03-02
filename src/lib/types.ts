@@ -1,47 +1,52 @@
-export interface StatsEntry {
-  id?: string | null | undefined
+export interface UserEntry {
+  scriptID?: string
+  userID?: string
   username?: string | null | undefined
   password?: string | null | undefined
-  biohash?: number
   experience: number
   gold: number
   runtime: number
-  banned: boolean
 }
 
-export interface StatsScriptEntry {
-  id?: string
+export interface RawScriptEntry {
+  userID?: string
   experience?: number
   gold?: number
   levels?: number
   runtime?: number
-  unique_users?: number[]
-  banned_users?: number[]
-  ban_at_runtime?: number[]
-  current_users?: number[]
-  xp_req_limit: number
-  gp_req_limit: number
+  unique_users?: string[]
+  current_users?: string[]
   min_xp: number
   min_gp: number
   max_xp: number
   max_gp: number
 }
 
+export interface ScriptEntry {
+  userID?: string
+  experience: number
+  gold: number
+  levels?: number
+  runtime: number
+  min_xp?: number
+  min_gp?: number
+  max_xp?: number
+  max_gp?: number
+}
+
 export interface Payload {
-  script_id: string
+  scriptID: string
   username: string
   experience: number
   gold: number
   runtime: number
-  banned: boolean
 }
 
 export interface RawPayload {
+  scriptID: string | undefined
   username?: string | undefined
   password?: string | undefined
-  script_id: string | undefined
   experience: number | undefined
   gold: number | undefined
   runtime: number | undefined
-  banned: boolean | undefined
 }

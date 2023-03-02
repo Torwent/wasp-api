@@ -1,15 +1,18 @@
 import { deleteData, updatePassword } from "./../lib/supabase"
-import { StatsEntry } from "$lib/types"
+import { UserEntry } from "$lib/types"
 
 import {
   comparePassword,
   upsertData,
-  getData,
+  getUserData,
   hashPassword,
 } from "../lib/supabase"
 import express, { Request, Response } from "express"
 
 import rateLimiter from "express-rate-limit"
+
+const UUID_V4_REGEX =
+  /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[4][0-9a-fA-F]{3}-[89AB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/i
 
 const router = express.Router()
 
@@ -32,11 +35,11 @@ const rateLimit = rateLimiter({
  * @swagger
  *  components:
  *    parameters:
- *      BioHash:
- *        name: BioHash
+ *      UUID:
+ *        name: UUID
  *        in: path
  *        required: true
- *        description: BioHash identifier of the account.
+ *        description: UUID identifier of the account.
  *        schema:
  *          type: number
  *          minimum: 0.000000000000001
@@ -90,17 +93,17 @@ const rateLimit = rateLimiter({
  *            type: boolean
  *            example: false
  *      AuthJSON:
- *        title: Auth BioHash/Password
+ *        title: Auth UUID/Password
  *        type: object
- *        description: JSON payload to be sent for authentication of a BioHash.
+ *        description: JSON payload to be sent for authentication of a UUID.
  *        properties:
  *          password:
  *            type: string
  *            example: helloworld
  *      UpdateAuthJSON:
- *        title: Update BioHash password
+ *        title: Update UUID password
  *        type: object
- *        description: JSON payload to be sent for authentication of a BioHash and then update the password.
+ *        description: JSON payload to be sent for authentication of a UUID and then update the password.
  *        properties:
  *          password:
  *            type: string
@@ -110,14 +113,14 @@ const rateLimit = rateLimiter({
  *            example: helloworld2
  *    requestBodies:
  *      Auth:
- *        description: JSON data to be sent for BioHash authentication.
+ *        description: JSON data to be sent for UUID authentication.
  *        required: true
  *        content:
  *          application/json:
  *            schema:
  *              $ref: '#components/schemas/AuthJSON'
  *      AuthUpdate:
- *        description: JSON data to be sent to update the password of a given Biohash.
+ *        description: JSON data to be sent to update the password of a given UUID.
  *        required: true
  *        content:
  *          application/json:
@@ -134,46 +137,51 @@ const rateLimit = rateLimiter({
 
 /**
  * @swagger
- * /stats/{BioHash}:
+ * /stats/{UUID}:
  *  parameters:
- *    - $ref: '#components/parameters/BioHash'
+ *    - $ref: '#components/parameters/UUID'
  */
 
 /**
  * @swagger
- * /stats/{BioHash}:
+ * /stats/{UUID}:
  *  get:
- *    summary: Get information of a particular BioHash.
+ *    summary: Get information of a particular UUID.
  *    tags:
  *      - stats
  *    responses:
  *      '200':
  *        description: The account was returned successfully!
+ *      '416':
+ *        description: That UUID is not valid!
  *      '417':
- *        description: That biohash does not exist in waspscripts stats database!
+ *        description: That UUID does not exist in waspscripts stats database!
  */
-router.get("/:biohash", async (req: Request, res: Response) => {
-  const { biohash } = req.params
+router.get("/:UUID", async (req: Request, res: Response) => {
+  const { UUID } = req.params
 
-  const data: StatsEntry | void = await getData(parseFloat(biohash))
+  if (!UUID_V4_REGEX.test(UUID))
+    return res.status(416).send({
+      message: "That UUID is not valid!",
+    })
+
+  const data: UserEntry | void = await getUserData(UUID)
 
   if (!data)
     return res.status(417).send({
-      message: "That biohash does not exist in waspscripts stats database!",
+      message: "That UUID does not exist in waspscripts stats database!",
     })
 
-  if (data.password != null) {
-    data.password = undefined
-  }
+  data.password = undefined
 
   return res.status(200).send(data)
 })
 
 /**
  * @swagger
- * /stats/{BioHash}:
+ * /stats/{UUID}:
  *  post:
- *    summary: Push information about a particular BioHash.
+ *    summary: Push information about a particular UUID.
  *    consumes:
  *      - application/x-www-form-urlencoded
  *    tags:
@@ -191,103 +199,116 @@ router.get("/:biohash", async (req: Request, res: Response) => {
  *        description: Unouthorized to do this request. You need to login and have permission for it.
  *      '403':
  *        description: You don't have permissions for this request.
- *      '428':
- *        description: The account is banned, no point in uploading more stats.
+ *      '416':
+ *        description: That UUID is not valid!
  *      '429':
- *        description: Too many requests! We only accept a request from each BioHash every 5 minutes!
+ *        description: Too many requests! We only accept a request from each UUID every 5 minutes!
  *      '500':
  *        description: Server couldn't login to the database for some reason!
  */
-router.post("/:biohash", rateLimit, async (req: Request, res: Response) => {
-  const { biohash } = req.params
+router.post("/:UUID", rateLimit, async (req: Request, res: Response) => {
+  const { UUID } = req.params
+
+  if (!UUID_V4_REGEX.test(UUID))
+    return res.status(416).send({
+      message: "Response code: 416 - That UUID is not valid!",
+    })
+
   const body = req.body
 
   if (!body)
-    return res
-      .status(400)
-      .send({ message: "Bad request! The server didn't receive any payload." })
+    return res.status(400).send({
+      message:
+        "Response code: 400 - Bad request! The server didn't receive any payload.",
+    })
 
-  const status = await upsertData(parseFloat(biohash), body)
+  const status = await upsertData(UUID, body)
 
   switch (status) {
     case 201:
       return res
         .status(201)
-        .send("The account was added to the database successfully!")
+        .send(
+          "Response code: 201 - The account was added to the database successfully!"
+        )
     case 202:
-      return res.status(202).send("The account was updated succesffully!")
+      return res
+        .status(202)
+        .send("Response code: 202 - The account was updated succesfully!")
 
     case 400:
       return res
-        .status(401)
+        .status(400)
         .send(
-          "Unauthorized! Your password doesn't match the one in the database for this biohash."
+          "Response code: 400 - Unauthorized! Your password doesn't match the one in the database for this UUID."
         )
     case 401:
-      return res.status(400).send("Bad request! script_id is missing.")
+      return res
+        .status(400)
+        .send("Response code: 401 - Bad request! script_id is missing.")
     case 402:
       return res
         .status(400)
-        .send("Bad request! script_id doesn't match any in waspscripts.")
+        .send(
+          "Response code: 402 - Bad request! script_id doesn't match any in waspscripts."
+        )
 
     case 403:
       return res
         .status(400)
         .send(
-          "Bad request! Your reported experience is less than the script request minimum limit."
+          "Response code: 403 - Bad request! Your reported experience is less than the script request minimum limit."
         )
     case 404:
       return res
         .status(400)
         .send(
-          "Bad request! Your reported experience is more than the script request maximum limit."
+          "Response code: 404 - Bad request! Your reported experience is more than the script request maximum limit."
         )
 
     case 405:
       return res
         .status(400)
         .send(
-          "Bad request! Your reported gold is less than the script request minimum limit."
+          "Response code: 405 - Bad request! Your reported gold is less than the script request minimum limit."
         )
     case 406:
       return res
         .status(400)
         .send(
-          "Bad request! Your reported gold is more than the script request maximum limit."
+          "Response code: 406 - Bad request! Your reported gold is more than the script request maximum limit."
         )
 
     case 407:
       return res
         .status(400)
-        .send("Bad request! Your reported runtime is lower than 1000.")
+        .send(
+          "Response code: 407 - Bad request! Your reported runtime is lower than 1000."
+        )
     case 408:
       return res
         .status(400)
-        .send("Bad request! Your report runtime is higher than 15mins.")
-    case 409:
-      return res
-        .status(412)
         .send(
-          "Your account is banned. No more data is accepted until it's reported unbanned."
+          "Response code: 408 - Bad request! Your report runtime is higher than 15mins."
         )
 
     case 500:
       return res
         .status(500)
         .send(
-          "Server error! The server couldn't login to the database! This is not an issue on your end."
+          "Response code: 500 - Server error! The server couldn't login to the database! This is not an issue on your end."
         )
     case 501:
       return res
         .status(500)
         .send(
-          "Server error! The server couldn't insert your row into stats_protected table. This is not an issue on your end."
+          "Response code: 501 - Server error! The server couldn't insert your row into stats table. This is not an issue on your end."
         )
     case 502:
       return res
         .status(500)
         .send(
-          "Server error! The server couldn't update your row in stats_protected table. This is not an issue on your end."
+          "Response code: 502 - Server error! The server couldn't update your row in stats table. This is not an issue on your end."
         )
   }
 })
@@ -320,7 +341,7 @@ router.post("/auth/hash/", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /stats/auth/check/{BioHash}:
+ * /stats/auth/check/{UUID}:
  *  post:
  *    summary: Checks if your password matches the hash stored in the database.
  *    consumes:
@@ -328,7 +349,7 @@ router.post("/auth/hash/", async (req: Request, res: Response) => {
  *    tags:
  *      - stats/auth
  *    parameters:
- *      - $ref: '#components/parameters/BioHash'
+ *      - $ref: '#components/parameters/UUID'
  *    requestBody:
  *      $ref: '#components/requestBodies/Auth'
  *    responses:
@@ -337,18 +358,18 @@ router.post("/auth/hash/", async (req: Request, res: Response) => {
  *      '409':
  *        description: Password does not match the database hash!
  *      '417':
- *        description: BioHash Password empty!
+ *        description: UUID Password empty!
  */
-router.post("/auth/check/:biohash", async (req: Request, res: Response) => {
-  const { biohash } = req.params
+router.post("/auth/check/:UUID", async (req: Request, res: Response) => {
+  const { UUID } = req.params
   let { password } = req.body
 
   const hash = await hashPassword(password)
 
-  if (!biohash) return res.status(417).send({ message: "BioHash empty!" })
+  if (!UUID) return res.status(417).send({ message: "UUID empty!" })
   if (!hash) return res.status(417).send({ message: "Password empty!" })
 
-  const result = await comparePassword(parseFloat(biohash), password)
+  const result = await comparePassword(UUID, password)
 
   if (result) {
     return res.status(200).send("Password matches the stored hash!")
@@ -359,7 +380,7 @@ router.post("/auth/check/:biohash", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /stats/auth/update/{BioHash}:
+ * /stats/auth/update/{UUID}:
  *  post:
  *    summary: Checks if your password matches the hash stored in the database.
  *    consumes:
@@ -367,33 +388,33 @@ router.post("/auth/check/:biohash", async (req: Request, res: Response) => {
  *    tags:
  *      - stats/auth
  *    parameters:
- *      - $ref: '#components/parameters/BioHash'
+ *      - $ref: '#components/parameters/UUID'
  *    requestBody:
  *      $ref: '#components/requestBodies/AuthUpdate'
  *    responses:
  *      '202':
- *        description: Password for that biohash was updated!
+ *        description: Password for that UUID was updated!
  *      '401':
- *        description: Biohash does not exist database hash!
+ *        description: UUID does not exist database hash!
  *      '409':
  *        description: Current password does not match!
  *      '417':
- *        description: Fields missing! All 3 paremeters are required (biohash, password and new_password)
+ *        description: Fields missing! All 3 paremeters are required (UUID, password and new_password)
  *      '500':
  *        description: The server couldn't login to the database. This issue is not on your end.
  *      '501':
  *        description: The server couldn't update the database. This issue is not on your end.
  */
-router.post("/auth/update/:biohash", async (req: Request, res: Response) => {
-  const { biohash } = req.params
+router.post("/auth/update/:UUID", async (req: Request, res: Response) => {
+  const { UUID } = req.params
   let { password, new_password } = req.body
 
-  if (!biohash) return res.status(417).send({ message: "BioHash empty!" })
+  if (!UUID) return res.status(417).send({ message: "UUID empty!" })
   if (!password) return res.status(417).send({ message: "Password empty!" })
 
-  switch (await updatePassword(parseFloat(biohash), password, new_password)) {
+  switch (await updatePassword(UUID, password, new_password)) {
     case 401:
-      return res.status(401).send({ message: "That biohash doesn't exist" })
+      return res.status(401).send({ message: "That UUID doesn't exist" })
     case 409:
       return res
         .status(409)
@@ -401,7 +422,7 @@ router.post("/auth/update/:biohash", async (req: Request, res: Response) => {
     case 417:
       return res.status(417).send({ message: "New password empty!" })
     case 202:
-      return res.status(200).send("Password for that biohash was updated!")
+      return res.status(200).send("Password for that UUID was updated!")
     case 500:
       return res
         .status(500)
@@ -419,7 +440,7 @@ router.post("/auth/update/:biohash", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /delete/{BioHash}:
+ * /delete/{UUID}:
  *  post:
  *    summary: Deletes an entry from the database if the password matches.
  *    consumes:
@@ -427,7 +448,7 @@ router.post("/auth/update/:biohash", async (req: Request, res: Response) => {
  *    tags:
  *      - stats/auth
  *    parameters:
- *      - $ref: '#components/parameters/BioHash'
+ *      - $ref: '#components/parameters/UUID'
  *    requestBody:
  *      $ref: '#components/requestBodies/Auth'
  *    responses:
@@ -436,22 +457,22 @@ router.post("/auth/update/:biohash", async (req: Request, res: Response) => {
  *      '409':
  *        description: Password does not match!
  *      '417':
- *        description: BioHash/Password empty!
+ *        description: UUID/Password empty!
  *      '500':
  *        description: Server error! The server couldn't login to the database! This is not an issue on your end.
  *      '501':
  *        description: Server error! The server couldn't delete the entry from the database! This is not an issue on your end.
  */
-router.post("/delete/:biohash", async (req: Request, res: Response) => {
-  const { biohash } = req.params
+router.post("/delete/:UUID", async (req: Request, res: Response) => {
+  const { UUID } = req.params
   let { password } = req.body
 
   const hash = await hashPassword(password)
 
-  if (!biohash) return res.status(417).send({ message: "BioHash empty!" })
+  if (!UUID) return res.status(417).send({ message: "UUID empty!" })
   if (!hash) return res.status(417).send({ message: "Password empty!" })
 
-  const status = await deleteData(parseFloat(biohash), password)
+  const status = await deleteData(UUID, password)
 
   switch (status) {
     case 200:
