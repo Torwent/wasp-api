@@ -1,3 +1,12 @@
+## [0.1.8](https://github.com/Torwent/wasp-api/compare/v0.1.7...v0.1.8) (2023-03-03)
+
+
+### Bug Fixes
+
+* changed scriptID to script_id ([20b5945](https://github.com/Torwent/wasp-api/commit/20b5945d2c038edf0578d72854131f0659e870cd))
+
+
+
 ## [0.1.7](https://github.com/Torwent/wasp-api/compare/v0.1.6...v0.1.7) (2023-03-02)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * forgot to change this to match the database ([3d1e9f0](https://github.com/Torwent/wasp-api/commit/3d1e9f0e42497ef25b19de4c0939665f5557918a))
-
-
-
-## [0.1.3](https://github.com/Torwent/wasp-api/compare/v0.1.2...v0.1.3) (2023-01-19)
-
-
-### Bug Fixes
-
-* several improvements, read notes ([15dd36e](https://github.com/Torwent/wasp-api/commit/15dd36ed280bea7c017fea3553c8dc2f1e7eaf36))
 
 
 
