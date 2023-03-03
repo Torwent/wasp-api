@@ -34,22 +34,22 @@ async function login() {
   return true
 }
 
-export async function getScriptData(scriptID: string) {
+export async function getScriptData(script_id: string) {
   const { data, error } = await supabase
     .from("stats_scripts")
     .select("min_xp, max_xp, min_gp, max_gp")
-    .eq("scriptID", scriptID)
+    .eq("script_id", script_id)
 
   if (error) return console.error(error)
 
   return data[0] as RawScriptEntry
 }
 
-export async function getScriptEntry(scriptID: string) {
+export async function getScriptEntry(script_id: string) {
   const { data, error } = await supabase
     .from("stats_scripts")
     .select("experience, gold, runtime")
-    .eq("scriptID", scriptID)
+    .eq("script_id", script_id)
 
   if (error) return console.error(error)
 
@@ -108,10 +108,10 @@ async function parseNumber(n: any) {
 async function sanitizePayload(
   rawPayload: RawPayload
 ): Promise<number | Payload> {
-  if (rawPayload.scriptID == null) return 401
+  if (rawPayload.script_id == null) return 401
 
   const results = await Promise.all([
-    getScriptData(rawPayload.scriptID),
+    getScriptData(rawPayload.script_id),
     parseNumber(rawPayload.experience),
     parseNumber(rawPayload.gold),
   ])
@@ -134,8 +134,8 @@ async function sanitizePayload(
   return rawPayload as Payload
 }
 
-async function updateScriptData(scriptID: string, payload: UserEntry) {
-  const oldData = await getScriptEntry(scriptID)
+async function updateScriptData(script_id: string, payload: UserEntry) {
+  const oldData = await getScriptEntry(script_id)
   if (oldData == null) return
 
   const entry: ScriptEntry = {
@@ -147,7 +147,7 @@ async function updateScriptData(scriptID: string, payload: UserEntry) {
   const { error } = await supabase
     .from("stats_scripts")
     .update(entry)
-    .eq("scriptID", scriptID)
+    .eq("script_id", script_id)
 
   if (error) console.error(error)
 }
@@ -185,8 +185,8 @@ export async function upsertData(userID: string, rawPayload: RawPayload) {
       return 501
     }
 
-    if (rawPayload.scriptID != null)
-      updateScriptData(rawPayload.scriptID, entry)
+    if (rawPayload.script_id != null)
+      updateScriptData(rawPayload.script_id, entry)
 
     return 201
   }
@@ -204,7 +204,8 @@ export async function upsertData(userID: string, rawPayload: RawPayload) {
     console.error(error)
     return 502
   }
-  if (rawPayload.scriptID != null) updateScriptData(rawPayload.scriptID, entry)
+  if (rawPayload.script_id != null)
+    updateScriptData(rawPayload.script_id, entry)
   return 202
 }
 
