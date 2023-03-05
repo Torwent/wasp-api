@@ -1,3 +1,12 @@
+## [0.1.10](https://github.com/Torwent/wasp-api/compare/v0.1.9...v0.1.10) (2023-03-05)
+
+
+### Bug Fixes
+
+* typos ([06ec6d4](https://github.com/Torwent/wasp-api/commit/06ec6d426417928819ff426bb5b36e151582bb6e))
+
+
+
 ## [0.1.9](https://github.com/Torwent/wasp-api/compare/v0.1.8...v0.1.9) (2023-03-05)
 
 
@@ -31,15 +40,6 @@
 ### Performance Improvements
 
 * stats submissions process ~30% faster now ([f536451](https://github.com/Torwent/wasp-api/commit/f536451da3f19825e49e36a169df5fe530e9791d))
-
-
-
-## [0.1.5](https://github.com/Torwent/wasp-api/compare/v0.1.4...v0.1.5) (2023-01-24)
-
-
-### Bug Fixes
-
-* typo in wasp-api ([74b5974](https://github.com/Torwent/wasp-api/commit/74b5974cd32d008b48adb893c23f2638e0293ac7))
 
 
 
