@@ -41,10 +41,8 @@ const rateLimit = rateLimiter({
  *        required: true
  *        description: UUID identifier of the account.
  *        schema:
- *          type: number
- *          minimum: 0.000000000000001
- *          maximum: 0.999999999999999
- *          example: 0.999999999999999
+ *          type: string
+ *          example: b36ff484-3659-4c34-8673-ff0f43ad8610
  *      PathPassword:
  *        name: Password
  *        in: path
@@ -73,25 +71,17 @@ const rateLimit = rateLimiter({
  *          experience:
  *            type: integer
  *            minimum: 0
- *            maximum: 10000
+ *            maximum: 100000
  *            example: 100
  *          gold:
  *            type: integer
  *            minimum: 0
- *            maximum: 10000
+ *            maximum: 100000
  *            example: 100
  *          runtime:
  *            type: integer
  *            minimum: 5000
  *            example: 5000
- *          levels:
- *            type: integer
- *            minimum: 0
- *            maximum: 50
- *            example: 1
- *          banned:
- *            type: boolean
- *            example: false
  *      AuthJSON:
  *        title: Auth UUID/Password
  *        type: object
@@ -161,20 +151,16 @@ router.get("/:UUID", async (req: Request, res: Response) => {
   const { UUID } = req.params
 
   if (!UUID_V4_REGEX.test(UUID))
-    return res.status(416).send({
-      message: "That UUID is not valid!",
-    })
+    return res.status(416).send("Response code: 416 - That UUID is not valid!")
 
   const data: UserEntry | void = await getUserData(UUID)
 
   if (!data)
-    return res.status(417).send({
-      message: "That UUID does not exist in waspscripts stats database!",
-    })
+    return res.status(417).send("Response code: 417 - That UUID does not exist in waspscripts database!")
 
   data.password = undefined
 
-  return res.status(200).send(data)
+  return res.status(200).send("Response code: 200 - " + JSON.stringify(data))
 })
 
 /**
@@ -210,17 +196,12 @@ router.post("/:UUID", rateLimit, async (req: Request, res: Response) => {
   const { UUID } = req.params
 
   if (!UUID_V4_REGEX.test(UUID))
-    return res.status(416).send({
-      message: "Response code: 416 - That UUID is not valid!",
-    })
+    return res.status(416).send("Response code: 416 - That UUID is not valid!")
 
   const body = req.body
 
   if (!body)
-    return res.status(400).send({
-      message:
-        "Response code: 400 - Bad request! The server didn't receive any payload.",
-    })
+    return res.status(400).send("Response code: 400 - Bad request! The server didn't receive any payload.")
 
   const status = await upsertData(UUID, body)
 
@@ -334,9 +315,9 @@ router.post("/auth/hash/", async (req: Request, res: Response) => {
 
   const data = await hashPassword(password)
 
-  if (!data) return res.status(417).send({ message: "Password empty!" })
+  if (!data) return res.status(417).send("Response code: 417 - Password empty!")
 
-  return res.status(200).send(data)
+  return res.status(200).send("Response code: 200 - " + JSON.stringify(data))
 })
 
 /**
@@ -362,20 +343,22 @@ router.post("/auth/hash/", async (req: Request, res: Response) => {
  */
 router.post("/auth/check/:UUID", async (req: Request, res: Response) => {
   const { UUID } = req.params
-  let { password } = req.body
+  
 
+  if (!UUID_V4_REGEX.test(UUID))
+    return res.status(416).send("Response code: 416 - That UUID is not valid!")
+  
+  let { password } = req.body
   const hash = await hashPassword(password)
 
-  if (!UUID) return res.status(417).send({ message: "UUID empty!" })
-  if (!hash) return res.status(417).send({ message: "Password empty!" })
+  if (!hash) return res.status(417).send("Response code: 417 - Password empty!")
 
   const result = await comparePassword(UUID, password)
 
-  if (result) {
-    return res.status(200).send("Password matches the stored hash!")
-  } else {
-    return res.status(409).send({ message: "Password does not match!" })
-  }
+  if (result)
+    return res.status(200).send("Response code: 200 - Password matches the stored hash!")
+
+  return res.status(409).send("Response code: 409 - Password does not match!")
 })
 
 /**
@@ -407,34 +390,26 @@ router.post("/auth/check/:UUID", async (req: Request, res: Response) => {
  */
 router.post("/auth/update/:UUID", async (req: Request, res: Response) => {
   const { UUID } = req.params
+
+  if (!UUID_V4_REGEX.test(UUID))
+    return res.status(416).send("Response code: 416 - That UUID is not valid!")
   let { password, new_password } = req.body
 
-  if (!UUID) return res.status(417).send({ message: "UUID empty!" })
-  if (!password) return res.status(417).send({ message: "Password empty!" })
+  if (!password) return res.status(417).send("Response code: 417 - Password empty!")
 
   switch (await updatePassword(UUID, password, new_password)) {
     case 401:
-      return res.status(401).send({ message: "That UUID doesn't exist" })
+      return res.status(401).send("Response code: 401 - That UUID doesn't exist in waspscripts database!")
     case 409:
-      return res
-        .status(409)
-        .send({ message: "Current password does not match!" })
+      return res.status(409).send("Response code: 409 - Current password does not match!")
     case 417:
-      return res.status(417).send({ message: "New password empty!" })
+      return res.status(417).send("Response code: 417 - New password empty!")
     case 202:
-      return res.status(200).send("Password for that UUID was updated!")
+      return res.status(200).send("Response code: 200 - Password for that UUID was updated!")
     case 500:
-      return res
-        .status(500)
-        .send(
-          "The server couldn't login to the database. This issue is not on your end."
-        )
+      return res.status(500).send("Response code: 500 - The server couldn't login to the database. This issue is not on your end.")
     case 501:
-      return res
-        .status(501)
-        .send(
-          "The server couldn't update the database. This issue is not on your end."
-        )
+      return res.status(501).send("Response code: 501 - The server couldn't update the database. This issue is not on your end.")
   }
 })
 
@@ -465,32 +440,27 @@ router.post("/auth/update/:UUID", async (req: Request, res: Response) => {
  */
 router.post("/delete/:UUID", async (req: Request, res: Response) => {
   const { UUID } = req.params
+
+  if (!UUID_V4_REGEX.test(UUID))
+    return res.status(416).send("Response code: 416 - That UUID is not valid!")
+
   let { password } = req.body
 
   const hash = await hashPassword(password)
 
-  if (!UUID) return res.status(417).send({ message: "UUID empty!" })
-  if (!hash) return res.status(417).send({ message: "Password empty!" })
+  if (!hash) return res.status(417).send("Response code: 417 - Password empty!")
 
   const status = await deleteData(UUID, password)
 
   switch (status) {
     case 200:
-      return res.status(200).send("Entry deleted!")
+      return res.status(200).send("Response code: 200 - Entry deleted!")
     case 400:
-      return res.status(400).send("Password does not match!")
+      return res.status(400).send("Response code: 400 - Password does not match!")
     case 500:
-      return res
-        .status(500)
-        .send(
-          "Server error! The server couldn't login to the database! This is not an issue on your end."
-        )
+      return res.status(500).send("Response code: 500 - The server couldn't login to the database! This is not an issue on your end.")
     case 501:
-      return res
-        .status(501)
-        .send(
-          "Server error! The server couldn't delete the entry from the database! This is not an issue on your end."
-        )
+      return res.status(501).send("Response code: 501 - The server couldn't delete the entry from the database! This is not an issue on your end.")
   }
 })
 

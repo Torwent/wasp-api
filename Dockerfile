@@ -17,12 +17,23 @@ RUN npx pnpm run build
 # Production image, copy all the files and run next
 FROM node:16-alpine AS runner
 WORKDIR /usr/src/app
-ENV NODE_ENV production
+ARG SB_URL
+ARG SB_ANON_KEY
+ARG SERVICE_USER
+ARG SERVICE_PASS
+ARG ENVIRONMENT
+
+ENV SB_URL $SB_URL
+ENV SB_ANON_KEY $SB_ANON_KEY
+ENV SERVICE_USER $SERVICE_USER
+ENV SERVICE_PASS $SERVICE_PASS
+ENV ENVIRONMENT $ENVIRONMENT
+ENV NODE_ENV $ENVIRONMENT
+
 RUN adduser -S torwent -D -u 10000 -s /bin/nologin
 COPY --from=builder /usr/src/app/dist ./build
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/package.json ./package.json
-COPY --from=builder /usr/src/app/.env ./.env
 USER 10000
 EXPOSE 8080
 CMD ["node", "./build"]

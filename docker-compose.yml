@@ -5,6 +5,12 @@ services:
     container_name: "wasp-api"
     build:
       context: .
+      args:
+        SB_URL: $VITE_SB_URL
+        SB_ANON_KEY: $VITE_SB_ANON_KEY
+        SERVICE_USER: $SERVICE_USER
+        SERVICE_PASS: $SERVICE_PASS
+        ENVIRONMENT: $VITE_DEV
     restart: unless-stopped
     volumes:
       - /docker/etc/letsencrypt/live/waspscripts.com/cert.pem:/etc/letsencrypt/live/waspscripts.com/cert.pem
@@ -12,6 +18,8 @@ services:
       - /docker/etc/letsencrypt/live/waspscripts.com/privkey.pem:/etc/letsencrypt/live/waspscripts.com/privkey.pem
     networks:
       - wasp-proxy
+    env_file:
+      - .env
 
 networks:
   wasp-proxy:

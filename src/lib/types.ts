@@ -50,3 +50,10 @@ export interface RawPayload {
   gold: number | undefined
   runtime: number | undefined
 }
+
+export interface ScriptData {
+  id?: string
+  title?: string
+  author?: string
+  revision?: number
+}

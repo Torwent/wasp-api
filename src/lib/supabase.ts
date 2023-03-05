@@ -7,6 +7,7 @@ import {
   ScriptEntry,
   UserEntry,
   RawScriptEntry,
+  ScriptData,
 } from "$lib/types"
 
 const options = { auth: { autoRefreshToken: true, persistSession: false } }
@@ -247,4 +248,51 @@ export async function deleteData(userID: string, password: string) {
   if (error) return 501
 
   return 200
+}
+
+
+export async function getFullScriptData(id: string) {
+
+  const publicData = supabase.from("scripts_public").select().eq("id", id)
+  const protectedData = supabase.from("scripts_protected").select().eq("id", id)
+
+  const promises = await Promise.all([publicData, protectedData])
+
+  if (promises[0].error) {
+    console.error(promises[0].error)
+    return
+  }
+
+  if (promises[1].error) {
+    console.error(promises[1].error)
+    return
+  }
+
+  const dataPublic = promises[0].data[0]
+  const dataProtected = promises[1].data[0]
+
+  if (dataPublic == null || dataProtected == null) return
+
+  const script: ScriptData = {
+    id: id,
+    title: dataPublic.title,
+    author: dataProtected.author,
+    revision: dataProtected.revision
+  }
+
+  return script
+}
+
+export async function getScriptRevision(id: string) {
+
+  const {data, error} = await supabase.from("scripts_protected").select("revision").eq("id", id)
+
+  if (error) {
+    console.error(error)
+    return
+  }
+
+  if (data[0] == null) return
+
+  return data[0] as ScriptData
 }
