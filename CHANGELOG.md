@@ -1,3 +1,12 @@
+## [0.1.9](https://github.com/Torwent/wasp-api/compare/v0.1.8...v0.1.9) (2023-03-05)
+
+
+### Bug Fixes
+
+* several changes, read notes ([306d4eb](https://github.com/Torwent/wasp-api/commit/306d4ebbca88d216675bb236e6012d9495fca70d))
+
+
+
 ## [0.1.8](https://github.com/Torwent/wasp-api/compare/v0.1.7...v0.1.8) (2023-03-03)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * typo in wasp-api ([74b5974](https://github.com/Torwent/wasp-api/commit/74b5974cd32d008b48adb893c23f2638e0293ac7))
-
-
-
-## [0.1.4](https://github.com/Torwent/wasp-api/compare/v0.1.3...v0.1.4) (2023-01-24)
-
-
-### Bug Fixes
-
-* forgot to change this to match the database ([3d1e9f0](https://github.com/Torwent/wasp-api/commit/3d1e9f0e42497ef25b19de4c0939665f5557918a))
 
 
 
