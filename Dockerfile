@@ -35,7 +35,7 @@ RUN adduser -S torwent -D -u 10000 -s /bin/nologin
 COPY --from=builder /usr/src/app/dist ./build
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/package.json ./package.json
-COPY --from=builder /usr/src/app/.env.example ./.env
+COPY --from=builder /usr/src/app/.env ./.env
 
 USER 10000
 EXPOSE 8080
