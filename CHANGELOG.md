@@ -1,3 +1,12 @@
+## [0.1.12](https://github.com/Torwent/wasp-api/compare/v0.1.11...v0.1.12) (2023-03-05)
+
+
+### Bug Fixes
+
+* more docker tweaks ([5ac4b7f](https://github.com/Torwent/wasp-api/commit/5ac4b7f29ffb1786d6623805e182023060ac3772))
+
+
+
 ## [0.1.11](https://github.com/Torwent/wasp-api/compare/v0.1.10...v0.1.11) (2023-03-05)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * changed scriptID to script_id ([20b5945](https://github.com/Torwent/wasp-api/commit/20b5945d2c038edf0578d72854131f0659e870cd))
-
-
-
-## [0.1.7](https://github.com/Torwent/wasp-api/compare/v0.1.6...v0.1.7) (2023-03-02)
-
-
-### Bug Fixes
-
-* several changes and improvements ([69fc345](https://github.com/Torwent/wasp-api/commit/69fc345d1f68a8c525ac24f265bc4d50c176e936))
 
 
 
