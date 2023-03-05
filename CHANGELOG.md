@@ -1,3 +1,12 @@
+## [0.1.11](https://github.com/Torwent/wasp-api/compare/v0.1.10...v0.1.11) (2023-03-05)
+
+
+### Bug Fixes
+
+* more tweaks to docker settings ([c642209](https://github.com/Torwent/wasp-api/commit/c6422099117f03638655ce396a92a1f8791b01ed))
+
+
+
 ## [0.1.10](https://github.com/Torwent/wasp-api/compare/v0.1.9...v0.1.10) (2023-03-05)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * several changes and improvements ([69fc345](https://github.com/Torwent/wasp-api/commit/69fc345d1f68a8c525ac24f265bc4d50c176e936))
-
-
-
-## [0.1.6](https://github.com/Torwent/wasp-api/compare/v0.1.5...v0.1.6) (2023-02-02)
-
-
-### Performance Improvements
-
-* stats submissions process ~30% faster now ([f536451](https://github.com/Torwent/wasp-api/commit/f536451da3f19825e49e36a169df5fe530e9791d))
 
 
 
