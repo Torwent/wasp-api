@@ -1,3 +1,12 @@
+## [0.1.13](https://github.com/Torwent/wasp-api/compare/v0.1.12...v0.1.13) (2023-03-05)
+
+
+### Bug Fixes
+
+* readd .env to .gitignore ([abe5f11](https://github.com/Torwent/wasp-api/commit/abe5f11289d2917bd27b251ed7756935d9580aaf))
+
+
+
 ## [0.1.12](https://github.com/Torwent/wasp-api/compare/v0.1.11...v0.1.12) (2023-03-05)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * several changes, read notes ([306d4eb](https://github.com/Torwent/wasp-api/commit/306d4ebbca88d216675bb236e6012d9495fca70d))
-
-
-
-## [0.1.8](https://github.com/Torwent/wasp-api/compare/v0.1.7...v0.1.8) (2023-03-03)
-
-
-### Bug Fixes
-
-* changed scriptID to script_id ([20b5945](https://github.com/Torwent/wasp-api/commit/20b5945d2c038edf0578d72854131f0659e870cd))
 
 
 
