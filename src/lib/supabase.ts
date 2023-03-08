@@ -149,7 +149,7 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
 
 
   if (not_gp_scripts.includes(script_id)) {
-    if (payload.gold > 0) console.log("payload:", payload)
+    if (payload.gold > 0) console.log(script_id, " payload:", payload)
   }
 
   const { error } = await supabase
