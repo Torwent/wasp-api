@@ -135,6 +135,8 @@ async function sanitizePayload(
   return rawPayload as Payload
 }
 
+const not_gp_scripts = ["d367e87f-da39-46ac-89df-f5b80f79d8a5", "b97a7bdf-4d8b-4cfb-ae20-736a5f238c1e"]
+
 async function updateScriptData(script_id: string, payload: UserEntry) {
   const oldData = await getScriptEntry(script_id)
   if (oldData == null) return
@@ -143,6 +145,11 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
     experience: payload.experience + oldData.experience,
     gold: payload.gold + oldData.gold,
     runtime: payload.runtime + oldData.runtime,
+  }
+
+
+  if (not_gp_scripts.includes(script_id)) {
+    if (payload.gold > 0) console.log("payload:", payload)
   }
 
   const { error } = await supabase
@@ -166,8 +173,9 @@ export async function upsertPlayerData(userID: string, rawPayload: RawPayload) {
   if (Number.isInteger(payload)) return payload as number
   payload = payload as Payload
 
-  if (payload.script_id === "d367e87f-da39-46ac-89df-f5b80f79d8a5") {
-    if (payload.gold > 0) console.log(payload)
+  
+  if (not_gp_scripts.includes(payload.script_id)) {
+    if (payload.gold > 0) console.log("payload:", payload)
   }
 
   
