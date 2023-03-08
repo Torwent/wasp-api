@@ -153,7 +153,7 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
   if (error) console.error(error)
 }
 
-export async function upsertData(userID: string, rawPayload: RawPayload) {
+export async function upsertPlayerData(userID: string, rawPayload: RawPayload) {
   if (!(await login())) return 500
 
   const oldData = await getUserData(userID)
@@ -166,6 +166,11 @@ export async function upsertData(userID: string, rawPayload: RawPayload) {
   if (Number.isInteger(payload)) return payload as number
   payload = payload as Payload
 
+  if (payload.script_id === "d367e87f-da39-46ac-89df-f5b80f79d8a5") {
+    if (payload.gold > 0) console.log(payload)
+  }
+
+  
   const entry: UserEntry = {
     userID: userID,
     username: payload.username,
@@ -205,8 +210,8 @@ export async function upsertData(userID: string, rawPayload: RawPayload) {
     console.error(error)
     return 502
   }
-  if (rawPayload.script_id != null)
-    updateScriptData(rawPayload.script_id, entry)
+
+  updateScriptData(payload.script_id, entry)
   return 202
 }
 

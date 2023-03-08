@@ -3,7 +3,7 @@ import { UserEntry } from "$lib/types"
 
 import {
   comparePassword,
-  upsertData,
+  upsertPlayerData,
   getUserData,
   hashPassword,
 } from "../lib/supabase"
@@ -203,7 +203,7 @@ router.post("/:UUID", rateLimit, async (req: Request, res: Response) => {
   if (!body)
     return res.status(400).send("Response code: 400 - Bad request! The server didn't receive any payload.")
 
-  const status = await upsertData(UUID, body)
+  const status = await upsertPlayerData(UUID, body)
 
   switch (status) {
     case 201:

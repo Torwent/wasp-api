@@ -3,7 +3,7 @@ import { ScriptData } from "$lib/types"
 
 import {
   comparePassword,
-  upsertData,
+  upsertPlayerData,
   getUserData,
   hashPassword,
 } from "../lib/supabase"
