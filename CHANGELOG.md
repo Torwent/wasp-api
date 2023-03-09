@@ -1,3 +1,12 @@
+## [0.1.18](https://github.com/Torwent/wasp-api/compare/v0.1.17...v0.1.18) (2023-03-09)
+
+
+### Bug Fixes
+
+* remove extra debugging ([4493dea](https://github.com/Torwent/wasp-api/commit/4493deaa123b91791fd84e46d2b7c0ad99b76da8))
+
+
+
 ## [0.1.17](https://github.com/Torwent/wasp-api/compare/v0.1.16...v0.1.17) (2023-03-09)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * add gp detection for gotr script ([bad16a3](https://github.com/Torwent/wasp-api/commit/bad16a354ed02a77e7e2cbeba2a029f3b0ef97f4))
-
-
-
-## [0.1.13](https://github.com/Torwent/wasp-api/compare/v0.1.12...v0.1.13) (2023-03-05)
-
-
-### Bug Fixes
-
-* readd .env to .gitignore ([abe5f11](https://github.com/Torwent/wasp-api/commit/abe5f11289d2917bd27b251ed7756935d9580aaf))
 
 
 
