@@ -22,6 +22,14 @@ export interface RawScriptEntry {
   max_gp: number
 }
 
+export interface ScriptLimits {
+  id: string
+  min_xp: number
+  min_gp: number
+  max_xp: number
+  max_gp: number
+}
+
 export interface ScriptEntry {
   userID?: string
   experience: number

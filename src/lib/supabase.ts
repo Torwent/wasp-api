@@ -8,49 +8,79 @@ import {
   UserEntry,
   RawScriptEntry,
   ScriptData,
+  ScriptLimits,
 } from "$lib/types"
 import { Console } from "console"
 
-const options = { auth: { autoRefreshToken: true, persistSession: false } }
-const supabase = createClient(env.SB_URL, env.SB_ANON_KEY, options)
+const OPTIONS = { auth: { autoRefreshToken: true, persistSession: false } }
+const SUPABASE = createClient(env.SB_URL, env.SB_ANON_KEY, OPTIONS)
+const CREDENTALS = {
+  email: env.SERVICE_USER,
+  password: env.SERVICE_PASS,
+}
 
-async function login() {
-  const { data, error } = await supabase.auth.getSession()
+let isLoggedIn: boolean = false //login cache.
+
+async function login(cacheOnly: boolean = true) {
+  if (isLoggedIn && cacheOnly) {
+    login(false) //make a full async, this should relog if needed.
+    return true
+  }
+
+  const { data, error } = await SUPABASE.auth.getSession()
 
   if (error) {
+    isLoggedIn = false
     console.error(error)
     return false
   }
 
   if (data.session == null) {
     console.log("Logging in as service user!")
-    const { error } = await supabase.auth.signInWithPassword({
-      email: env.SERVICE_USER,
-      password: env.SERVICE_PASS,
-    })
+    const { error } = await SUPABASE.auth.signInWithPassword(CREDENTALS)
     if (error) {
+      isLoggedIn = false
       console.error(error)
       return false
     }
   }
 
+  if (!isLoggedIn) isLoggedIn = true
   return true
 }
 
-export async function getScriptLimits(script_id: string) {
-  const { data, error } = await supabase
-    .from("scripts_public")
+let scriptLimitsArray: ScriptLimits[] = [] //script limits cache for blazing fast execution!
+
+async function getScriptLimits(script_id: string, cacheOnly = true) {
+  const index = scriptLimitsArray.findIndex((script) => script.id === script_id)
+  if (cacheOnly) {
+    if (index != -1) {
+      getScriptLimits(script_id, false) //make a full async, this will update our cache.
+      return scriptLimitsArray[index]
+    }
+  }
+
+  const { data, error } = await SUPABASE.from("scripts_public")
     .select("min_xp, max_xp, min_gp, max_gp")
     .eq("id", script_id)
 
   if (error) return console.error(error)
 
-  return data[0] as RawScriptEntry
+  const scriptLimit: ScriptLimits = {
+    id: script_id,
+    min_xp: data[0].min_xp,
+    max_xp: data[0].max_xp,
+    min_gp: data[0].min_gp,
+    max_gp: data[0].max_gp,
+  }
+
+  if (index === -1) scriptLimitsArray.push(scriptLimit)
+  else scriptLimitsArray[index] = scriptLimit
+  return scriptLimit
 }
 
 export async function getScriptEntry(script_id: string) {
-  const { data, error } = await supabase
-    .from("stats_scripts")
+  const { data, error } = await SUPABASE.from("stats_scripts")
     .select("experience, gold, runtime")
     .eq("script_id", script_id)
 
@@ -60,9 +90,8 @@ export async function getScriptEntry(script_id: string) {
 }
 
 export async function getUserData(userID: string) {
-  const { data, error } = await supabase
-    .from("stats")
-    .select()
+  const { data, error } = await SUPABASE.from("stats")
+    .select("password, experience, gold, runtime")
     .eq("userID", userID)
 
   if (error) return console.error(error)
@@ -117,11 +146,13 @@ async function sanitizePayload(
     getScriptLimits(rawPayload.script_id),
     parseNumber(rawPayload.experience),
     parseNumber(rawPayload.gold),
+    parseNumber(rawPayload.runtime),
   ])
 
   const scriptLimits = results[0]
   rawPayload.experience = results[1]
   rawPayload.gold = results[2]
+  rawPayload.runtime = results[3]
 
   if (scriptLimits == null) return 402
   if (rawPayload.experience < scriptLimits.min_xp) return 403
@@ -129,8 +160,7 @@ async function sanitizePayload(
   if (rawPayload.gold < scriptLimits.min_gp) return 405
   if (rawPayload.gold > scriptLimits.max_gp) return 406
 
-  if (rawPayload.runtime == null) rawPayload.runtime = 5000
-  rawPayload.runtime = Number(rawPayload.runtime)
+  if (rawPayload.runtime === 0) rawPayload.runtime = 5000
   if (rawPayload.runtime <= 1000) return 407
   if (rawPayload.runtime >= 15 * 60 * 1000) return 408
 
@@ -147,8 +177,7 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
     runtime: payload.runtime + oldData.runtime,
   }
 
-  const { error } = await supabase
-    .from("stats_scripts")
+  const { error } = await SUPABASE.from("stats_scripts")
     .update(entry)
     .eq("script_id", script_id)
 
@@ -156,12 +185,19 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
 }
 
 export async function upsertPlayerData(userID: string, rawPayload: RawPayload) {
-  if (!(await login())) return 500
+  if (!isLoggedIn) await login(false)
+  if (!isLoggedIn) return 500
 
   const oldData = await getUserData(userID)
-  if (oldData != null)
-    if (!(await comparePasswordFast(oldData.password, rawPayload.password)))
-      return 400
+
+  if (oldData != null) {
+    const validPassword = await comparePasswordFast(
+      oldData.password,
+      rawPayload.password
+    )
+
+    if (!validPassword) return 400
+  }
 
   let payload = await sanitizePayload(rawPayload)
 
@@ -182,7 +218,7 @@ export async function upsertPlayerData(userID: string, rawPayload: RawPayload) {
     if (rawPayload.password != null)
       entry.password = await hashPassword(rawPayload.password)
 
-    const { error } = await supabase.from("stats").insert(entry)
+    const { error } = await SUPABASE.from("stats").insert(entry)
     if (error) {
       console.error(error)
       return 501
@@ -198,8 +234,7 @@ export async function upsertPlayerData(userID: string, rawPayload: RawPayload) {
   entry.gold += oldData.gold
   entry.runtime += oldData.runtime
 
-  const { error } = await supabase
-    .from("stats")
+  const { error } = await SUPABASE.from("stats")
     .update(entry)
     .eq("userID", userID)
 
@@ -224,7 +259,7 @@ export async function updatePassword(
   const results = await Promise.all([
     comparePasswordFast(oldData.password, password),
     hashPassword(new_password),
-    supabase.from("stats").update({ password: new_password }).eq("uuid", uuid),
+    SUPABASE.from("stats").update({ password: new_password }).eq("uuid", uuid),
   ])
 
   if (!results[0]) return 409
@@ -245,16 +280,30 @@ export async function deleteData(userID: string, password: string) {
   if (!(await login())) return 500
   if (!(await comparePassword(userID, password))) return 400
 
-  const { error } = await supabase.from("stats").delete().eq("uuid", userID)
+  const { error } = await SUPABASE.from("stats").delete().eq("uuid", userID)
 
   if (error) return 501
 
   return 200
 }
 
-export async function getFullScriptData(id: string) {
-  const publicData = supabase.from("scripts_public").select().eq("id", id)
-  const protectedData = supabase.from("scripts_protected").select().eq("id", id)
+let scriptDataArray: ScriptData[] = []
+
+export async function getScriptData(id: string, cacheOnly = true) {
+  const index = scriptDataArray.findIndex((script) => script.id === id)
+  if (cacheOnly) {
+    if (index != -1) {
+      getScriptData(id, false) //make a full async, this will update our cache.
+      return scriptDataArray[index]
+    }
+  }
+
+  const publicData = SUPABASE.from("scripts_public")
+    .select("title")
+    .eq("id", id)
+  const protectedData = SUPABASE.from("scripts_protected")
+    .select("author, revision")
+    .eq("id", id)
 
   const promises = await Promise.all([publicData, protectedData])
 
@@ -280,21 +329,8 @@ export async function getFullScriptData(id: string) {
     revision: dataProtected.revision,
   }
 
+  if (index === -1) scriptDataArray.push(script)
+  else scriptDataArray[index] = script
+
   return script
-}
-
-export async function getScriptRevision(id: string) {
-  const { data, error } = await supabase
-    .from("scripts_protected")
-    .select("revision")
-    .eq("id", id)
-
-  if (error) {
-    console.error(error)
-    return
-  }
-
-  if (data[0] == null) return
-
-  return data[0] as ScriptData
 }

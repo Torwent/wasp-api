@@ -1,4 +1,4 @@
-import { getFullScriptData, getScriptRevision } from "./../lib/supabase"
+import { getScriptData } from "./../lib/supabase"
 import { ScriptData } from "$lib/types"
 
 import {
@@ -71,12 +71,18 @@ router.get("/:SCRIPT_ID", async (req: Request, res: Response) => {
   const { SCRIPT_ID } = req.params
 
   if (!SCRIPT_ID_V4_REGEX.test(SCRIPT_ID))
-    return res.status(416).send("Response code: 416 - That SCRIPT_ID is not valid!")
+    return res
+      .status(416)
+      .send("Response code: 416 - That SCRIPT_ID is not valid!")
 
-  const data: ScriptData | void = await getFullScriptData(SCRIPT_ID)
+  const data: ScriptData | void = await getScriptData(SCRIPT_ID)
 
   if (!data)
-    return res.status(417).send("Response code: 417 - That SCRIPT_ID does not exist in waspscripts database!")
+    return res
+      .status(417)
+      .send(
+        "Response code: 417 - That SCRIPT_ID does not exist in waspscripts database!"
+      )
 
   return res.status(200).send("Response code: 200 - " + JSON.stringify(data))
 })
@@ -107,15 +113,24 @@ router.get("/revision/:SCRIPT_ID", async (req: Request, res: Response) => {
   const { SCRIPT_ID } = req.params
 
   if (!SCRIPT_ID_V4_REGEX.test(SCRIPT_ID))
-    return res.status(416).send("Response code: 416 - That SCRIPT_ID is not valid!",
-    )
+    return res
+      .status(416)
+      .send("Response code: 416 - That SCRIPT_ID is not valid!")
 
-  const data: ScriptData | void = await getScriptRevision(SCRIPT_ID)
+  const data: ScriptData | void = await getScriptData(SCRIPT_ID)
 
   if (!data)
-    return res.status(417).send("Response code: 417 - That SCRIPT_ID does not exist in waspscripts database!")
+    return res
+      .status(417)
+      .send(
+        "Response code: 417 - That SCRIPT_ID does not exist in waspscripts database!"
+      )
 
-  return res.status(200).send("Response code: 200 - " + JSON.stringify(data))
+  const reply: ScriptData = {
+    revision: data.revision,
+  }
+
+  return res.status(200).send("Response code: 200 - " + JSON.stringify(reply))
 })
 
 export default router
