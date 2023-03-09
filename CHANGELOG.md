@@ -1,3 +1,12 @@
+## [0.1.16](https://github.com/Torwent/wasp-api/compare/v0.1.15...v0.1.16) (2023-03-09)
+
+
+### Bug Fixes
+
+* fix a bug where the total user stats were added to the script stats ([598b21c](https://github.com/Torwent/wasp-api/commit/598b21cc6946739e5c4d32a916fd31d6f0a11383))
+
+
+
 ## [0.1.15](https://github.com/Torwent/wasp-api/compare/v0.1.14...v0.1.15) (2023-03-08)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * more docker tweaks ([5ac4b7f](https://github.com/Torwent/wasp-api/commit/5ac4b7f29ffb1786d6623805e182023060ac3772))
-
-
-
-## [0.1.11](https://github.com/Torwent/wasp-api/compare/v0.1.10...v0.1.11) (2023-03-05)
-
-
-### Bug Fixes
-
-* more tweaks to docker settings ([c642209](https://github.com/Torwent/wasp-api/commit/c6422099117f03638655ce396a92a1f8791b01ed))
 
 
 
