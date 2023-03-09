@@ -9,6 +9,7 @@ import {
   RawScriptEntry,
   ScriptData,
 } from "$lib/types"
+import { Console } from "console"
 
 const options = { auth: { autoRefreshToken: true, persistSession: false } }
 const supabase = createClient(env.SB_URL, env.SB_ANON_KEY, options)
@@ -22,6 +23,7 @@ async function login() {
   }
 
   if (data.session == null) {
+    console.log("Logging in as service user!")
     const { error } = await supabase.auth.signInWithPassword({
       email: env.SERVICE_USER,
       password: env.SERVICE_PASS,
@@ -35,9 +37,9 @@ async function login() {
   return true
 }
 
-export async function getScriptData(script_id: string) {
+export async function getScriptLimits(script_id: string) {
   const { data, error } = await supabase
-    .from("stats_scripts")
+    .from("stats_public")
     .select("min_xp, max_xp, min_gp, max_gp")
     .eq("script_id", script_id)
 
@@ -112,7 +114,7 @@ async function sanitizePayload(
   if (rawPayload.script_id == null) return 401
 
   const results = await Promise.all([
-    getScriptData(rawPayload.script_id),
+    getScriptLimits(rawPayload.script_id),
     parseNumber(rawPayload.experience),
     parseNumber(rawPayload.gold),
   ])
@@ -135,7 +137,10 @@ async function sanitizePayload(
   return rawPayload as Payload
 }
 
-const not_gp_scripts = ["d367e87f-da39-46ac-89df-f5b80f79d8a5", "b97a7bdf-4d8b-4cfb-ae20-736a5f238c1e"]
+const not_gp_scripts = [
+  "d367e87f-da39-46ac-89df-f5b80f79d8a5",
+  "b97a7bdf-4d8b-4cfb-ae20-736a5f238c1e",
+]
 
 async function updateScriptData(script_id: string, payload: UserEntry) {
   const oldData = await getScriptEntry(script_id)
@@ -147,9 +152,11 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
     runtime: payload.runtime + oldData.runtime,
   }
 
-
   if (not_gp_scripts.includes(script_id)) {
-    if (payload.gold > 0) console.log(script_id, " payload:", payload)
+    if (payload.gold > 0) {
+      console.log("updateScriptData")
+      console.log(script_id, " payload:", payload)
+    }
   }
 
   const { error } = await supabase
@@ -173,12 +180,6 @@ export async function upsertPlayerData(userID: string, rawPayload: RawPayload) {
   if (Number.isInteger(payload)) return payload as number
   payload = payload as Payload
 
-  
-  if (not_gp_scripts.includes(payload.script_id)) {
-    if (payload.gold > 0) console.log("payload:", payload)
-  }
-
-  
   const entry: UserEntry = {
     userID: userID,
     username: payload.username,
@@ -219,7 +220,17 @@ export async function upsertPlayerData(userID: string, rawPayload: RawPayload) {
     return 502
   }
 
-  updateScriptData(payload.script_id, entry)
+  if (not_gp_scripts.includes(payload.script_id)) {
+    if (entry.gold > 0) {
+      console.log("upsertPlayerData")
+      console.log("rawPayload:", rawPayload)
+      console.log("payload:", payload)
+      console.log("oldData:", oldData)
+      console.log("entry:", entry)
+    }
+  }
+
+  updateScriptData(payload.script_id, payload as UserEntry)
   return 202
 }
 
@@ -263,9 +274,7 @@ export async function deleteData(userID: string, password: string) {
   return 200
 }
 
-
 export async function getFullScriptData(id: string) {
-
   const publicData = supabase.from("scripts_public").select().eq("id", id)
   const protectedData = supabase.from("scripts_protected").select().eq("id", id)
 
@@ -290,15 +299,17 @@ export async function getFullScriptData(id: string) {
     id: id,
     title: dataPublic.title,
     author: dataProtected.author,
-    revision: dataProtected.revision
+    revision: dataProtected.revision,
   }
 
   return script
 }
 
 export async function getScriptRevision(id: string) {
-
-  const {data, error} = await supabase.from("scripts_protected").select("revision").eq("id", id)
+  const { data, error } = await supabase
+    .from("scripts_protected")
+    .select("revision")
+    .eq("id", id)
 
   if (error) {
     console.error(error)
