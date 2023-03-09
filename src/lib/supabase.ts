@@ -39,9 +39,9 @@ async function login() {
 
 export async function getScriptLimits(script_id: string) {
   const { data, error } = await supabase
-    .from("stats_public")
+    .from("scripts_public")
     .select("min_xp, max_xp, min_gp, max_gp")
-    .eq("script_id", script_id)
+    .eq("id", script_id)
 
   if (error) return console.error(error)
 
