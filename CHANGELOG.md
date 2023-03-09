@@ -1,3 +1,12 @@
+## [0.1.17](https://github.com/Torwent/wasp-api/compare/v0.1.16...v0.1.17) (2023-03-09)
+
+
+### Bug Fixes
+
+* typos ([147e72e](https://github.com/Torwent/wasp-api/commit/147e72e8affd07dfce051be99c9dc968f904ee46))
+
+
+
 ## [0.1.16](https://github.com/Torwent/wasp-api/compare/v0.1.15...v0.1.16) (2023-03-09)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * readd .env to .gitignore ([abe5f11](https://github.com/Torwent/wasp-api/commit/abe5f11289d2917bd27b251ed7756935d9580aaf))
-
-
-
-## [0.1.12](https://github.com/Torwent/wasp-api/compare/v0.1.11...v0.1.12) (2023-03-05)
-
-
-### Bug Fixes
-
-* more docker tweaks ([5ac4b7f](https://github.com/Torwent/wasp-api/commit/5ac4b7f29ffb1786d6623805e182023060ac3772))
 
 
 
