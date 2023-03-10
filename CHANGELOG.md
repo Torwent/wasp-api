@@ -1,3 +1,12 @@
+## [0.1.20](https://github.com/Torwent/wasp-api/compare/v0.1.19...v0.1.20) (2023-03-10)
+
+
+### Bug Fixes
+
+* read notes ([c471f0e](https://github.com/Torwent/wasp-api/commit/c471f0e2ff21fe29c98d3e279e2d69107506dec4))
+
+
+
 ## [0.1.19](https://github.com/Torwent/wasp-api/compare/v0.1.18...v0.1.19) (2023-03-09)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * fix a bug where the total user stats were added to the script stats ([598b21c](https://github.com/Torwent/wasp-api/commit/598b21cc6946739e5c4d32a916fd31d6f0a11383))
-
-
-
-## [0.1.15](https://github.com/Torwent/wasp-api/compare/v0.1.14...v0.1.15) (2023-03-08)
-
-
-### Bug Fixes
-
-* added more debugging ([1e864be](https://github.com/Torwent/wasp-api/commit/1e864be74e47728d2b2329b45dd37dc7cbab842d))
 
 
 
