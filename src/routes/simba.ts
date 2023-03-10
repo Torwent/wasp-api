@@ -1,14 +1,7 @@
-import { getScriptData } from "./../lib/supabase"
-import { ScriptData } from "$lib/types"
-
-import {
-  comparePassword,
-  upsertPlayerData,
-  getUserData,
-  hashPassword,
-} from "../lib/supabase"
+import { getScriptData } from "../lib/supabase"
+import { ScriptData } from "../lib/types"
+import { getLatestPackageVersion } from "../lib/github"
 import express, { Request, Response } from "express"
-
 import rateLimiter from "express-rate-limit"
 
 const SCRIPT_ID_V4_REGEX =
@@ -43,22 +36,30 @@ const rateLimit = rateLimiter({
  *        schema:
  *          type: string
  *          example: cf0a01e4-8d20-41c2-a78e-3d83081b388d
+ *      PACKAGE_NAME:
+ *        name: PACKAGE_NAME
+ *        in: path
+ *        required: true
+ *        description: PACKAGE_NAME identifier of the package. Only "srl-t" and "wasplib" are supported. Casing doesn't matter.
+ *        schema:
+ *          type: string
+ *          example: srl-t
  */
 
 /**
  * @swagger
- * /script/{SCRIPT_ID}:
+ * /simba/{SCRIPT_ID}:
  *  parameters:
  *    - $ref: '#components/parameters/SCRIPT_ID'
  */
 
 /**
  * @swagger
- * /script/{SCRIPT_ID}:
+ * /simba/{SCRIPT_ID}:
  *  get:
  *    summary: Get information of a particular SCRIPT_ID.
  *    tags:
- *      - script
+ *      - simba
  *    responses:
  *      '200':
  *        description: The script was returned successfully!
@@ -89,18 +90,18 @@ router.get("/:SCRIPT_ID", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /script/revision/{SCRIPT_ID}:
+ * /simba/revision/{SCRIPT_ID}:
  *  parameters:
  *    - $ref: '#components/parameters/SCRIPT_ID'
  */
 
 /**
  * @swagger
- * /script/revision/{SCRIPT_ID}:
+ * /simba/revision/{SCRIPT_ID}:
  *  get:
  *    summary: Get information the latest revision of SCRIPT_ID.
  *    tags:
- *      - script
+ *      - simba
  *    responses:
  *      '200':
  *        description: The revision was returned successfully!
@@ -129,6 +130,51 @@ router.get("/revision/:SCRIPT_ID", async (req: Request, res: Response) => {
   const reply: ScriptData = {
     revision: data.revision,
   }
+
+  return res.status(200).send("Response code: 200 - " + JSON.stringify(reply))
+})
+
+/**
+ * @swagger
+ * /simba/package/{PACKAGE_NAME}:
+ *  parameters:
+ *    - $ref: '#components/parameters/PACKAGE_NAME'
+ */
+
+/**
+ * @swagger
+ * /simba/package/{PACKAGE_NAME}:
+ *  get:
+ *    summary: Get information the latest version of PACKAGE_NAME.
+ *    tags:
+ *      - simba
+ *    responses:
+ *      '200':
+ *        description: The version was returned successfully!
+ *      '416':
+ *        description: That PACKAGE_NAME is not valid!
+ *      '417':
+ *        description: That PACKAGE_NAME does not exist in github!
+ */
+
+router.get("/package/:PACKAGE_NAME", async (req: Request, res: Response) => {
+  let { PACKAGE_NAME } = req.params
+
+  PACKAGE_NAME = PACKAGE_NAME.toLowerCase()
+
+  if (PACKAGE_NAME != "srl-t" && PACKAGE_NAME != "wasplib")
+    return res
+      .status(416)
+      .send("Response code: 416 - That PACKAGE_NAME is not valid!")
+
+  const data = await getLatestPackageVersion(PACKAGE_NAME)
+
+  if (data == null)
+    return res
+      .status(417)
+      .send("Response code: 417 - That PACKAGE_NAME does not exist in github!")
+
+  const reply = { version: data }
 
   return res.status(200).send("Response code: 200 - " + JSON.stringify(reply))
 })
