@@ -1,3 +1,12 @@
+## [0.1.21](https://github.com/Torwent/wasp-api/compare/v0.1.20...v0.1.21) (2023-03-11)
+
+
+### Bug Fixes
+
+* bump node version so fetch() is available ([eb9a014](https://github.com/Torwent/wasp-api/commit/eb9a014975556fc0b868070d5564a13b4bda3ef5))
+
+
+
 ## [0.1.20](https://github.com/Torwent/wasp-api/compare/v0.1.19...v0.1.20) (2023-03-10)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * typos ([147e72e](https://github.com/Torwent/wasp-api/commit/147e72e8affd07dfce051be99c9dc968f904ee46))
-
-
-
-## [0.1.16](https://github.com/Torwent/wasp-api/compare/v0.1.15...v0.1.16) (2023-03-09)
-
-
-### Bug Fixes
-
-* fix a bug where the total user stats were added to the script stats ([598b21c](https://github.com/Torwent/wasp-api/commit/598b21cc6946739e5c4d32a916fd31d6f0a11383))
 
 
 
