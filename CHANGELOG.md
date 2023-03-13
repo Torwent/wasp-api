@@ -1,3 +1,12 @@
+## [0.1.23](https://github.com/Torwent/wasp-api/compare/v0.1.22...v0.1.23) (2023-03-13)
+
+
+### Bug Fixes
+
+* **stats:** tweaks to password checking so responses are more informative. ([65acfce](https://github.com/Torwent/wasp-api/commit/65acfce517a0ce7b54f243a4ea7ffcf5b80faa57))
+
+
+
 ## [0.1.22](https://github.com/Torwent/wasp-api/compare/v0.1.21...v0.1.22) (2023-03-13)
 
 
@@ -31,15 +40,6 @@
 ### Performance Improvements
 
 * several performance reworks ([045c811](https://github.com/Torwent/wasp-api/commit/045c811641b2c90e1603ae9c6d375ac5dfe7e3e3))
-
-
-
-## [0.1.18](https://github.com/Torwent/wasp-api/compare/v0.1.17...v0.1.18) (2023-03-09)
-
-
-### Bug Fixes
-
-* remove extra debugging ([4493dea](https://github.com/Torwent/wasp-api/commit/4493deaa123b91791fd84e46d2b7c0ad99b76da8))
 
 
 
