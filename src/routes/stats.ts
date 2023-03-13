@@ -343,11 +343,17 @@ router.post("/auth/hash/", async (req: Request, res: Response) => {
  *      $ref: '#components/requestBodies/Auth'
  *    responses:
  *      '200':
- *        description: Password matches the stored hash!
- *      '409':
- *        description: Password does not match the database hash!
+ *        description: Response code: 200 - Password matches the stored hash!
+ *      '201':
+ *        description: Response code: 201 - That UUID does not have a password set yet!
+ *      '400':
+ *        description: Response code: 400 - That UUID does not exist!
+ *      '401':
+ *        description: Response code: 401 - Your password does not match what's stored in the database!
+ *      '416':
+ *        description: Response code: 416 - That UUID is not valid!
  *      '417':
- *        description: UUID Password empty!
+ *        description: Response code: 417 - Password empty!
  */
 router.post("/auth/check/:UUID", async (req: Request, res: Response) => {
   const { UUID } = req.params
@@ -362,12 +368,31 @@ router.post("/auth/check/:UUID", async (req: Request, res: Response) => {
 
   const result = await comparePassword(UUID, password)
 
-  if (result)
-    return res
-      .status(200)
-      .send("Response code: 200 - Password matches the stored hash!")
+  switch (result) {
+    case 400:
+      return res
+        .status(400)
+        .send("Response code: 400 - That UUID does not exist!")
 
-  return res.status(409).send("Response code: 409 - Password does not match!")
+    case 401:
+      return res
+        .status(401)
+        .send(
+          "Response code: 401 - Your password does not match what's stored in the database!"
+        )
+
+    case 200:
+      return res
+        .status(200)
+        .send("Response code: 200 - Password matches the stored hash!")
+
+    case 201:
+      return res
+        .status(201)
+        .send(
+          "Response code: 201 - That UUID does not have a password set yet!"
+        )
+  }
 })
 
 /**

@@ -109,15 +109,16 @@ export async function comparePassword(
   password: string | null | undefined
 ) {
   const data = await getUserData(uuid)
-  if (data == null) return true
+  if (data == null) return 400
 
   const storedHash = data.password
-  if (storedHash == null || storedHash === "") return true
-  if (storedHash === "" && password === "") return true
+  if (storedHash == null || storedHash === "") return 201
+  if (storedHash === "" && password === "") return 200
 
-  if (password == null) return false
+  if (password == null) return 401
 
-  return bcrypt.compare(password, storedHash)
+  if (await bcrypt.compare(password, storedHash)) return 200
+  return 401
 }
 
 export async function comparePasswordFast(
