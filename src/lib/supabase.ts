@@ -259,14 +259,15 @@ export async function updatePassword(
   const results = await Promise.all([
     comparePasswordFast(oldData.password, password),
     hashPassword(new_password),
-    SUPABASE.from("stats").update({ password: new_password }).eq("uuid", uuid),
   ])
 
   if (!results[0]) return 409
   new_password = results[1]
   if (new_password == null) return 417
 
-  const { error } = results[2]
+  const { error } = await SUPABASE.from("stats")
+    .update({ password: new_password })
+    .eq("userID", uuid)
 
   if (error) {
     console.error(error)
