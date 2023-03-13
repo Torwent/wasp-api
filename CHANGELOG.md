@@ -1,3 +1,12 @@
+## [0.1.22](https://github.com/Torwent/wasp-api/compare/v0.1.21...v0.1.22) (2023-03-13)
+
+
+### Bug Fixes
+
+* logical bug that would cause updating stats password impossible ([39e0998](https://github.com/Torwent/wasp-api/commit/39e09984a19b76d9394ddee0a0f07cb9bc82fe56))
+
+
+
 ## [0.1.21](https://github.com/Torwent/wasp-api/compare/v0.1.20...v0.1.21) (2023-03-11)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * remove extra debugging ([4493dea](https://github.com/Torwent/wasp-api/commit/4493deaa123b91791fd84e46d2b7c0ad99b76da8))
-
-
-
-## [0.1.17](https://github.com/Torwent/wasp-api/compare/v0.1.16...v0.1.17) (2023-03-09)
-
-
-### Bug Fixes
-
-* typos ([147e72e](https://github.com/Torwent/wasp-api/commit/147e72e8affd07dfce051be99c9dc968f904ee46))
 
 
 
