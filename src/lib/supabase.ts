@@ -6,11 +6,9 @@ import {
   RawPayload,
   ScriptEntry,
   UserEntry,
-  RawScriptEntry,
   ScriptData,
   ScriptLimits,
 } from "$lib/types"
-import { Console } from "console"
 
 const OPTIONS = { auth: { autoRefreshToken: true, persistSession: false } }
 const SUPABASE = createClient(env.SB_URL, env.SB_ANON_KEY, OPTIONS)

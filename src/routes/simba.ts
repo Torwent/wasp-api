@@ -1,28 +1,16 @@
 import { getScriptData } from "../lib/supabase"
 import { ScriptData } from "../lib/types"
-import { getLatestPackageVersion } from "../lib/github"
+import {
+  getLatestPackageVersion,
+  getLatestPackageVersions,
+} from "../lib/github"
 import express, { Request, Response } from "express"
-import rateLimiter from "express-rate-limit"
-
 const SCRIPT_ID_V4_REGEX =
   /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[4][0-9a-fA-F]{3}-[89AB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/i
 
 const router = express.Router()
 
 router.use(express.json())
-
-const rateLimit = rateLimiter({
-  max: 10, // the rate limit in reqs
-  windowMs: 3 * 60 * 1000, // time where limit applies
-  message: "You've reached the 10 requests/min limit for stats submissions.",
-  statusCode: 429,
-  headers: true,
-  standardHeaders: true,
-  legacyHeaders: false,
-  keyGenerator: function (req: any) {
-    return req.headers["x-forwarded-for"] || req.connection.remoteAddress
-  },
-})
 
 /**
  * @swagger
@@ -36,6 +24,14 @@ const rateLimit = rateLimiter({
  *        schema:
  *          type: string
  *          example: cf0a01e4-8d20-41c2-a78e-3d83081b388d
+ *      GET_PACKAGES:
+ *        name: GET_PACKAGES
+ *        in: path
+ *        required: false
+ *        description: wether to retrieve the latest packages as well or not.
+ *        schema:
+ *          type: boolean
+ *          example: true
  *      PACKAGE_NAME:
  *        name: PACKAGE_NAME
  *        in: path
@@ -48,16 +44,17 @@ const rateLimit = rateLimiter({
 
 /**
  * @swagger
- * /simba/{SCRIPT_ID}:
+ * /simba/{SCRIPT_ID}/{GET_PACKAGES}:
  *  parameters:
  *    - $ref: '#components/parameters/SCRIPT_ID'
+ *    - $ref: '#components/parameters/GET_PACKAGES'
  */
 
 /**
  * @swagger
- * /simba/{SCRIPT_ID}:
+ * /simba/{SCRIPT_ID}/{GET_PACKAGES}:
  *  get:
- *    summary: Get information of a particular SCRIPT_ID.
+ *    summary: Get information of a particular SCRIPT_ID. You can optionally also ask the server to give you the latest SRL-T and WaspLib versions.
  *    tags:
  *      - simba
  *    responses:
@@ -68,25 +65,49 @@ const rateLimit = rateLimiter({
  *      '417':
  *        description: That SCRIPT_ID does not exist in waspscripts stats database!
  */
-router.get("/:SCRIPT_ID", async (req: Request, res: Response) => {
-  const { SCRIPT_ID } = req.params
+router.get(
+  "/:SCRIPT_ID/:GET_PACKAGES?",
+  async (req: Request, res: Response) => {
+    let { SCRIPT_ID, GET_PACKAGES } = req.params
 
-  if (!SCRIPT_ID_V4_REGEX.test(SCRIPT_ID))
+    if (GET_PACKAGES == null) GET_PACKAGES = "true"
+    GET_PACKAGES = GET_PACKAGES.toLowerCase()
+
+    if (!SCRIPT_ID_V4_REGEX.test(SCRIPT_ID))
+      return res
+        .status(416)
+        .send("Response code: 416 - That SCRIPT_ID is not valid!")
+
+    let promises = []
+    promises.push(getScriptData(SCRIPT_ID))
+
+    if (GET_PACKAGES === "true") promises.push(getLatestPackageVersions())
+
+    const results = await Promise.all(promises)
+    const scriptData: ScriptData | void = results[0]
+
+    if (!scriptData)
+      return res
+        .status(417)
+        .send(
+          "Response code: 417 - That SCRIPT_ID does not exist in waspscripts database!"
+        )
+
+    let srlV = undefined
+    let wlV = undefined
+    if (GET_PACKAGES === "true") {
+      srlV = results[1]?.srlt_version
+      wlV = results[1]?.wasplib_version
+    }
+
+    if (srlV != null) scriptData.srlt_version = srlV
+    if (wlV != null) scriptData.wasplib_version = wlV
+
     return res
-      .status(416)
-      .send("Response code: 416 - That SCRIPT_ID is not valid!")
-
-  const data: ScriptData | void = await getScriptData(SCRIPT_ID)
-
-  if (!data)
-    return res
-      .status(417)
-      .send(
-        "Response code: 417 - That SCRIPT_ID does not exist in waspscripts database!"
-      )
-
-  return res.status(200).send("Response code: 200 - " + JSON.stringify(data))
-})
+      .status(200)
+      .send("Response code: 200 - " + JSON.stringify(scriptData))
+  }
+)
 
 /**
  * @swagger

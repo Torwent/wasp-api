@@ -64,4 +64,11 @@ export interface ScriptData {
   title?: string
   author?: string
   revision?: number
+  srlt_version?: string
+  wasplib_version?: string
+}
+
+export interface PackagesData {
+  srlt_version: string
+  wasplib_version: string
 }

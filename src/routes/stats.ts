@@ -177,24 +177,24 @@ router.get("/:UUID", async (req: Request, res: Response) => {
  *    tags:
  *      - stats
  *    requestBody:
- *      $ref: '#components/requestBodies/AccountData'
+ *      $ref: "#components/requestBodies/AccountData"
  *    responses:
- *      '201':
- *        description: Successful request! The entry did not exist and was created!
- *      '202':
- *        description: Successful request! Your data was received and the entry was updated!
- *      '400':
- *        description: Bad request!
- *      '401':
- *        description: Unouthorized to do this request. You need to login and have permission for it.
- *      '403':
- *        description: You don't have permissions for this request.
- *      '416':
- *        description: That UUID is not valid!
- *      '429':
- *        description: Too many requests! We only accept a request from each UUID every 5 minutes!
- *      '500':
- *        description: Server couldn't login to the database for some reason!
+ *      "201":
+ *        description: "Successful request! The entry did not exist and was created!"
+ *      "202":
+ *        description: "Successful request! Your data was received and the entry was updated!"
+ *      "400":
+ *        description: "Bad request!"
+ *      "401":
+ *        description: "Unouthorized to do this request. You need to login and have permission for it."
+ *      "403":
+ *        description: "You don't have permissions for this request."
+ *      "416":
+ *        description: "That UUID is not valid!"
+ *      "429":
+ *        description: "Too many requests! We only accept a request from each UUID every 5 minutes!"
+ *      "500":
+ *        description: "Server couldn't login to the database for some reason!"
  */
 router.post("/:UUID", rateLimit, async (req: Request, res: Response) => {
   const { UUID } = req.params
@@ -311,12 +311,12 @@ router.post("/:UUID", rateLimit, async (req: Request, res: Response) => {
  *    tags:
  *      - stats/auth
  *    requestBody:
- *      $ref: '#components/requestBodies/Auth'
+ *      $ref: "#components/requestBodies/Auth"
  *    responses:
- *      '200':
- *        description: Successful request!
- *      '417':
- *        description: Password empty!
+ *      "200":
+ *        description: "Successful request!"
+ *      "417":
+ *        description: "Password empty!"
  */
 router.post("/auth/hash/", async (req: Request, res: Response) => {
   const { password } = req.body
@@ -338,22 +338,22 @@ router.post("/auth/hash/", async (req: Request, res: Response) => {
  *    tags:
  *      - stats/auth
  *    parameters:
- *      - $ref: '#components/parameters/UUID'
+ *      - $ref: "#components/parameters/UUID"
  *    requestBody:
- *      $ref: '#components/requestBodies/Auth'
+ *      $ref: "#components/requestBodies/Auth"
  *    responses:
- *      '200':
- *        description: Response code: 200 - Password matches the stored hash!
- *      '201':
- *        description: Response code: 201 - That UUID does not have a password set yet!
- *      '400':
- *        description: Response code: 400 - That UUID does not exist!
- *      '401':
- *        description: Response code: 401 - Your password does not match what's stored in the database!
- *      '416':
- *        description: Response code: 416 - That UUID is not valid!
- *      '417':
- *        description: Response code: 417 - Password empty!
+ *      "200":
+ *        description: "Response code: 200 - Password matches the stored hash!"
+ *      "201":
+ *        description: "Response code: 201 - That UUID does not have a password set yet!"
+ *      "400":
+ *        description: "Response code: 400 - That UUID does not exist!"
+ *      "401":
+ *        description: "Response code: 401 - Your password does not match what's stored in the database!"
+ *      "416":
+ *        description: "Response code: 416 - That UUID is not valid!"
+ *      "417":
+ *        description: "Response code: 417 - Password empty!"
  */
 router.post("/auth/check/:UUID", async (req: Request, res: Response) => {
   const { UUID } = req.params
