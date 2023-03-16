@@ -1,3 +1,12 @@
+# [0.2.0](https://github.com/Torwent/wasp-api/compare/v0.1.23...v0.2.0) (2023-03-16)
+
+
+### Features
+
+* added the ability to get all versions at once ([b05425e](https://github.com/Torwent/wasp-api/commit/b05425e8272080eae34258e52e61544725a3e8a8))
+
+
+
 ## [0.1.23](https://github.com/Torwent/wasp-api/compare/v0.1.22...v0.1.23) (2023-03-13)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * read notes ([c471f0e](https://github.com/Torwent/wasp-api/commit/c471f0e2ff21fe29c98d3e279e2d69107506dec4))
-
-
-
-## [0.1.19](https://github.com/Torwent/wasp-api/compare/v0.1.18...v0.1.19) (2023-03-09)
-
-
-### Performance Improvements
-
-* several performance reworks ([045c811](https://github.com/Torwent/wasp-api/commit/045c811641b2c90e1603ae9c6d375ac5dfe7e3e3))
 
 
 
