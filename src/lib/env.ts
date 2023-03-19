@@ -10,6 +10,7 @@ interface ENV {
   SB_ANON_KEY: string | undefined
   SERVICE_USER: string | undefined
   SERVICE_PASS: string | undefined
+  DISCORD_TOKEN: string | undefined
   ENVIRONMENT: string | undefined
 }
 
@@ -18,6 +19,7 @@ interface Config {
   SB_ANON_KEY: string
   SERVICE_USER: string
   SERVICE_PASS: string
+  DISCORD_TOKEN: string
   ENVIRONMENT: "dev" | "production" | "debug"
 }
 
@@ -28,6 +30,7 @@ const getConfig = (): ENV => {
     SB_ANON_KEY: process.env.SB_ANON_KEY,
     SERVICE_USER: process.env.SERVICE_USER,
     SERVICE_PASS: process.env.SERVICE_PASS,
+    DISCORD_TOKEN: process.env.DISCORD_TOKEN,
     ENVIRONMENT: process.env.ENVIRONMENT,
   }
 }

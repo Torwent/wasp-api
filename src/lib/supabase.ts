@@ -184,8 +184,10 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
 }
 
 export async function upsertPlayerData(userID: string, rawPayload: RawPayload) {
-  if (!isLoggedIn) await login(false)
-  if (!isLoggedIn) return 500
+  if (!isLoggedIn) {
+    await login(false)
+    if (!isLoggedIn) return 500
+  }
 
   const oldData = await getUserData(userID)
 
@@ -333,4 +335,26 @@ export async function getScriptData(id: string, cacheOnly = true) {
   else scriptDataArray[index] = script
 
   return script
+}
+
+export async function updateProfileProtected(
+  discord_id: string,
+  roles: string[]
+) {
+  if (!isLoggedIn) {
+    await login(false)
+    if (!isLoggedIn) return 500
+  }
+
+  const { error } = await SUPABASE.rpc("set_discord_roles", {
+    discord_id: discord_id,
+    param_developer: roles.includes("864744526894333963"),
+    param_premium: roles.includes("820985772140134440"),
+    param_vip: roles.includes("931167526681972746"),
+    param_tester: roles.includes("907209408860291113"),
+    param_mod: roles.includes("1018906735123124315"),
+  })
+
+  if (error) return 417
+  return 200
 }

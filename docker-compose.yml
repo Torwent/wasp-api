@@ -10,6 +10,7 @@ services:
         SB_ANON_KEY: $SB_ANON_KEY
         SERVICE_USER: $SERVICE_USER
         SERVICE_PASS: $SERVICE_PASS
+        DISCORD_TOKEN: $DISCORD_TOKEN
         ENVIRONMENT: $ENVIRONMENT
     restart: unless-stopped
     volumes:
