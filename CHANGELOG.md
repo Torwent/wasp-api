@@ -1,3 +1,12 @@
+# [0.3.0](https://github.com/Torwent/wasp-api/compare/v0.2.0...v0.3.0) (2023-03-19)
+
+
+### Features
+
+* **discord:** added discord route to get roles information ([315c580](https://github.com/Torwent/wasp-api/commit/315c58025654d05571dbed5ff377904970bd727f))
+
+
+
 # [0.2.0](https://github.com/Torwent/wasp-api/compare/v0.1.23...v0.2.0) (2023-03-16)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * bump node version so fetch() is available ([eb9a014](https://github.com/Torwent/wasp-api/commit/eb9a014975556fc0b868070d5564a13b4bda3ef5))
-
-
-
-## [0.1.20](https://github.com/Torwent/wasp-api/compare/v0.1.19...v0.1.20) (2023-03-10)
-
-
-### Bug Fixes
-
-* read notes ([c471f0e](https://github.com/Torwent/wasp-api/commit/c471f0e2ff21fe29c98d3e279e2d69107506dec4))
 
 
 
