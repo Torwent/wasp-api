@@ -1,3 +1,12 @@
+## [0.3.3](https://github.com/Torwent/wasp-api/compare/v0.3.2...v0.3.3) (2023-03-20)
+
+
+### Bug Fixes
+
+* removed last changes, they are not required ([8a0ece1](https://github.com/Torwent/wasp-api/commit/8a0ece1d1735686e74c111bdd95a51dc87827083))
+
+
+
 ## [0.3.2](https://github.com/Torwent/wasp-api/compare/v0.3.1...v0.3.2) (2023-03-20)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * added the ability to get all versions at once ([b05425e](https://github.com/Torwent/wasp-api/commit/b05425e8272080eae34258e52e61544725a3e8a8))
-
-
-
-## [0.1.23](https://github.com/Torwent/wasp-api/compare/v0.1.22...v0.1.23) (2023-03-13)
-
-
-### Bug Fixes
-
-* **stats:** tweaks to password checking so responses are more informative. ([65acfce](https://github.com/Torwent/wasp-api/commit/65acfce517a0ce7b54f243a4ea7ffcf5b80faa57))
 
 
 
