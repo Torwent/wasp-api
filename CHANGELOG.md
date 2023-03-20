@@ -1,3 +1,12 @@
+## [0.3.1](https://github.com/Torwent/wasp-api/compare/v0.3.0...v0.3.1) (2023-03-20)
+
+
+### Bug Fixes
+
+* some changes to rate limiting and to logging of issues ([6024fef](https://github.com/Torwent/wasp-api/commit/6024fef1d15eb24cf70da7f23749444d7e1d96ed))
+
+
+
 # [0.3.0](https://github.com/Torwent/wasp-api/compare/v0.2.0...v0.3.0) (2023-03-19)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * logical bug that would cause updating stats password impossible ([39e0998](https://github.com/Torwent/wasp-api/commit/39e09984a19b76d9394ddee0a0f07cb9bc82fe56))
-
-
-
-## [0.1.21](https://github.com/Torwent/wasp-api/compare/v0.1.20...v0.1.21) (2023-03-11)
-
-
-### Bug Fixes
-
-* bump node version so fetch() is available ([eb9a014](https://github.com/Torwent/wasp-api/commit/eb9a014975556fc0b868070d5564a13b4bda3ef5))
 
 
 
