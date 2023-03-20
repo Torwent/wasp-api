@@ -1,3 +1,12 @@
+## [0.3.4](https://github.com/Torwent/wasp-api/compare/v0.3.3...v0.3.4) (2023-03-20)
+
+
+### Bug Fixes
+
+* added cors package ([b2d5dba](https://github.com/Torwent/wasp-api/commit/b2d5dba5320e6b737fa64fee0f5bef0f4bfa4136))
+
+
+
 ## [0.3.3](https://github.com/Torwent/wasp-api/compare/v0.3.2...v0.3.3) (2023-03-20)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * **discord:** added discord route to get roles information ([315c580](https://github.com/Torwent/wasp-api/commit/315c58025654d05571dbed5ff377904970bd727f))
-
-
-
-# [0.2.0](https://github.com/Torwent/wasp-api/compare/v0.1.23...v0.2.0) (2023-03-16)
-
-
-### Features
-
-* added the ability to get all versions at once ([b05425e](https://github.com/Torwent/wasp-api/commit/b05425e8272080eae34258e52e61544725a3e8a8))
 
 
 
