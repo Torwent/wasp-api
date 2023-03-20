@@ -5,6 +5,7 @@ import swaggerUi from "swagger-ui-express"
 import morgan from "morgan"
 import env from "./lib/env"
 import rateLimiter from "express-rate-limit"
+import { request } from "http"
 
 const server = express()
 const PORT = 8080
@@ -77,6 +78,24 @@ server.use(
   swaggerUi.setup(swaggerDocs, swaggerUiOptions)
 )
 
+import util from "util"
+import dns from "dns"
+const lookup = util.promisify(dns.lookup)
+
+async function skipFunc(req: any) {
+  console.log(req)
+  console.log(req.ip)
+  let result
+  try {
+    result = await lookup("wasp-webapp")
+    console.log(result)
+  } catch (error) {
+    console.error(error)
+  }
+
+  return req.ip === result
+}
+
 // set a rate limit of 200 reqs/min
 const rateLimit = rateLimiter({
   max: 500, // the rate limit in reqs
@@ -89,7 +108,7 @@ const rateLimit = rateLimiter({
   keyGenerator: function (req: any) {
     return req.headers["x-forwarded-for"] || req.connection.remoteAddress
   },
-  skip: (request, response) => request.ip === "wasp-webapp",
+  skip: async (request, response) => await skipFunc(request.ip),
 })
 
 server.use(rateLimit)
