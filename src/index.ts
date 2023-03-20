@@ -5,6 +5,7 @@ import swaggerUi from "swagger-ui-express"
 import morgan from "morgan"
 import env from "./lib/env"
 import rateLimiter from "express-rate-limit"
+import cors from "cors"
 
 const server = express()
 const PORT = 8080
@@ -97,6 +98,7 @@ server.use(
     ":remote-addr :user-agent :method :url :status :res[content-length] - :response-time ms"
   )
 )
+server.use(cors())
 
 //dynamically load routes from ./routes
 fs.readdirSync(__dirname + "/routes/").forEach(async (file) => {
