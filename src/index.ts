@@ -79,7 +79,7 @@ server.use(
 
 // set a rate limit of 200 reqs/min
 const rateLimit = rateLimiter({
-  max: 100, // the rate limit in reqs
+  max: 500, // the rate limit in reqs
   windowMs: 60 * 1000, // time where limit applies
   message: "You've reached the 100 requests/min limit.",
   statusCode: 429,
@@ -89,11 +89,14 @@ const rateLimit = rateLimiter({
   keyGenerator: function (req: any) {
     return req.headers["x-forwarded-for"] || req.connection.remoteAddress
   },
+  skip: (request, response) => request.ip === "wasp-webapp",
 })
 
 server.use(rateLimit)
 server.use(
-  morgan(":method :url :status :res[content-length] - :response-time ms")
+  morgan(
+    ":remote-addr :user-agent :method :url :status :res[content-length] - :response-time ms"
+  )
 )
 
 //dynamically load routes from ./routes
