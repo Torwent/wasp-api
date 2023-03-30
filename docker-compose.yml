@@ -1,7 +1,7 @@
 version: "3.9"
 
 services:
-  wasp-discord:
+  wasp-api:
     container_name: "wasp-api"
     build:
       context: .
