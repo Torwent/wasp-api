@@ -1,3 +1,12 @@
+## [0.3.6](https://github.com/Torwent/wasp-api/compare/v0.3.5...v0.3.6) (2023-03-30)
+
+
+### Bug Fixes
+
+* typo ([eb0ad2e](https://github.com/Torwent/wasp-api/commit/eb0ad2e319c3ff7c71c6c5bb0ad47f6508a9606a))
+
+
+
 ## [0.3.5](https://github.com/Torwent/wasp-api/compare/v0.3.4...v0.3.5) (2023-03-30)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * added debugging ([dcaf071](https://github.com/Torwent/wasp-api/commit/dcaf07185d9ccc68ad528e569241f001023b8388))
-
-
-
-## [0.3.1](https://github.com/Torwent/wasp-api/compare/v0.3.0...v0.3.1) (2023-03-20)
-
-
-### Bug Fixes
-
-* some changes to rate limiting and to logging of issues ([6024fef](https://github.com/Torwent/wasp-api/commit/6024fef1d15eb24cf70da7f23749444d7e1d96ed))
 
 
 
