@@ -1,3 +1,12 @@
+## [0.3.5](https://github.com/Torwent/wasp-api/compare/v0.3.4...v0.3.5) (2023-03-30)
+
+
+### Bug Fixes
+
+* temporarily disabled the lockfile ([da4e313](https://github.com/Torwent/wasp-api/commit/da4e31332bae1a871532497bad1f6e2ddcd1df2e))
+
+
+
 ## [0.3.4](https://github.com/Torwent/wasp-api/compare/v0.3.3...v0.3.4) (2023-03-20)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * some changes to rate limiting and to logging of issues ([6024fef](https://github.com/Torwent/wasp-api/commit/6024fef1d15eb24cf70da7f23749444d7e1d96ed))
-
-
-
-# [0.3.0](https://github.com/Torwent/wasp-api/compare/v0.2.0...v0.3.0) (2023-03-19)
-
-
-### Features
-
-* **discord:** added discord route to get roles information ([315c580](https://github.com/Torwent/wasp-api/commit/315c58025654d05571dbed5ff377904970bd727f))
 
 
 
