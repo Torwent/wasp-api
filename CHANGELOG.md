@@ -1,3 +1,12 @@
+## [0.3.7](https://github.com/Torwent/wasp-api/compare/v0.3.6...v0.3.7) (2023-04-04)
+
+
+### Bug Fixes
+
+* **github:** github cache changes ([d92db80](https://github.com/Torwent/wasp-api/commit/d92db80d023141489004b82649b99ea9a2b659ec))
+
+
+
 ## [0.3.6](https://github.com/Torwent/wasp-api/compare/v0.3.5...v0.3.6) (2023-03-30)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * removed last changes, they are not required ([8a0ece1](https://github.com/Torwent/wasp-api/commit/8a0ece1d1735686e74c111bdd95a51dc87827083))
-
-
-
-## [0.3.2](https://github.com/Torwent/wasp-api/compare/v0.3.1...v0.3.2) (2023-03-20)
-
-
-### Bug Fixes
-
-* added debugging ([dcaf071](https://github.com/Torwent/wasp-api/commit/dcaf07185d9ccc68ad528e569241f001023b8388))
 
 
 
