@@ -71,4 +71,5 @@ export interface ScriptData {
 export interface PackagesData {
   srlt_version: string
   wasplib_version: string
+  timestamp: number
 }

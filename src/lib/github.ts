@@ -33,12 +33,15 @@ export async function getLatestPackageVersion(pkg: string, cacheOnly = true) {
 
 let compositeCache: PackagesData | undefined = undefined
 
-export async function getLatestPackageVersions(cacheOnly = true) {
+export async function getLatestPackageVersions(
+  cacheOnly = true
+): Promise<PackagesData> {
   if (cacheOnly && compositeCache != undefined) {
-    getLatestPackageVersions(false)
+    if (Date.now() - compositeCache.timestamp >= 300000)
+      return await getLatestPackageVersions(false)
     return compositeCache
   }
-
+  console.log("compositeCache is going to be updated!")
   const SRL_URL = BASE_URL + "srl-t/releases/latest"
   const WL_URL = BASE_URL + "wasplib/releases/latest"
 
@@ -46,10 +49,14 @@ export async function getLatestPackageVersions(cacheOnly = true) {
 
   const jsons = await Promise.all([promises[0].json(), promises[1].json()])
 
+  let t = Date.now()
+
+  if (jsons[0].name == null || jsons[1].name == null) t -= 300000
+
   compositeCache = {
     srlt_version: jsons[0].name,
     wasplib_version: jsons[1].name,
+    timestamp: t,
   }
-
   return compositeCache
 }
