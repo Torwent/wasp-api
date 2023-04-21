@@ -1,3 +1,12 @@
+# [0.4.0](https://github.com/Torwent/wasp-api/compare/v0.3.7...v0.4.0) (2023-04-21)
+
+
+### Features
+
+* stats will now add unique users to each script unique users list ([3d1b7be](https://github.com/Torwent/wasp-api/commit/3d1b7befcc6c09674be032df8e5edad655e61547))
+
+
+
 ## [0.3.7](https://github.com/Torwent/wasp-api/compare/v0.3.6...v0.3.7) (2023-04-04)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * added cors package ([b2d5dba](https://github.com/Torwent/wasp-api/commit/b2d5dba5320e6b737fa64fee0f5bef0f4bfa4136))
-
-
-
-## [0.3.3](https://github.com/Torwent/wasp-api/compare/v0.3.2...v0.3.3) (2023-03-20)
-
-
-### Bug Fixes
-
-* removed last changes, they are not required ([8a0ece1](https://github.com/Torwent/wasp-api/commit/8a0ece1d1735686e74c111bdd95a51dc87827083))
 
 
 
