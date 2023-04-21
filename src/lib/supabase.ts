@@ -79,7 +79,7 @@ async function getScriptLimits(script_id: string, cacheOnly = true) {
 
 export async function getScriptEntry(script_id: string) {
   const { data, error } = await SUPABASE.from("stats_scripts")
-    .select("experience, gold, runtime")
+    .select("experience, gold, runtime, unique_users")
     .eq("script_id", script_id)
 
   if (error) return console.error(error)
@@ -174,7 +174,10 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
     experience: payload.experience + oldData.experience,
     gold: payload.gold + oldData.gold,
     runtime: payload.runtime + oldData.runtime,
+    unique_users: oldData.unique_users,
   }
+  let id = payload.userID as string
+  if (!entry.unique_users.includes(id)) entry.unique_users.push(id)
 
   const { error } = await SUPABASE.from("stats_scripts")
     .update(entry)

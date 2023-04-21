@@ -34,12 +34,8 @@ export interface ScriptEntry {
   userID?: string
   experience: number
   gold: number
-  levels?: number
   runtime: number
-  min_xp?: number
-  min_gp?: number
-  max_xp?: number
-  max_gp?: number
+  unique_users: string[]
 }
 
 export interface Payload {
