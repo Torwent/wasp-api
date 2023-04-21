@@ -176,9 +176,10 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
     runtime: payload.runtime + oldData.runtime,
     unique_users: oldData.unique_users,
   }
-  let id = payload.userID as string
-  if (!entry.unique_users.includes(id)) entry.unique_users.push(id)
-
+  if (payload.userID != null) {
+    let id = payload.userID
+    if (!entry.unique_users.includes(id)) entry.unique_users.push(id)
+  }
   const { error } = await SUPABASE.from("stats_scripts")
     .update(entry)
     .eq("script_id", script_id)
