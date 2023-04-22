@@ -187,13 +187,17 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
 
     if (!entry.unique_users.includes(id)) entry.unique_users.push(id)
 
-    for (let i = 0; i < entry.current_users.length; i++) {
-      if (entry.current_users[i].id.toLowerCase() === id) {
-        entry.current_users[i].timestamp = t
-        break
+    if (entry.current_users.length === 0) {
+      entry.current_users.push({ id: id, timestamp: t })
+    } else {
+      for (let i = 0; i < entry.current_users.length; i++) {
+        if (entry.current_users[i].id.toLowerCase() === id) {
+          entry.current_users[i].timestamp = t
+          break
+        }
+        if (i === entry.current_users.length - 1)
+          entry.current_users.push({ id: id, timestamp: t })
       }
-      if (i === entry.current_users.length - 1)
-        entry.current_users.push({ id: id, timestamp: t })
     }
   }
 
