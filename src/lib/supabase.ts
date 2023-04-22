@@ -188,13 +188,17 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
     if (!entry.unique_users.includes(id)) entry.unique_users.push(id)
 
     let foundUser = false
-    entry.current_users.forEach((user, index, arr) => {
+
+    entry.current_users.forEach((user, index) => {
+      console.log("testing: ", user.id.toLowerCase())
       foundUser = user.id.toLowerCase() === id
       if (foundUser) {
-        arr[index].timestamp = t
+        console.log("found: ", user.id.toLowerCase())
+        entry.current_users[index].timestamp = t
         return
       }
     })
+
     if (!foundUser) entry.current_users.push({ id: id, timestamp: t })
   }
   const { error } = await SUPABASE.from("stats_scripts")
