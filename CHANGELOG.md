@@ -1,3 +1,12 @@
+## [0.4.6](https://github.com/Torwent/wasp-api/compare/v0.4.5...v0.4.6) (2023-04-22)
+
+
+### Bug Fixes
+
+* current users comparison is now lowercased ([0a8b6a6](https://github.com/Torwent/wasp-api/commit/0a8b6a6892ccaa465d1e901f7c61728cbc6e8ccc))
+
+
+
 ## [0.4.5](https://github.com/Torwent/wasp-api/compare/v0.4.4...v0.4.5) (2023-04-22)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * some more issues fixed with the latest commit ([042a151](https://github.com/Torwent/wasp-api/commit/042a151a9f927a244c03fae183fc0d374ad2d3c8))
-
-
-
-## [0.4.1](https://github.com/Torwent/wasp-api/compare/v0.4.0...v0.4.1) (2023-04-21)
-
-
-### Bug Fixes
-
-* issue with last commit ([75210b4](https://github.com/Torwent/wasp-api/commit/75210b4c125da7083e02346964bebab1c29a34e9))
 
 
 
