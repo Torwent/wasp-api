@@ -176,8 +176,9 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
     runtime: payload.runtime + oldData.runtime,
     unique_users: oldData.unique_users,
   }
+
   if (payload.userID != null) {
-    let id = payload.userID
+    let id = payload.userID.toLocaleLowerCase()
     if (!entry.unique_users.includes(id)) entry.unique_users.push(id)
   }
   const { error } = await SUPABASE.from("stats_scripts")
@@ -247,8 +248,13 @@ export async function upsertPlayerData(userID: string, rawPayload: RawPayload) {
     console.error(error)
     return 502
   }
-
-  updateScriptData(payload.script_id, payload as UserEntry)
+  let userEntry: UserEntry = {
+    userID: userID,
+    experience: payload.experience,
+    gold: payload.gold,
+    runtime: payload.runtime,
+  }
+  updateScriptData(payload.script_id, userEntry)
   return 202
 }
 
