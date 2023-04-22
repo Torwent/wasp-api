@@ -1,3 +1,12 @@
+## [0.4.2](https://github.com/Torwent/wasp-api/compare/v0.4.1...v0.4.2) (2023-04-22)
+
+
+### Bug Fixes
+
+* some more issues fixed with the latest commit ([042a151](https://github.com/Torwent/wasp-api/commit/042a151a9f927a244c03fae183fc0d374ad2d3c8))
+
+
+
 ## [0.4.1](https://github.com/Torwent/wasp-api/compare/v0.4.0...v0.4.1) (2023-04-21)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * typo ([eb0ad2e](https://github.com/Torwent/wasp-api/commit/eb0ad2e319c3ff7c71c6c5bb0ad47f6508a9606a))
-
-
-
-## [0.3.5](https://github.com/Torwent/wasp-api/compare/v0.3.4...v0.3.5) (2023-03-30)
-
-
-### Bug Fixes
-
-* temporarily disabled the lockfile ([da4e313](https://github.com/Torwent/wasp-api/commit/da4e31332bae1a871532497bad1f6e2ddcd1df2e))
 
 
 
