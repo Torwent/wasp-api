@@ -203,7 +203,6 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
   entry.total_unique_users = entry.unique_users.length
   entry.total_current_users = entry.current_users.length
 
-  console.log(entry)
   const { error } = await SUPABASE.from("stats_scripts")
     .update(entry)
     .eq("script_id", script_id)
