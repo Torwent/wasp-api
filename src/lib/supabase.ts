@@ -189,7 +189,7 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
 
     let foundUser = false
     entry.current_users.forEach((user, index, arr) => {
-      foundUser = user.id === id
+      foundUser = user.id.toLowerCase() === id
       if (foundUser) {
         arr[index].timestamp = t
         return
