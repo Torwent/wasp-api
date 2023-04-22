@@ -30,12 +30,18 @@ export interface ScriptLimits {
   max_gp: number
 }
 
+interface CurrentUser {
+  id: string
+  timestamp: number
+}
+
 export interface ScriptEntry {
   userID?: string
   experience: number
   gold: number
   runtime: number
   unique_users: string[]
+  current_users: CurrentUser[]
 }
 
 export interface Payload {

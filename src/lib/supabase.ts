@@ -79,7 +79,7 @@ async function getScriptLimits(script_id: string, cacheOnly = true) {
 
 export async function getScriptEntry(script_id: string) {
   const { data, error } = await SUPABASE.from("stats_scripts")
-    .select("experience, gold, runtime, unique_users")
+    .select("experience, gold, runtime, unique_users, current_users")
     .eq("script_id", script_id)
 
   if (error) return console.error(error)
@@ -170,16 +170,32 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
   const oldData = await getScriptEntry(script_id)
   if (oldData == null) return
 
+  const t = Date.now()
+
   const entry: ScriptEntry = {
     experience: payload.experience + oldData.experience,
     gold: payload.gold + oldData.gold,
     runtime: payload.runtime + oldData.runtime,
     unique_users: oldData.unique_users,
+    current_users: oldData.current_users.filter((user) => {
+      return user.timestamp + 300000 > t
+    }),
   }
 
   if (payload.userID != null) {
     let id = payload.userID.toLocaleLowerCase()
+
     if (!entry.unique_users.includes(id)) entry.unique_users.push(id)
+
+    let foundUser = false
+    entry.current_users.forEach((user, index, arr) => {
+      foundUser = user.id === id
+      if (foundUser) {
+        arr[index].timestamp = t
+        return
+      }
+    })
+    if (!foundUser) entry.current_users.push({ id: id, timestamp: t })
   }
   const { error } = await SUPABASE.from("stats_scripts")
     .update(entry)
