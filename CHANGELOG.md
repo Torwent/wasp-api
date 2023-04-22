@@ -1,3 +1,12 @@
+## [0.4.3](https://github.com/Torwent/wasp-api/compare/v0.4.2...v0.4.3) (2023-04-22)
+
+
+### Bug Fixes
+
+* minor improvements to the currently using tracking ([6c3972c](https://github.com/Torwent/wasp-api/commit/6c3972c529abefadc34e3e7dc6d2335b503994d9))
+
+
+
 ## [0.4.2](https://github.com/Torwent/wasp-api/compare/v0.4.1...v0.4.2) (2023-04-22)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * **github:** github cache changes ([d92db80](https://github.com/Torwent/wasp-api/commit/d92db80d023141489004b82649b99ea9a2b659ec))
-
-
-
-## [0.3.6](https://github.com/Torwent/wasp-api/compare/v0.3.5...v0.3.6) (2023-03-30)
-
-
-### Bug Fixes
-
-* typo ([eb0ad2e](https://github.com/Torwent/wasp-api/commit/eb0ad2e319c3ff7c71c6c5bb0ad47f6508a9606a))
 
 
 
