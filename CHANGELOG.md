@@ -1,3 +1,12 @@
+## [0.4.4](https://github.com/Torwent/wasp-api/compare/v0.4.3...v0.4.4) (2023-04-22)
+
+
+### Bug Fixes
+
+* forgot to remove debugging lines ([83dc93b](https://github.com/Torwent/wasp-api/commit/83dc93b45576118410e2924cb19bbd0099273439))
+
+
+
 ## [0.4.3](https://github.com/Torwent/wasp-api/compare/v0.4.2...v0.4.3) (2023-04-22)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * stats will now add unique users to each script unique users list ([3d1b7be](https://github.com/Torwent/wasp-api/commit/3d1b7befcc6c09674be032df8e5edad655e61547))
-
-
-
-## [0.3.7](https://github.com/Torwent/wasp-api/compare/v0.3.6...v0.3.7) (2023-04-04)
-
-
-### Bug Fixes
-
-* **github:** github cache changes ([d92db80](https://github.com/Torwent/wasp-api/commit/d92db80d023141489004b82649b99ea9a2b659ec))
 
 
 
