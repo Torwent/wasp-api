@@ -172,7 +172,7 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
 
   const t = Date.now()
 
-  let entry: ScriptEntry = {
+  const entry: ScriptEntry = {
     experience: payload.experience + oldData.experience,
     gold: payload.gold + oldData.gold,
     runtime: payload.runtime + oldData.runtime,
@@ -180,8 +180,6 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
     current_users: oldData.current_users.filter((user) => {
       return user.timestamp + 300000 > t
     }),
-    total_unique_users: 0,
-    total_current_users: 0,
   }
 
   if (payload.userID != null) {
@@ -199,10 +197,6 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
     })
     if (!foundUser) entry.current_users.push({ id: id, timestamp: t })
   }
-
-  entry.total_unique_users = entry.unique_users.length
-  entry.total_current_users = entry.current_users.length
-
   const { error } = await SUPABASE.from("stats_scripts")
     .update(entry)
     .eq("script_id", script_id)

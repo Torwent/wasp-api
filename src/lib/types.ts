@@ -42,8 +42,6 @@ export interface ScriptEntry {
   runtime: number
   unique_users: string[]
   current_users: CurrentUser[]
-  total_unique_users: number
-  total_current_users: number
 }
 
 export interface Payload {
