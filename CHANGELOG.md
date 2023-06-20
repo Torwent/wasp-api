@@ -1,3 +1,12 @@
+## [0.4.7](https://github.com/Torwent/wasp-api/compare/v0.4.6...v0.4.7) (2023-06-20)
+
+
+### Bug Fixes
+
+* added prettier ([19d2e6d](https://github.com/Torwent/wasp-api/commit/19d2e6dd6c22c6100251a893e80d5b138f7a6724))
+
+
+
 ## [0.4.6](https://github.com/Torwent/wasp-api/compare/v0.4.5...v0.4.6) (2023-04-22)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * minor improvements to the currently using tracking ([6c3972c](https://github.com/Torwent/wasp-api/commit/6c3972c529abefadc34e3e7dc6d2335b503994d9))
-
-
-
-## [0.4.2](https://github.com/Torwent/wasp-api/compare/v0.4.1...v0.4.2) (2023-04-22)
-
-
-### Bug Fixes
-
-* some more issues fixed with the latest commit ([042a151](https://github.com/Torwent/wasp-api/commit/042a151a9f927a244c03fae183fc0d374ad2d3c8))
 
 
 
