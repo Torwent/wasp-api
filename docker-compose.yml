@@ -18,10 +18,10 @@ services:
       - /docker/etc/letsencrypt/live/waspscripts.com/fullchain.pem:/etc/letsencrypt/live/waspscripts.com/fullchain.pem
       - /docker/etc/letsencrypt/live/waspscripts.com/privkey.pem:/etc/letsencrypt/live/waspscripts.com/privkey.pem
     networks:
-      - wasp-proxy
+      - hive
     env_file:
       - .env
 
 networks:
-  wasp-proxy:
+  hive:
     external: true

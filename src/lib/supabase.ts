@@ -12,10 +12,7 @@ import {
 
 const OPTIONS = { auth: { autoRefreshToken: true, persistSession: false } }
 const SUPABASE = createClient(env.SB_URL, env.SB_ANON_KEY, OPTIONS)
-const CREDENTALS = {
-  email: env.SERVICE_USER,
-  password: env.SERVICE_PASS,
-}
+const CREDENTALS = { email: env.SERVICE_USER, password: env.SERVICE_PASS }
 
 let isLoggedIn: boolean = false //login cache.
 
@@ -195,6 +192,7 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
           entry.current_users[i].timestamp = t
           break
         }
+
         if (i === entry.current_users.length - 1)
           entry.current_users.push({ id: id, timestamp: t })
       }

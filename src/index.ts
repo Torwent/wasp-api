@@ -115,5 +115,6 @@ fs.readdirSync(__dirname + "/routes/").forEach(async (file) => {
 })
 
 server.listen(PORT, async () => {
-  console.log(`Server is alive at:  https://localhost:${PORT}`)
+  console.log(`API Server is live at:  http://localhost:${PORT}`)
+  console.log(`API Docs are live at:  http://localhost:${PORT}/docs`)
 })
