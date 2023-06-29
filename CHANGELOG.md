@@ -1,3 +1,12 @@
+## [0.4.9](https://github.com/Torwent/wasp-api/compare/v0.4.8...v0.4.9) (2023-06-29)
+
+
+### Bug Fixes
+
+* fixed compatibility with the new layout of the database tables ([8b83321](https://github.com/Torwent/wasp-api/commit/8b83321251539692d8c2629721f41136488d6956))
+
+
+
 ## [0.4.8](https://github.com/Torwent/wasp-api/compare/v0.4.7...v0.4.8) (2023-06-21)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * reverse last commit ([034d5ac](https://github.com/Torwent/wasp-api/commit/034d5ac3c764fc3e809525e9d4c9d4bce93d064e))
-
-
-
-## [0.4.4](https://github.com/Torwent/wasp-api/compare/v0.4.3...v0.4.4) (2023-04-22)
-
-
-### Bug Fixes
-
-* forgot to remove debugging lines ([83dc93b](https://github.com/Torwent/wasp-api/commit/83dc93b45576118410e2924cb19bbd0099273439))
 
 
 
