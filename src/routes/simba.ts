@@ -1,12 +1,9 @@
 import { getScriptData } from "../lib/supabase"
-import { ScriptData } from "../lib/types"
-import {
-  getLatestPackageVersion,
-  getLatestPackageVersions,
-} from "../lib/github"
+import { ScriptData, ScriptResponse } from "../lib/types"
+import { getLatestPackageVersion, getLatestPackageVersions } from "../lib/github"
 import express, { Request, Response } from "express"
 const SCRIPT_ID_V4_REGEX =
-  /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[4][0-9a-fA-F]{3}-[89AB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/i
+	/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[4][0-9a-fA-F]{3}-[89AB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/i
 
 const router = express.Router()
 
@@ -65,49 +62,47 @@ router.use(express.json())
  *      '417':
  *        description: That SCRIPT_ID does not exist in waspscripts stats database!
  */
-router.get(
-  "/:SCRIPT_ID/:GET_PACKAGES?",
-  async (req: Request, res: Response) => {
-    let { SCRIPT_ID, GET_PACKAGES } = req.params
+router.get("/:SCRIPT_ID/:GET_PACKAGES?", async (req: Request, res: Response) => {
+	let { SCRIPT_ID, GET_PACKAGES } = req.params
 
-    if (GET_PACKAGES == null) GET_PACKAGES = "true"
-    GET_PACKAGES = GET_PACKAGES.toLowerCase()
+	if (GET_PACKAGES == null) GET_PACKAGES = "true"
+	GET_PACKAGES = GET_PACKAGES.toLowerCase()
 
-    if (!SCRIPT_ID_V4_REGEX.test(SCRIPT_ID))
-      return res
-        .status(416)
-        .send("Response code: 416 - That SCRIPT_ID is not valid!")
+	if (!SCRIPT_ID_V4_REGEX.test(SCRIPT_ID))
+		return res.status(416).send("Response code: 416 - That SCRIPT_ID is not valid!")
 
-    let promises = []
-    promises.push(getScriptData(SCRIPT_ID))
+	let promises = []
+	promises.push(getScriptData(SCRIPT_ID))
+	if (GET_PACKAGES === "true") promises.push(getLatestPackageVersions())
 
-    if (GET_PACKAGES === "true") promises.push(getLatestPackageVersions())
+	const results = await Promise.all(promises)
+	const script: ScriptData | null = results[0]
 
-    const results = await Promise.all(promises)
-    const scriptData: ScriptData | void = results[0]
+	if (!script)
+		return res
+			.status(417)
+			.send("Response code: 417 - That SCRIPT_ID does not exist in waspscripts database!")
 
-    if (!scriptData)
-      return res
-        .status(417)
-        .send(
-          "Response code: 417 - That SCRIPT_ID does not exist in waspscripts database!"
-        )
+	let srlV = undefined
+	let wlV = undefined
+	if (GET_PACKAGES === "true") {
+		srlV = results[1]?.srlt_version
+		wlV = results[1]?.wasplib_version
+	}
 
-    let srlV = undefined
-    let wlV = undefined
-    if (GET_PACKAGES === "true") {
-      srlV = results[1]?.srlt_version
-      wlV = results[1]?.wasplib_version
-    }
+	const response: ScriptResponse = {}
 
-    if (srlV != null) scriptData.srlt_version = srlV
-    if (wlV != null) scriptData.wasplib_version = wlV
+	if (script.id) response.id = script.id
+	if (script.title) response.title = script.title
+	if (script.scripts_protected?.profiles_public?.username)
+		response.author = script.scripts_protected?.profiles_public.username
+	if (script.scripts_protected?.revision) response.revision = script.scripts_protected?.revision
 
-    return res
-      .status(200)
-      .send("Response code: 200 - " + JSON.stringify(scriptData))
-  }
-)
+	if (srlV != null) response.srlt_version = srlV
+	if (wlV != null) response.wasplib_version = wlV
+
+	return res.status(200).send("Response code: 200 - " + JSON.stringify(response))
+})
 
 /**
  * @swagger
@@ -132,27 +127,23 @@ router.get(
  *        description: That SCRIPT_ID does not exist in waspscripts stats database!
  */
 router.get("/revision/:SCRIPT_ID", async (req: Request, res: Response) => {
-  const { SCRIPT_ID } = req.params
+	const { SCRIPT_ID } = req.params
 
-  if (!SCRIPT_ID_V4_REGEX.test(SCRIPT_ID))
-    return res
-      .status(416)
-      .send("Response code: 416 - That SCRIPT_ID is not valid!")
+	if (!SCRIPT_ID_V4_REGEX.test(SCRIPT_ID))
+		return res.status(416).send("Response code: 416 - That SCRIPT_ID is not valid!")
 
-  const data: ScriptData | void = await getScriptData(SCRIPT_ID)
+	const data: ScriptData | null = await getScriptData(SCRIPT_ID)
 
-  if (!data)
-    return res
-      .status(417)
-      .send(
-        "Response code: 417 - That SCRIPT_ID does not exist in waspscripts database!"
-      )
+	if (!data)
+		return res
+			.status(417)
+			.send("Response code: 417 - That SCRIPT_ID does not exist in waspscripts database!")
 
-  const reply: ScriptData = {
-    revision: data.revision,
-  }
+	const reply: ScriptResponse = {
+		revision: data.scripts_protected?.revision
+	}
 
-  return res.status(200).send("Response code: 200 - " + JSON.stringify(reply))
+	return res.status(200).send("Response code: 200 - " + JSON.stringify(reply))
 })
 
 /**
@@ -179,25 +170,21 @@ router.get("/revision/:SCRIPT_ID", async (req: Request, res: Response) => {
  */
 
 router.get("/package/:PACKAGE_NAME", async (req: Request, res: Response) => {
-  let { PACKAGE_NAME } = req.params
+	let { PACKAGE_NAME } = req.params
 
-  PACKAGE_NAME = PACKAGE_NAME.toLowerCase()
+	PACKAGE_NAME = PACKAGE_NAME.toLowerCase()
 
-  if (PACKAGE_NAME != "srl-t" && PACKAGE_NAME != "wasplib")
-    return res
-      .status(416)
-      .send("Response code: 416 - That PACKAGE_NAME is not valid!")
+	if (PACKAGE_NAME != "srl-t" && PACKAGE_NAME != "wasplib")
+		return res.status(416).send("Response code: 416 - That PACKAGE_NAME is not valid!")
 
-  const data = await getLatestPackageVersion(PACKAGE_NAME)
+	const data = await getLatestPackageVersion(PACKAGE_NAME)
 
-  if (data == null)
-    return res
-      .status(417)
-      .send("Response code: 417 - That PACKAGE_NAME does not exist in github!")
+	if (data == null)
+		return res.status(417).send("Response code: 417 - That PACKAGE_NAME does not exist in github!")
 
-  const reply = { version: data }
+	const reply = { version: data }
 
-  return res.status(200).send("Response code: 200 - " + JSON.stringify(reply))
+	return res.status(200).send("Response code: 200 - " + JSON.stringify(reply))
 })
 
 export default router

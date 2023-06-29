@@ -6,57 +6,61 @@ let waspLibCache = ""
 let srltCache = ""
 
 function isCacheValid(pkg: string, cacheOnly: boolean) {
-  if (!cacheOnly) return false
+	if (!cacheOnly) return false
 
-  return (
-    (pkg === "srl-t" && srltCache != "") ||
-    (pkg === "wasplib" && waspLibCache != "")
-  )
+	return (pkg === "srl-t" && srltCache != "") || (pkg === "wasplib" && waspLibCache != "")
 }
 
 export async function getLatestPackageVersion(pkg: string, cacheOnly = true) {
-  if (isCacheValid(pkg, cacheOnly)) {
-    getLatestPackageVersion(pkg, false)
-    return pkg === "srl-t" ? srltCache : waspLibCache
-  }
+	if (isCacheValid(pkg, cacheOnly)) {
+		getLatestPackageVersion(pkg, false)
+		return pkg === "srl-t" ? srltCache : waspLibCache
+	}
 
-  const URL = BASE_URL + pkg + "/releases/latest"
+	const URL = BASE_URL + pkg + "/releases/latest"
 
-  const response = await fetch(URL)
-  const body = await response.json()
+	const response = await fetch(URL)
+	const body = await response.json()
 
-  if (pkg === "srl-t") srltCache = body.name
-  else waspLibCache = body.name
+	if (pkg === "srl-t") srltCache = body.name
+	else waspLibCache = body.name
 
-  return body.name
+	return body.name
 }
 
-let compositeCache: PackagesData | undefined = undefined
+const versionsCache = new Map<string, PackagesData>()
 
-export async function getLatestPackageVersions(
-  cacheOnly = true
-): Promise<PackagesData> {
-  if (cacheOnly && compositeCache != undefined) {
-    if (Date.now() - compositeCache.timestamp >= 300000)
-      return await getLatestPackageVersions(false)
-    return compositeCache
-  }
-  console.log("compositeCache is going to be updated!")
-  const SRL_URL = BASE_URL + "srl-t/releases/latest"
-  const WL_URL = BASE_URL + "wasplib/releases/latest"
+export async function getLatestPackageVersions(): Promise<PackagesData> {
+	const cacheKey = "latestVersions"
 
-  const promises = await Promise.all([fetch(SRL_URL), fetch(WL_URL)])
+	if (versionsCache.has(cacheKey)) {
+		return versionsCache.get(cacheKey)!
+	}
 
-  const jsons = await Promise.all([promises[0].json(), promises[1].json()])
+	console.log("Composite cache is going to be updated!")
+	const SRL_URL = BASE_URL + "srl-t/releases/latest"
+	const WL_URL = BASE_URL + "wasplib/releases/latest"
 
-  let t = Date.now()
+	try {
+		const promises = await Promise.all([fetch(SRL_URL), fetch(WL_URL)])
+		const jsons = await Promise.all(promises.map((response) => response.json()))
 
-  if (jsons[0].name == null || jsons[1].name == null) t -= 300000
+		const latestVersions: PackagesData = {
+			srlt_version: jsons[0].name,
+			wasplib_version: jsons[1].name
+		}
 
-  compositeCache = {
-    srlt_version: jsons[0].name,
-    wasplib_version: jsons[1].name,
-    timestamp: t,
-  }
-  return compositeCache
+		versionsCache.set(cacheKey, latestVersions)
+
+		// Set timeout to clear the cache after 5 minutes (300,000 milliseconds)
+		setTimeout(() => {
+			versionsCache.delete(cacheKey)
+		}, 300000)
+
+		return latestVersions
+	} catch (error) {
+		// Handle error fetching latest versions
+		console.error("Error fetching latest package versions:", error)
+		throw error
+	}
 }
