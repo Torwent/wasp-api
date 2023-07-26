@@ -1,3 +1,12 @@
+## [0.4.10](https://github.com/Torwent/wasp-api/compare/v0.4.9...v0.4.10) (2023-07-26)
+
+
+### Bug Fixes
+
+* api cannot change database roles if the roles are not managed externally ([7e55fee](https://github.com/Torwent/wasp-api/commit/7e55feef158cd785e674e8f21671d0b929ac79db))
+
+
+
 ## [0.4.9](https://github.com/Torwent/wasp-api/compare/v0.4.8...v0.4.9) (2023-06-29)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * current users comparison is now lowercased ([0a8b6a6](https://github.com/Torwent/wasp-api/commit/0a8b6a6892ccaa465d1e901f7c61728cbc6e8ccc))
-
-
-
-## [0.4.5](https://github.com/Torwent/wasp-api/compare/v0.4.4...v0.4.5) (2023-04-22)
-
-
-### Bug Fixes
-
-* reverse last commit ([034d5ac](https://github.com/Torwent/wasp-api/commit/034d5ac3c764fc3e809525e9d4c9d4bce93d064e))
 
 
 
