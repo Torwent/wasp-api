@@ -70,6 +70,13 @@ interface ScriptsProtected {
 	profiles_public?: ProfilesPublic
 }
 
+export interface SBProfile {
+	id: string
+	profiles_protected: {
+		subscription_external: boolean
+	}
+}
+
 export interface ScriptData {
 	id?: string
 	title?: string

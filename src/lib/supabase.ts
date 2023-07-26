@@ -1,7 +1,15 @@
 import { createClient } from "@supabase/supabase-js"
 import bcrypt from "bcrypt"
 import env from "./env"
-import { Payload, RawPayload, ScriptEntry, UserEntry, ScriptData, ScriptLimits } from "$lib/types"
+import {
+	Payload,
+	RawPayload,
+	ScriptEntry,
+	UserEntry,
+	ScriptData,
+	ScriptLimits,
+	SBProfile
+} from "$lib/types"
 
 const OPTIONS = { auth: { autoRefreshToken: true, persistSession: false } }
 const SUPABASE = createClient(env.SB_URL, env.SB_ANON_KEY, OPTIONS)
@@ -324,15 +332,44 @@ export async function updateProfileProtected(discord_id: string, roles: string[]
 		if (!isLoggedIn) return 500
 	}
 
-	const { error } = await SUPABASE.rpc("set_discord_roles", {
-		discord_id: discord_id,
-		param_developer: roles.includes("864744526894333963"),
-		param_premium: roles.includes("820985772140134440"),
-		param_vip: roles.includes("931167526681972746"),
-		param_tester: roles.includes("907209408860291113"),
-		param_mod: roles.includes("1018906735123124315")
-	})
+	const { data, error } = await SUPABASE.from("profiles_public")
+		.select("id, profiles_protected (subscription_external)")
+		.eq("discord_id", discord_id)
+		.limit(1)
+		.returns<SBProfile[]>()
 
-	if (error) return 417
+	if (error) {
+		console.error(error)
+		return 417
+	}
+
+	const {
+		id,
+		profiles_protected: { subscription_external }
+	} = data[0]
+
+	const roleObject = subscription_external
+		? {
+				moderator: roles.includes("1018906735123124315"),
+				scripter: roles.includes("1069140447647240254"),
+				tester: roles.includes("907209408860291113"),
+				vip: roles.includes("931167526681972746"),
+				premium: roles.includes("820985772140134440"),
+				developer: roles.includes("864744526894333963"),
+				timeout: roles.includes("1102052216157786192")
+		  }
+		: {
+				moderator: roles.includes("1018906735123124315"),
+				scripter: roles.includes("1069140447647240254"),
+				tester: roles.includes("907209408860291113"),
+				developer: roles.includes("864744526894333963"),
+				timeout: roles.includes("1102052216157786192")
+		  }
+
+	const { error: updateError } = await SUPABASE.from("profiles_protected")
+		.update(roleObject)
+		.eq("id", id)
+
+	if (updateError) return 417
 	return 200
 }
