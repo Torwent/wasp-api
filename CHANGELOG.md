@@ -1,3 +1,12 @@
+# [0.5.0](https://github.com/Torwent/wasp-api/compare/v0.4.10...v0.5.0) (2023-07-27)
+
+
+### Features
+
+* added new route to update roles only on discord from the database ([0ce5163](https://github.com/Torwent/wasp-api/commit/0ce5163394fb638901594a237562c9d5f37a1476))
+
+
+
 ## [0.4.10](https://github.com/Torwent/wasp-api/compare/v0.4.9...v0.4.10) (2023-07-26)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * added prettier ([19d2e6d](https://github.com/Torwent/wasp-api/commit/19d2e6dd6c22c6100251a893e80d5b138f7a6724))
-
-
-
-## [0.4.6](https://github.com/Torwent/wasp-api/compare/v0.4.5...v0.4.6) (2023-04-22)
-
-
-### Bug Fixes
-
-* current users comparison is now lowercased ([0a8b6a6](https://github.com/Torwent/wasp-api/commit/0a8b6a6892ccaa465d1e901f7c61728cbc6e8ccc))
 
 
 
