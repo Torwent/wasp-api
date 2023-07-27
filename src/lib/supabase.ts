@@ -327,6 +327,10 @@ export async function getScriptData(id: string, cacheOnly = true) {
 }
 
 export async function getProfileProtected(discord_id: string) {
+	if (!isLoggedIn) {
+		await login(false)
+		if (!isLoggedIn) return 500
+	}
 	const { data, error } = await SUPABASE.from("profiles_public")
 		.select("id, profiles_protected (*)")
 		.eq("discord_id", discord_id)
@@ -348,7 +352,7 @@ export async function updateProfileProtected(discord_id: string, roles: string[]
 	}
 
 	const profile = await getProfileProtected(discord_id)
-	if (profile === 417) return 417
+	if (profile === 417 || profile === 500) return profile
 
 	const {
 		id,

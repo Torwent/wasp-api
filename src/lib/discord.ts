@@ -102,16 +102,21 @@ export async function updateDiscord(userID: string): Promise<500 | 501 | 416 | 4
 	if (member == null) return 417
 
 	const profile = await getProfileProtected(userID)
-	if (profile === 417) return 417
+
+	if (profile === 417 || profile === 500) return profile
 
 	const { profiles_protected } = profile
 
 	let property: keyof typeof profiles_protected
+
 	for (property in profiles_protected) {
-		if (property !== "administrator" && property !== "subscription_external") {
+		if (Object.keys(ROLES).includes(property)) {
 			const rolesKey = property as keyof typeof ROLES
-			if (profiles_protected[property]) await member.roles.add(ROLES[rolesKey])
-			else await member.roles.remove(ROLES[rolesKey])
+
+			if (property !== "administrator" && property !== "subscription_external") {
+				if (profiles_protected[property]) await member.roles.add(ROLES[rolesKey])
+				else await member.roles.remove(ROLES[rolesKey])
+			}
 		}
 	}
 	return 200
