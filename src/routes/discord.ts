@@ -1,4 +1,4 @@
-import { CheckDiscord, RefreshDiscord } from "../lib/discord"
+import { CheckDiscord, RefreshDiscord, updateDiscord } from "../lib/discord"
 import express, { Request, Response } from "express"
 import rateLimiter from "express-rate-limit"
 
@@ -134,6 +134,44 @@ router.get("/refresh/:DISCORD_ID", rateLimit, async (req: Request, res: Response
 			return res
 				.status(200)
 				.send("Response code: 200 - The user roles were refreshed in waspscripts.com")
+	}
+})
+
+router.get("/update/:DISCORD_ID", rateLimit, async (req: Request, res: Response) => {
+	let { DISCORD_ID } = req.params
+
+	if (!DISCORD_ID_REGEX.test(DISCORD_ID))
+		return res.status(416).send("Response code: 416 - That DISCORD_ID is not valid!")
+
+	const result = await updateDiscord(DISCORD_ID)
+
+	switch (result) {
+		case 500:
+			return res
+				.status(500)
+				.send(
+					"Response code: 500 - The server failed to login to the database. This is not an issue on your end."
+				)
+
+		case 501:
+			return res
+				.status(501)
+				.send(
+					"Response code: 501 - The server failed to find the discord server. This is not an issue on your end."
+				)
+
+		case 416:
+			return res.status(416).send("Response code: 416 - That DISCORD_ID is not valid!")
+
+		case 417:
+			return res
+				.status(417)
+				.send("Response code: 417 - That DISCORD_ID is not in the discord server!")
+
+		case 200:
+			return res
+				.status(200)
+				.send("Response code: 200 - The user roles were refreshed in the discord server")
 	}
 })
 

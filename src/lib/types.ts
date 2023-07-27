@@ -73,6 +73,14 @@ interface ScriptsProtected {
 export interface SBProfile {
 	id: string
 	profiles_protected: {
+		timeout: boolean
+		developer: boolean
+		premium: boolean
+		vip: boolean
+		tester: boolean
+		scripter: boolean
+		moderator: boolean
+		administrator: boolean
 		subscription_external: boolean
 	}
 }

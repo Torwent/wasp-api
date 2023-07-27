@@ -326,14 +326,9 @@ export async function getScriptData(id: string, cacheOnly = true) {
 	return script
 }
 
-export async function updateProfileProtected(discord_id: string, roles: string[]) {
-	if (!isLoggedIn) {
-		await login(false)
-		if (!isLoggedIn) return 500
-	}
-
+export async function getProfileProtected(discord_id: string) {
 	const { data, error } = await SUPABASE.from("profiles_public")
-		.select("id, profiles_protected (subscription_external)")
+		.select("id, profiles_protected (*)")
 		.eq("discord_id", discord_id)
 		.limit(1)
 		.returns<SBProfile[]>()
@@ -343,10 +338,22 @@ export async function updateProfileProtected(discord_id: string, roles: string[]
 		return 417
 	}
 
+	return data[0]
+}
+
+export async function updateProfileProtected(discord_id: string, roles: string[]) {
+	if (!isLoggedIn) {
+		await login(false)
+		if (!isLoggedIn) return 500
+	}
+
+	const profile = await getProfileProtected(discord_id)
+	if (profile === 417) return 417
+
 	const {
 		id,
 		profiles_protected: { subscription_external }
-	} = data[0]
+	} = profile
 
 	const roleObject = subscription_external
 		? {
