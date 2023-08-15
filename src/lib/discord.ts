@@ -51,7 +51,7 @@ export async function CheckDiscord(userID: string): Promise<string[]> {
 	if (member == null) return []
 
 	const roles = member.roles.cache.map((role: { toString: () => any }) =>
-		role.toString().replace(/[\<\@\&\>]/gi, "")
+		role.toString().replace(/[<@&>]/gi, "")
 	)
 	return roles
 }
@@ -78,7 +78,7 @@ export async function RefreshDiscord(userID: string): Promise<500 | 501 | 416 | 
 	}
 
 	const roles = member.roles.cache.map((role: { toString: () => any }) =>
-		role.toString().replace(/[\<\@\&\>]/gi, "")
+		role.toString().replace(/[<@&>]/gi, "")
 	)
 
 	return await updateProfileProtected(userID, roles)
@@ -92,9 +92,7 @@ export async function updateDiscord(userID: string): Promise<500 | 501 | 416 | 4
 		if (guild == null) return 501
 	}
 
-	let member: GuildMember | null
-
-	member = await guild.members.fetch(userID).catch(() => {
+	const member = await guild.members.fetch(userID).catch(() => {
 		console.error("Unknown user!")
 		return null
 	})

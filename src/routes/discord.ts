@@ -59,7 +59,7 @@ const rateLimit = rateLimiter({
  */
 
 router.get("/:DISCORD_ID", async (req: Request, res: Response) => {
-	let { DISCORD_ID } = req.params
+	const { DISCORD_ID } = req.params
 
 	if (!DISCORD_ID_REGEX.test(DISCORD_ID))
 		return res.status(416).send("Response code: 416 - That DISCORD_ID is not valid!")
@@ -100,7 +100,7 @@ router.get("/:DISCORD_ID", async (req: Request, res: Response) => {
  */
 
 router.get("/refresh/:DISCORD_ID", rateLimit, async (req: Request, res: Response) => {
-	let { DISCORD_ID } = req.params
+	const { DISCORD_ID } = req.params
 
 	if (!DISCORD_ID_REGEX.test(DISCORD_ID))
 		return res.status(416).send("Response code: 416 - That DISCORD_ID is not valid!")
@@ -138,7 +138,7 @@ router.get("/refresh/:DISCORD_ID", rateLimit, async (req: Request, res: Response
 })
 
 router.get("/update/:DISCORD_ID", rateLimit, async (req: Request, res: Response) => {
-	let { DISCORD_ID } = req.params
+	const { DISCORD_ID } = req.params
 
 	if (!DISCORD_ID_REGEX.test(DISCORD_ID))
 		return res.status(416).send("Response code: 416 - That DISCORD_ID is not valid!")

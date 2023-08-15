@@ -45,7 +45,7 @@ async function login(cacheOnly: boolean = true) {
 	return true
 }
 
-let scriptLimitsArray: ScriptLimits[] = [] //script limits cache for blazing fast execution!
+const scriptLimitsArray: ScriptLimits[] = [] //script limits cache for blazing fast execution!
 
 async function getScriptLimits(script_id: string, cacheOnly = true) {
 	const index = scriptLimitsArray.findIndex((script) => script.id === script_id)
@@ -76,7 +76,8 @@ async function getScriptLimits(script_id: string, cacheOnly = true) {
 }
 
 export async function getScriptEntry(script_id: string) {
-	const { data, error } = await SUPABASE.from("stats_scripts")
+	const { data, error } = await SUPABASE.schema("scripts")
+		.from("stats_simba")
 		.select("experience, gold, runtime, unique_users, current_users")
 		.eq("script_id", script_id)
 
@@ -176,7 +177,7 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
 	}
 
 	if (payload.userID != null) {
-		let id = payload.userID.toLocaleLowerCase()
+		const id = payload.userID.toLocaleLowerCase()
 
 		if (!entry.unique_users.includes(id)) entry.unique_users.push(id)
 
@@ -194,7 +195,10 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
 		}
 	}
 
-	const { error } = await SUPABASE.from("stats_scripts").update(entry).eq("script_id", script_id)
+	const { error } = await SUPABASE.schema("scripts")
+		.from("stats_simba")
+		.update(entry)
+		.eq("script_id", script_id)
 
 	if (error) console.error(error)
 }
@@ -252,7 +256,7 @@ export async function upsertPlayerData(userID: string, rawPayload: RawPayload) {
 		console.error(error)
 		return 502
 	}
-	let userEntry: UserEntry = {
+	const userEntry: UserEntry = {
 		userID: userID,
 		experience: payload.experience,
 		gold: payload.gold,
@@ -299,7 +303,7 @@ export async function deleteData(userID: string, password: string) {
 	return 200
 }
 
-let scriptDataArray: ScriptData[] = []
+const scriptDataArray: ScriptData[] = []
 
 export async function getScriptData(id: string, cacheOnly = true) {
 	const index = scriptDataArray.findIndex((script) => script.id === id)

@@ -63,16 +63,14 @@ router.use(express.json())
  *        description: That SCRIPT_ID does not exist in waspscripts stats database!
  */
 router.get("/:SCRIPT_ID/:GET_PACKAGES?", async (req: Request, res: Response) => {
-	let { SCRIPT_ID, GET_PACKAGES } = req.params
-
-	if (GET_PACKAGES == null) GET_PACKAGES = "true"
-	GET_PACKAGES = GET_PACKAGES.toLowerCase()
+	const { SCRIPT_ID } = req.params
+	const GET_PACKAGES = req.params.GET_PACKAGES.toLowerCase() ?? "true"
 
 	if (!SCRIPT_ID_V4_REGEX.test(SCRIPT_ID))
 		return res.status(416).send("Response code: 416 - That SCRIPT_ID is not valid!")
 
-	let promises = []
-	promises.push(getScriptData(SCRIPT_ID))
+	const promises = [getScriptData(SCRIPT_ID)]
+
 	if (GET_PACKAGES === "true") promises.push(getLatestPackageVersions())
 
 	const results = await Promise.all(promises)
