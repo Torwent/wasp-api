@@ -64,13 +64,15 @@ router.use(express.json())
  */
 router.get("/:SCRIPT_ID/:GET_PACKAGES?", async (req: Request, res: Response) => {
 	const { SCRIPT_ID } = req.params
-	const GET_PACKAGES = req.params.GET_PACKAGES.toLowerCase() ?? "true"
+	const GET_PACKAGES = req.params.GET_PACKAGES
+		? req.params.GET_PACKAGES.toLowerCase() === "true"
+		: true
 
 	if (!SCRIPT_ID_V4_REGEX.test(SCRIPT_ID))
 		return res.status(416).send("Response code: 416 - That SCRIPT_ID is not valid!")
 
 	const promises = [getScriptData(SCRIPT_ID)]
-	if (GET_PACKAGES === "true") promises.push(getLatestPackageVersions())
+	if (GET_PACKAGES) promises.push(getLatestPackageVersions())
 
 	const results = await Promise.all(promises)
 	const script: ScriptData | null = results[0]
@@ -82,7 +84,7 @@ router.get("/:SCRIPT_ID/:GET_PACKAGES?", async (req: Request, res: Response) => 
 
 	let srlV = undefined
 	let wlV = undefined
-	if (GET_PACKAGES === "true") {
+	if (GET_PACKAGES) {
 		srlV = results[1]?.srlt_version
 		wlV = results[1]?.wasplib_version
 	}

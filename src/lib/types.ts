@@ -32,7 +32,7 @@ export interface ScriptLimits {
 
 interface CurrentUser {
 	id: string
-	timestamp: number
+	time: number
 }
 
 export interface ScriptEntry {
@@ -41,7 +41,7 @@ export interface ScriptEntry {
 	gold: number
 	runtime: number
 	unique_users: string[]
-	current_users: CurrentUser[]
+	online_users: CurrentUser[]
 }
 
 export interface Payload {

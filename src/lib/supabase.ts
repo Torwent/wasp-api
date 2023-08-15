@@ -78,12 +78,14 @@ async function getScriptLimits(script_id: string, cacheOnly = true) {
 export async function getScriptEntry(script_id: string) {
 	const { data, error } = await SUPABASE.schema("scripts")
 		.from("stats_simba")
-		.select("experience, gold, runtime, unique_users, current_users")
+		.select("experience, gold, runtime, unique_users, online_users")
 		.eq("script_id", script_id)
+		.limit(1)
+		.returns<ScriptEntry>()
 
 	if (error) return console.error(error)
 
-	return data[0] as ScriptEntry
+	return data
 }
 
 export async function getUserData(userID: string) {
@@ -171,8 +173,8 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
 		gold: payload.gold + oldData.gold,
 		runtime: payload.runtime + oldData.runtime,
 		unique_users: oldData.unique_users,
-		current_users: oldData.current_users.filter((user) => {
-			return user.timestamp + 300000 > t
+		online_users: oldData.online_users.filter((user) => {
+			return user.time + 300000 > t
 		})
 	}
 
@@ -181,16 +183,16 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
 
 		if (!entry.unique_users.includes(id)) entry.unique_users.push(id)
 
-		if (entry.current_users.length === 0) {
-			entry.current_users.push({ id: id, timestamp: t })
+		if (entry.online_users.length === 0) {
+			entry.online_users.push({ id: id, time: t })
 		} else {
-			for (let i = 0; i < entry.current_users.length; i++) {
-				if (entry.current_users[i].id.toLowerCase() === id) {
-					entry.current_users[i].timestamp = t
+			for (let i = 0; i < entry.online_users.length; i++) {
+				if (entry.online_users[i].id.toLowerCase() === id) {
+					entry.online_users[i].time = t
 					break
 				}
 
-				if (i === entry.current_users.length - 1) entry.current_users.push({ id: id, timestamp: t })
+				if (i === entry.online_users.length - 1) entry.online_users.push({ id: id, time: t })
 			}
 		}
 	}
