@@ -1,3 +1,12 @@
+## [0.5.3](https://github.com/Torwent/wasp-api/compare/v0.5.2...v0.5.3) (2023-08-15)
+
+
+### Bug Fixes
+
+* downgraded discordjs ([2d02388](https://github.com/Torwent/wasp-api/commit/2d0238868ed13dce63f5e9396c3596753d30e7a9))
+
+
+
 ## [0.5.2](https://github.com/Torwent/wasp-api/compare/v0.5.1...v0.5.2) (2023-08-15)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * api cannot change database roles if the roles are not managed externally ([7e55fee](https://github.com/Torwent/wasp-api/commit/7e55feef158cd785e674e8f21671d0b929ac79db))
-
-
-
-## [0.4.9](https://github.com/Torwent/wasp-api/compare/v0.4.8...v0.4.9) (2023-06-29)
-
-
-### Bug Fixes
-
-* fixed compatibility with the new layout of the database tables ([8b83321](https://github.com/Torwent/wasp-api/commit/8b83321251539692d8c2629721f41136488d6956))
 
 
 
