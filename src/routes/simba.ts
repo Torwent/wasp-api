@@ -70,7 +70,6 @@ router.get("/:SCRIPT_ID/:GET_PACKAGES?", async (req: Request, res: Response) => 
 		return res.status(416).send("Response code: 416 - That SCRIPT_ID is not valid!")
 
 	const promises = [getScriptData(SCRIPT_ID)]
-
 	if (GET_PACKAGES === "true") promises.push(getLatestPackageVersions())
 
 	const results = await Promise.all(promises)
