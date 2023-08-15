@@ -81,11 +81,11 @@ export async function getScriptEntry(script_id: string) {
 		.select("experience, gold, runtime, unique_users, online_users")
 		.eq("id", script_id)
 		.limit(1)
-		.returns<ScriptEntry>()
+		.returns<ScriptEntry[]>()
 
 	if (error) return console.error(error)
 
-	return data
+	return data[0]
 }
 
 export async function getUserData(userID: string) {
@@ -196,7 +196,6 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
 			}
 		}
 	}
-
 	const { error } = await SUPABASE.schema("scripts")
 		.from("stats_simba")
 		.update(entry)
