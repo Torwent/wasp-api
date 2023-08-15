@@ -45,7 +45,7 @@ export interface ScriptEntry {
 }
 
 export interface Payload {
-	id: string
+	script_id: string
 	username: string
 	experience: number
 	gold: number
@@ -53,7 +53,7 @@ export interface Payload {
 }
 
 export interface RawPayload {
-	id: string | undefined
+	script_id: string | undefined
 	username?: string | undefined
 	password?: string | undefined
 	experience: number | undefined

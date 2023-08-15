@@ -135,10 +135,10 @@ async function parseNumber(n: any) {
 }
 
 async function sanitizePayload(rawPayload: RawPayload): Promise<number | Payload> {
-	if (rawPayload.id == null) return 401
+	if (rawPayload.script_id == null) return 401
 
 	const results = await Promise.all([
-		getScriptLimits(rawPayload.id),
+		getScriptLimits(rawPayload.script_id),
 		parseNumber(rawPayload.experience),
 		parseNumber(rawPayload.gold),
 		parseNumber(rawPayload.runtime)
@@ -243,7 +243,7 @@ export async function upsertPlayerData(userID: string, rawPayload: RawPayload) {
 			return 501
 		}
 
-		if (rawPayload.id != null) updateScriptData(rawPayload.id, entry)
+		if (rawPayload.script_id) updateScriptData(rawPayload.script_id, entry)
 
 		return 201
 	}
@@ -264,7 +264,7 @@ export async function upsertPlayerData(userID: string, rawPayload: RawPayload) {
 		gold: payload.gold,
 		runtime: payload.runtime
 	}
-	updateScriptData(payload.id, userEntry)
+	updateScriptData(payload.script_id, userEntry)
 	return 202
 }
 
