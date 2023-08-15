@@ -79,7 +79,7 @@ export async function getScriptEntry(script_id: string) {
 	const { data, error } = await SUPABASE.schema("scripts")
 		.from("stats_simba")
 		.select("experience, gold, runtime, unique_users, online_users")
-		.eq("script_id", script_id)
+		.eq("id", script_id)
 		.limit(1)
 		.returns<ScriptEntry>()
 
@@ -135,10 +135,10 @@ async function parseNumber(n: any) {
 }
 
 async function sanitizePayload(rawPayload: RawPayload): Promise<number | Payload> {
-	if (rawPayload.script_id == null) return 401
+	if (rawPayload.id == null) return 401
 
 	const results = await Promise.all([
-		getScriptLimits(rawPayload.script_id),
+		getScriptLimits(rawPayload.id),
 		parseNumber(rawPayload.experience),
 		parseNumber(rawPayload.gold),
 		parseNumber(rawPayload.runtime)
@@ -200,7 +200,7 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
 	const { error } = await SUPABASE.schema("scripts")
 		.from("stats_simba")
 		.update(entry)
-		.eq("script_id", script_id)
+		.eq("id", script_id)
 
 	if (error) console.error(error)
 }
@@ -243,7 +243,7 @@ export async function upsertPlayerData(userID: string, rawPayload: RawPayload) {
 			return 501
 		}
 
-		if (rawPayload.script_id != null) updateScriptData(rawPayload.script_id, entry)
+		if (rawPayload.id != null) updateScriptData(rawPayload.id, entry)
 
 		return 201
 	}
@@ -264,7 +264,7 @@ export async function upsertPlayerData(userID: string, rawPayload: RawPayload) {
 		gold: payload.gold,
 		runtime: payload.runtime
 	}
-	updateScriptData(payload.script_id, userEntry)
+	updateScriptData(payload.id, userEntry)
 	return 202
 }
 
