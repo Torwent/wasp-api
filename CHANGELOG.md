@@ -1,3 +1,12 @@
+## [0.5.4](https://github.com/Torwent/wasp-api/compare/v0.5.3...v0.5.4) (2023-08-15)
+
+
+### Bug Fixes
+
+* stuff I forgot ([aa7c449](https://github.com/Torwent/wasp-api/commit/aa7c4492b12b9a5b67e98e26766bed5a3978a5b5))
+
+
+
 ## [0.5.3](https://github.com/Torwent/wasp-api/compare/v0.5.2...v0.5.3) (2023-08-15)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * added new route to update roles only on discord from the database ([0ce5163](https://github.com/Torwent/wasp-api/commit/0ce5163394fb638901594a237562c9d5f37a1476))
-
-
-
-## [0.4.10](https://github.com/Torwent/wasp-api/compare/v0.4.9...v0.4.10) (2023-07-26)
-
-
-### Bug Fixes
-
-* api cannot change database roles if the roles are not managed externally ([7e55fee](https://github.com/Torwent/wasp-api/commit/7e55feef158cd785e674e8f21671d0b929ac79db))
 
 
 
