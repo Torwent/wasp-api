@@ -1,4 +1,4 @@
-import { PackagesData } from "./types"
+import { PackagesData } from "./types/collection"
 
 const BASE_URL = "https://api.github.com/repos/Torwent/"
 

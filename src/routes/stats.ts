@@ -1,10 +1,10 @@
 import { deleteData, updatePassword } from "./../lib/supabase"
-import { UserEntry } from "$lib/types"
 
 import { comparePassword, upsertPlayerData, getUserData, hashPassword } from "../lib/supabase"
 import express, { Request, Response } from "express"
 
 import rateLimiter from "express-rate-limit"
+import { UserEntry } from "$lib/types/collection"
 
 const UUID_V4_REGEX =
 	/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[4][0-9a-fA-F]{3}-[89AB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/i

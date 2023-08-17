@@ -3,16 +3,19 @@ import bcrypt from "bcrypt"
 import env from "./env"
 import {
 	Payload,
+	Profile,
 	RawPayload,
+	Script,
 	ScriptEntry,
-	UserEntry,
-	ScriptData,
 	ScriptLimits,
-	SBProfile
-} from "$lib/types"
+	Stats,
+	StatsSimba,
+	UserEntry
+} from "./types/collection"
+import { Database } from "./types/supabase"
 
 const OPTIONS = { auth: { autoRefreshToken: true, persistSession: false } }
-const SUPABASE = createClient(env.SB_URL, env.SB_ANON_KEY, OPTIONS)
+const supabase = createClient<Database>(env.SB_URL, env.SB_ANON_KEY, OPTIONS)
 const CREDENTALS = { email: env.SERVICE_USER, password: env.SERVICE_PASS }
 
 let isLoggedIn: boolean = false //login cache.
@@ -23,7 +26,7 @@ async function login(cacheOnly: boolean = true) {
 		return true
 	}
 
-	const { data, error } = await SUPABASE.auth.getSession()
+	const { data, error } = await supabase.auth.getSession()
 
 	if (error) {
 		isLoggedIn = false
@@ -33,7 +36,7 @@ async function login(cacheOnly: boolean = true) {
 
 	if (data.session == null) {
 		console.log("Logging in as service user!")
-		const { error } = await SUPABASE.auth.signInWithPassword(CREDENTALS)
+		const { error } = await supabase.auth.signInWithPassword(CREDENTALS)
 		if (error) {
 			isLoggedIn = false
 			console.error(error)
@@ -56,27 +59,24 @@ async function getScriptLimits(script_id: string, cacheOnly = true) {
 		}
 	}
 
-	const { data, error } = await SUPABASE.from("scripts_public")
-		.select("min_xp, max_xp, min_gp, max_gp")
+	const { data, error } = await supabase
+		.schema("scripts")
+		.from("scripts")
+		.select("id, min_xp, max_xp, min_gp, max_gp")
 		.eq("id", script_id)
+		.limit(1)
+		.returns<ScriptLimits[]>()
 
 	if (error) return console.error(error)
 
-	const scriptLimit: ScriptLimits = {
-		id: script_id,
-		min_xp: data[0].min_xp,
-		max_xp: data[0].max_xp,
-		min_gp: data[0].min_gp,
-		max_gp: data[0].max_gp
-	}
-
-	if (index === -1) scriptLimitsArray.push(scriptLimit)
-	else scriptLimitsArray[index] = scriptLimit
-	return scriptLimit
+	if (index === -1) scriptLimitsArray.push(data[0])
+	else scriptLimitsArray[index] = data[0]
+	return data[0]
 }
 
 export async function getScriptEntry(script_id: string) {
-	const { data, error } = await SUPABASE.schema("scripts")
+	const { data, error } = await supabase
+		.schema("scripts")
 		.from("stats_simba")
 		.select("experience, gold, runtime, unique_users, online_users")
 		.eq("id", script_id)
@@ -89,7 +89,8 @@ export async function getScriptEntry(script_id: string) {
 }
 
 export async function getUserData(userID: string) {
-	const { data, error } = await SUPABASE.from("stats")
+	const { data, error } = await supabase
+		.from("stats")
 		.select("password, experience, gold, runtime")
 		.eq("userID", userID)
 
@@ -162,16 +163,16 @@ async function sanitizePayload(rawPayload: RawPayload): Promise<number | Payload
 	return rawPayload as Payload
 }
 
-async function updateScriptData(script_id: string, payload: UserEntry) {
+async function updateScriptData(script_id: string, payload: Stats) {
 	const oldData = await getScriptEntry(script_id)
 	if (oldData == null) return
 
 	const t = Date.now()
 
-	const entry: ScriptEntry = {
-		experience: payload.experience + oldData.experience,
-		gold: payload.gold + oldData.gold,
-		runtime: payload.runtime + oldData.runtime,
+	const entry = {
+		experience: payload.experience ?? 0 + oldData.experience,
+		gold: payload.gold ?? 0 + oldData.gold,
+		runtime: payload.runtime ?? 0 + oldData.runtime,
 		unique_users: oldData.unique_users,
 		online_users: oldData.online_users.filter((user) => {
 			return user.time + 300000 > t
@@ -196,9 +197,19 @@ async function updateScriptData(script_id: string, payload: UserEntry) {
 			}
 		}
 	}
-	const { error } = await SUPABASE.schema("scripts")
+
+	// Now you can use the online_users_jsonb string in your SQL query to insert it into a jsonb[] column.
+
+	const { error } = await supabase
+		.schema("scripts")
 		.from("stats_simba")
-		.update(entry)
+		.update({
+			experience: entry.experience,
+			gold: entry.gold,
+			runtime: entry.runtime,
+			unique_users: entry.unique_users,
+			online_users: entry.online_users.map((entry) => JSON.stringify(entry))
+		})
 		.eq("id", script_id)
 
 	if (error) console.error(error)
@@ -223,12 +234,15 @@ export async function upsertPlayerData(userID: string, rawPayload: RawPayload) {
 	if (Number.isInteger(payload)) return payload as number
 	payload = payload as Payload
 
-	const entry: UserEntry = {
+	const entry: Stats = {
 		userID: userID,
 		username: payload.username,
 		experience: payload.experience,
 		gold: payload.gold,
-		runtime: payload.runtime
+		runtime: payload.runtime,
+		levels: null,
+		password: "",
+		updated_at: null
 	}
 
 	if (rawPayload.username) entry.username = rawPayload.username
@@ -236,7 +250,7 @@ export async function upsertPlayerData(userID: string, rawPayload: RawPayload) {
 	if (!oldData) {
 		if (rawPayload.password != null) entry.password = await hashPassword(rawPayload.password)
 
-		const { error } = await SUPABASE.from("stats").insert(entry)
+		const { error } = await supabase.from("stats").insert(entry)
 		if (error) {
 			console.error(error)
 			return 501
@@ -247,21 +261,25 @@ export async function upsertPlayerData(userID: string, rawPayload: RawPayload) {
 		return 201
 	}
 
-	entry.experience += oldData.experience
-	entry.gold += oldData.gold
-	entry.runtime += oldData.runtime
+	entry.experience = entry.experience ?? 0 + oldData.experience
+	entry.gold = entry.gold ?? 0 + oldData.gold
+	entry.runtime = entry.runtime ?? 0 + oldData.runtime
 
-	const { error } = await SUPABASE.from("stats").update(entry).eq("userID", userID)
+	const { error } = await supabase.from("stats").update(entry).eq("userID", userID)
 
 	if (error) {
 		console.error(error)
 		return 502
 	}
-	const userEntry: UserEntry = {
+	const userEntry: Stats = {
 		userID: userID,
 		experience: payload.experience,
 		gold: payload.gold,
-		runtime: payload.runtime
+		runtime: payload.runtime,
+		levels: null,
+		password: "",
+		updated_at: null,
+		username: ""
 	}
 	updateScriptData(payload.script_id, userEntry)
 	return 202
@@ -281,7 +299,8 @@ export async function updatePassword(uuid: string, password: string, new_passwor
 	new_password = results[1]
 	if (new_password == null) return 417
 
-	const { error } = await SUPABASE.from("stats")
+	const { error } = await supabase
+		.from("stats")
 		.update({ password: new_password })
 		.eq("userID", uuid)
 
@@ -297,14 +316,14 @@ export async function deleteData(userID: string, password: string) {
 	if (!(await login())) return 500
 	if (!(await comparePassword(userID, password))) return 400
 
-	const { error } = await SUPABASE.from("stats").delete().eq("uuid", userID)
+	const { error } = await supabase.from("stats").delete().eq("uuid", userID)
 
 	if (error) return 501
 
 	return 200
 }
 
-const scriptDataArray: ScriptData[] = []
+const scriptDataArray: Script[] = []
 
 export async function getScriptData(id: string, cacheOnly = true) {
 	const index = scriptDataArray.findIndex((script) => script.id === id)
@@ -315,20 +334,21 @@ export async function getScriptData(id: string, cacheOnly = true) {
 		}
 	}
 
-	const { data, error } = await SUPABASE.from("scripts_public")
-		.select("id, title, scripts_protected (revision, profiles_public (username))")
+	const { data, error } = await supabase
+		.schema("scripts")
+		.from("scripts")
+		.select("id, title, protected (revision, username)")
 		.eq("id", id)
-		.returns<ScriptData[]>()
+		.limit(1)
+		.returns<Script[]>()
 
-	if (error) console.error(error)
-	if (data == null || error) return null
+	if (error) return console.error(error)
+	if (data.length === 0) return console.error("Script not found")
 
-	const script: ScriptData = data[0]
+	if (index === -1) scriptDataArray.push(data[0])
+	else scriptDataArray[index] = data[0]
 
-	if (index === -1) scriptDataArray.push(script)
-	else scriptDataArray[index] = script
-
-	return script
+	return data[0]
 }
 
 export async function getProfileProtected(discord_id: string) {
@@ -336,11 +356,13 @@ export async function getProfileProtected(discord_id: string) {
 		await login(false)
 		if (!isLoggedIn) return 500
 	}
-	const { data, error } = await SUPABASE.from("profiles_public")
-		.select("id, profiles_protected (*)")
-		.eq("discord_id", discord_id)
+	const { data, error } = await supabase
+		.schema("profiles")
+		.from("profiles")
+		.select("id, roles (*), subscriptions (external)")
+		.eq("discord", discord_id)
 		.limit(1)
-		.returns<SBProfile[]>()
+		.returns<Profile[]>()
 
 	if (error) {
 		console.error(error)
@@ -359,12 +381,7 @@ export async function updateProfileProtected(discord_id: string, roles: string[]
 	const profile = await getProfileProtected(discord_id)
 	if (profile === 417 || profile === 500) return profile
 
-	const {
-		id,
-		profiles_protected: { subscription_external }
-	} = profile
-
-	const roleObject = subscription_external
+	const roleObject = profile.subscriptions.external
 		? {
 				moderator: roles.includes("1018906735123124315"),
 				scripter: roles.includes("1069140447647240254"),
@@ -382,10 +399,15 @@ export async function updateProfileProtected(discord_id: string, roles: string[]
 				timeout: roles.includes("1102052216157786192")
 		  }
 
-	const { error: updateError } = await SUPABASE.from("profiles_protected")
+	const { error: updateError } = await supabase
+		.schema("profiles")
+		.from("roles")
 		.update(roleObject)
-		.eq("id", id)
+		.eq("id", profile.id)
 
-	if (updateError) return 417
+	if (updateError) {
+		console.error(updateError)
+		return 417
+	}
 	return 200
 }
