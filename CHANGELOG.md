@@ -1,3 +1,12 @@
+## [0.5.11](https://github.com/Torwent/wasp-api/compare/v0.5.10...v0.5.11) (2023-08-17)
+
+
+### Bug Fixes
+
+* another major math oversight... ([1c698a3](https://github.com/Torwent/wasp-api/commit/1c698a35a678fec851ec715d4f691c13e345b912))
+
+
+
 ## [0.5.10](https://github.com/Torwent/wasp-api/compare/v0.5.9...v0.5.10) (2023-08-17)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * bad math logic that broke stats ([9b1bb58](https://github.com/Torwent/wasp-api/commit/9b1bb58f5556de80bf3f5248c2bf6c307521b813))
-
-
-
-## [0.5.6](https://github.com/Torwent/wasp-api/compare/v0.5.5...v0.5.6) (2023-08-17)
-
-
-### Bug Fixes
-
-* read notes ([db0ebd4](https://github.com/Torwent/wasp-api/commit/db0ebd4678a30239e9cd2edb43176d25faeb9d30))
 
 
 
