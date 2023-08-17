@@ -172,7 +172,7 @@ router.get("/:SCRIPT_ID/:GET_PACKAGES?", async (req: Request, res: Response) => 
 	const response: ScriptResponse = {
 		id: script.id,
 		title: script.title,
-		author: script.protected.username,
+		author: script.protected.username ?? undefined,
 		revision: script.protected.revision
 	}
 
