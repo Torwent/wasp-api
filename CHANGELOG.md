@@ -1,3 +1,12 @@
+## [0.5.6](https://github.com/Torwent/wasp-api/compare/v0.5.5...v0.5.6) (2023-08-17)
+
+
+### Bug Fixes
+
+* read notes ([db0ebd4](https://github.com/Torwent/wasp-api/commit/db0ebd4678a30239e9cd2edb43176d25faeb9d30))
+
+
+
 ## [0.5.5](https://github.com/Torwent/wasp-api/compare/v0.5.4...v0.5.5) (2023-08-15)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * compatibility update with the new database structure ([69923b9](https://github.com/Torwent/wasp-api/commit/69923b9ee233ea5d94baf09e26d0851a9e48e47a))
-
-
-
-## [0.5.1](https://github.com/Torwent/wasp-api/compare/v0.5.0...v0.5.1) (2023-07-27)
-
-
-### Bug Fixes
-
-* update discord roles was not working properly ([2121f5a](https://github.com/Torwent/wasp-api/commit/2121f5a8c686b5f1fd0d8496a0bffd8c6fe00242))
 
 
 
