@@ -170,9 +170,9 @@ async function updateScriptData(script_id: string, payload: Stats) {
 	const t = Date.now()
 
 	const entry = {
-		experience: payload.experience ?? 0 + oldData.experience,
-		gold: payload.gold ?? 0 + oldData.gold,
-		runtime: payload.runtime ?? 0 + oldData.runtime,
+		experience: (payload.experience ?? 0) + oldData.experience,
+		gold: (payload.gold ?? 0) + oldData.gold,
+		runtime: (payload.runtime ?? 0) + oldData.runtime,
 		unique_users: oldData.unique_users,
 		online_users: oldData.online_users.filter((user) => {
 			return user.time + 300000 > t
@@ -261,9 +261,9 @@ export async function upsertPlayerData(userID: string, rawPayload: RawPayload) {
 		return 201
 	}
 
-	entry.experience = entry.experience ?? 0 + oldData.experience
-	entry.gold = entry.gold ?? 0 + oldData.gold
-	entry.runtime = entry.runtime ?? 0 + oldData.runtime
+	entry.experience = (entry.experience ?? 0) + oldData.experience
+	entry.gold = (entry.gold ?? 0) + oldData.gold
+	entry.runtime = (entry.runtime ?? 0) + oldData.runtime
 
 	const { error } = await supabase.from("stats").update(entry).eq("userID", userID)
 
