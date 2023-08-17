@@ -1,3 +1,12 @@
+## [0.5.7](https://github.com/Torwent/wasp-api/compare/v0.5.6...v0.5.7) (2023-08-17)
+
+
+### Bug Fixes
+
+* bad math logic that broke stats ([9b1bb58](https://github.com/Torwent/wasp-api/commit/9b1bb58f5556de80bf3f5248c2bf6c307521b813))
+
+
+
 ## [0.5.6](https://github.com/Torwent/wasp-api/compare/v0.5.5...v0.5.6) (2023-08-17)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * downgraded discordjs ([2d02388](https://github.com/Torwent/wasp-api/commit/2d0238868ed13dce63f5e9396c3596753d30e7a9))
-
-
-
-## [0.5.2](https://github.com/Torwent/wasp-api/compare/v0.5.1...v0.5.2) (2023-08-15)
-
-
-### Bug Fixes
-
-* compatibility update with the new database structure ([69923b9](https://github.com/Torwent/wasp-api/commit/69923b9ee233ea5d94baf09e26d0851a9e48e47a))
 
 
 
