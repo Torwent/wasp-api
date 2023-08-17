@@ -9,10 +9,9 @@ import {
 	ScriptEntry,
 	ScriptLimits,
 	Stats,
-	StatsSimba,
 	UserEntry
 } from "./types/collection"
-import { Database } from "./types/supabase"
+import { Database, Json } from "./types/supabase"
 
 const OPTIONS = { auth: { autoRefreshToken: true, persistSession: false } }
 const supabase = createClient<Database>(env.SB_URL, env.SB_ANON_KEY, OPTIONS)
@@ -175,7 +174,7 @@ async function updateScriptData(script_id: string, payload: Stats) {
 		runtime: (payload.runtime ?? 0) + oldData.runtime,
 		unique_users: oldData.unique_users,
 		online_users: oldData.online_users.filter((user) => {
-			return user.time + 300000 > t
+			if (user) return user.time + 300000 > t
 		})
 	}
 
@@ -198,8 +197,6 @@ async function updateScriptData(script_id: string, payload: Stats) {
 		}
 	}
 
-	// Now you can use the online_users_jsonb string in your SQL query to insert it into a jsonb[] column.
-
 	const { error } = await supabase
 		.schema("scripts")
 		.from("stats_simba")
@@ -208,7 +205,7 @@ async function updateScriptData(script_id: string, payload: Stats) {
 			gold: entry.gold,
 			runtime: entry.runtime,
 			unique_users: entry.unique_users,
-			online_users: entry.online_users.map((entry) => JSON.stringify(entry))
+			online_users: entry.online_users.map((user) => user as unknown as Json)
 		})
 		.eq("id", script_id)
 
@@ -240,7 +237,7 @@ export async function upsertPlayerData(id: string, rawPayload: RawPayload) {
 		experience: payload.experience,
 		gold: payload.gold,
 		runtime: payload.runtime,
-		levels: null,
+		levels: 0,
 		password: "",
 		updated_at: null
 	}
@@ -265,7 +262,14 @@ export async function upsertPlayerData(id: string, rawPayload: RawPayload) {
 	entry.gold = (entry.gold ?? 0) + oldData.gold
 	entry.runtime = (entry.runtime ?? 0) + oldData.runtime
 
-	const { error } = await supabase.from("stats").update(entry).eq("id", id)
+	const { error } = await supabase
+		.from("stats")
+		.update({
+			experience: (entry.experience ?? 0) + oldData.experience,
+			gold: (entry.gold ?? 0) + oldData.gold,
+			runtime: (entry.runtime ?? 0) + oldData.runtime
+		})
+		.eq("id", id)
 
 	if (error) {
 		console.error(error)
@@ -276,7 +280,7 @@ export async function upsertPlayerData(id: string, rawPayload: RawPayload) {
 		experience: payload.experience,
 		gold: payload.gold,
 		runtime: payload.runtime,
-		levels: null,
+		levels: 0,
 		password: "",
 		updated_at: null,
 		username: ""
