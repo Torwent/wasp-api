@@ -88,11 +88,11 @@ export async function getScriptEntry(script_id: string) {
 	return data[0]
 }
 
-export async function getUserData(userID: string) {
+export async function getUserData(id: string) {
 	const { data, error } = await supabase
 		.from("stats")
 		.select("password, experience, gold, runtime")
-		.eq("userID", userID)
+		.eq("id", id)
 
 	if (error) return console.error(error)
 
@@ -179,8 +179,8 @@ async function updateScriptData(script_id: string, payload: Stats) {
 		})
 	}
 
-	if (payload.userID != null) {
-		const id = payload.userID.toLocaleLowerCase()
+	if (payload.id != null) {
+		const id = payload.id.toLocaleLowerCase()
 
 		if (!entry.unique_users.includes(id)) entry.unique_users.push(id)
 
@@ -215,13 +215,13 @@ async function updateScriptData(script_id: string, payload: Stats) {
 	if (error) console.error(error)
 }
 
-export async function upsertPlayerData(userID: string, rawPayload: RawPayload) {
+export async function upsertPlayerData(id: string, rawPayload: RawPayload) {
 	if (!isLoggedIn) {
 		await login(false)
 		if (!isLoggedIn) return 500
 	}
 
-	const oldData = await getUserData(userID)
+	const oldData = await getUserData(id)
 
 	if (oldData != null) {
 		const validPassword = await comparePasswordFast(oldData.password, rawPayload.password)
@@ -235,7 +235,7 @@ export async function upsertPlayerData(userID: string, rawPayload: RawPayload) {
 	payload = payload as Payload
 
 	const entry: Stats = {
-		userID: userID,
+		id: id,
 		username: payload.username,
 		experience: payload.experience,
 		gold: payload.gold,
@@ -265,14 +265,14 @@ export async function upsertPlayerData(userID: string, rawPayload: RawPayload) {
 	entry.gold = (entry.gold ?? 0) + oldData.gold
 	entry.runtime = (entry.runtime ?? 0) + oldData.runtime
 
-	const { error } = await supabase.from("stats").update(entry).eq("userID", userID)
+	const { error } = await supabase.from("stats").update(entry).eq("id", id)
 
 	if (error) {
 		console.error(error)
 		return 502
 	}
 	const userEntry: Stats = {
-		userID: userID,
+		id: id,
 		experience: payload.experience,
 		gold: payload.gold,
 		runtime: payload.runtime,
@@ -299,10 +299,7 @@ export async function updatePassword(uuid: string, password: string, new_passwor
 	new_password = results[1]
 	if (new_password == null) return 417
 
-	const { error } = await supabase
-		.from("stats")
-		.update({ password: new_password })
-		.eq("userID", uuid)
+	const { error } = await supabase.from("stats").update({ password: new_password }).eq("id", uuid)
 
 	if (error) {
 		console.error(error)
@@ -312,11 +309,11 @@ export async function updatePassword(uuid: string, password: string, new_passwor
 	return 202
 }
 
-export async function deleteData(userID: string, password: string) {
+export async function deleteData(id: string, password: string) {
 	if (!(await login())) return 500
-	if (!(await comparePassword(userID, password))) return 400
+	if (!(await comparePassword(id, password))) return 400
 
-	const { error } = await supabase.from("stats").delete().eq("uuid", userID)
+	const { error } = await supabase.from("stats").delete().eq("uuid", id)
 
 	if (error) return 501
 

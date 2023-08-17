@@ -9,7 +9,8 @@
 		"build": "tsc",
 		"watch": "tsc -w",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
-		"format": "prettier --plugin-search-dir . --write ."
+		"format": "prettier --plugin-search-dir . --write .",
+		"gentypes": "supabase gen types typescript --linked > src/lib/types/supabase.ts"
 	},
 	"keywords": [],
 	"author": "Torwent",
