@@ -258,10 +258,6 @@ export async function upsertPlayerData(id: string, rawPayload: RawPayload) {
 		return 201
 	}
 
-	entry.experience = (entry.experience ?? 0) + oldData.experience
-	entry.gold = (entry.gold ?? 0) + oldData.gold
-	entry.runtime = (entry.runtime ?? 0) + oldData.runtime
-
 	const { error } = await supabase
 		.from("stats")
 		.update({
@@ -272,6 +268,13 @@ export async function upsertPlayerData(id: string, rawPayload: RawPayload) {
 		.eq("id", id)
 
 	if (error) {
+		error.message +=
+			" object: " +
+			JSON.stringify({
+				experience: (entry.experience ?? 0) + oldData.experience,
+				gold: (entry.gold ?? 0) + oldData.gold,
+				runtime: (entry.runtime ?? 0) + oldData.runtime
+			})
 		console.error(error)
 		return 502
 	}
