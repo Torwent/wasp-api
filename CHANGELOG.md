@@ -1,3 +1,12 @@
+## [0.6.1](https://github.com/Torwent/wasp-api/compare/v0.6.0...v0.6.1) (2023-08-19)
+
+
+### Bug Fixes
+
+* more tiny fixes ([64763e2](https://github.com/Torwent/wasp-api/commit/64763e24cf4f7aba53d50ed81d41ed7e053cb592))
+
+
+
 # [0.6.0](https://github.com/Torwent/wasp-api/compare/v0.5.11...v0.6.0) (2023-08-19)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * ts error ([be69e9a](https://github.com/Torwent/wasp-api/commit/be69e9aa5cd548b7c20f8d5c3cb2c9b676df1f7e))
-
-
-
-## [0.5.8](https://github.com/Torwent/wasp-api/compare/v0.5.7...v0.5.8) (2023-08-17)
-
-
-### Bug Fixes
-
-* **stats:** updated to the new table structure ([81d5ccd](https://github.com/Torwent/wasp-api/commit/81d5ccd725d95a799747a999f07cbc2f95cd7805))
 
 
 
