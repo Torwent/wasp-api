@@ -10,7 +10,6 @@ module.exports = {
 	},
 	env: {
 		browser: false,
-		es2017: true,
 		node: true
 	}
 }

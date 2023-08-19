@@ -1,0 +1,13 @@
+.git
+.gitattributes
+.gitignore
+.dockerignore
+.eslintignore
+.eslintrc.cjs
+.prettierignore
+.prettierrc
+build
+node_modules
+Dockerfile
+docker-compose.yml
+README.md
