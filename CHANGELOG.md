@@ -1,3 +1,12 @@
+# [0.6.0](https://github.com/Torwent/wasp-api/compare/v0.5.11...v0.6.0) (2023-08-19)
+
+
+### Features
+
+* updated the project to my new node template ([1044a2d](https://github.com/Torwent/wasp-api/commit/1044a2d97bae5fa25055c2ed78c3c7cbd28d83e3))
+
+
+
 ## [0.5.11](https://github.com/Torwent/wasp-api/compare/v0.5.10...v0.5.11) (2023-08-17)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * **stats:** updated to the new table structure ([81d5ccd](https://github.com/Torwent/wasp-api/commit/81d5ccd725d95a799747a999f07cbc2f95cd7805))
-
-
-
-## [0.5.7](https://github.com/Torwent/wasp-api/compare/v0.5.6...v0.5.7) (2023-08-17)
-
-
-### Bug Fixes
-
-* bad math logic that broke stats ([9b1bb58](https://github.com/Torwent/wasp-api/commit/9b1bb58f5556de80bf3f5248c2bf6c307521b813))
 
 
 
