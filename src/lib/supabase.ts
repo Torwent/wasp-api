@@ -204,6 +204,7 @@ async function updateScriptData(script_id: string, payload: Stats) {
 			experience: entry.experience,
 			gold: entry.gold,
 			runtime: entry.runtime,
+			levels: undefined,
 			unique_users: entry.unique_users,
 			online_users: entry.online_users.map((user) => user as unknown as Json)
 		})
@@ -215,9 +216,7 @@ async function updateScriptData(script_id: string, payload: Stats) {
 			JSON.stringify({
 				experience: entry.experience,
 				gold: entry.gold,
-				runtime: entry.runtime,
-				unique_users: entry.unique_users,
-				online_users: entry.online_users.map((user) => user as unknown as Json)
+				runtime: entry.runtime
 			})
 		console.error(error)
 	}
@@ -274,7 +273,8 @@ export async function upsertPlayerData(id: string, rawPayload: RawPayload) {
 		.update({
 			experience: (entry.experience ?? 0) + oldData.experience,
 			gold: (entry.gold ?? 0) + oldData.gold,
-			runtime: (entry.runtime ?? 0) + oldData.runtime
+			runtime: (entry.runtime ?? 0) + oldData.runtime,
+			levels: undefined
 		})
 		.eq("id", id)
 
