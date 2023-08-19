@@ -1,3 +1,12 @@
+## [0.6.3](https://github.com/Torwent/wasp-api/compare/v0.6.2...v0.6.3) (2023-08-19)
+
+
+### Bug Fixes
+
+* explicitly settings levels to undefined since they are calculated on the database ([8600184](https://github.com/Torwent/wasp-api/commit/86001841f2205443790e0f229d6fc5e3c4f730ba))
+
+
+
 ## [0.6.2](https://github.com/Torwent/wasp-api/compare/v0.6.1...v0.6.2) (2023-08-19)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * another major math oversight... ([1c698a3](https://github.com/Torwent/wasp-api/commit/1c698a35a678fec851ec715d4f691c13e345b912))
-
-
-
-## [0.5.10](https://github.com/Torwent/wasp-api/compare/v0.5.9...v0.5.10) (2023-08-17)
-
-
-### Bug Fixes
-
-* online_users type ([6fb464d](https://github.com/Torwent/wasp-api/commit/6fb464d35cb8f4c4a8c806ea7f67621ee0e1f10f))
 
 
 
