@@ -178,7 +178,7 @@ async function updateScriptData(script_id: string, payload: Stats) {
 		})
 	}
 
-	if (payload.id != null) {
+	if (payload.id) {
 		const id = payload.id.toLocaleLowerCase()
 
 		if (!entry.unique_users.includes(id)) entry.unique_users.push(id)
@@ -209,7 +209,18 @@ async function updateScriptData(script_id: string, payload: Stats) {
 		})
 		.eq("id", script_id)
 
-	if (error) console.error(error)
+	if (error) {
+		error.message +=
+			" error object: " +
+			JSON.stringify({
+				experience: entry.experience,
+				gold: entry.gold,
+				runtime: entry.runtime,
+				unique_users: entry.unique_users,
+				online_users: entry.online_users.map((user) => user as unknown as Json)
+			})
+		console.error(error)
+	}
 }
 
 export async function upsertPlayerData(id: string, rawPayload: RawPayload) {
