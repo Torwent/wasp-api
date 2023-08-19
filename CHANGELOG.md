@@ -1,3 +1,12 @@
+## [0.6.2](https://github.com/Torwent/wasp-api/compare/v0.6.1...v0.6.2) (2023-08-19)
+
+
+### Bug Fixes
+
+* improved logging ([6f401b1](https://github.com/Torwent/wasp-api/commit/6f401b1172e440cc0e6aac1851130afc8567191b))
+
+
+
 ## [0.6.1](https://github.com/Torwent/wasp-api/compare/v0.6.0...v0.6.1) (2023-08-19)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * online_users type ([6fb464d](https://github.com/Torwent/wasp-api/commit/6fb464d35cb8f4c4a8c806ea7f67621ee0e1f10f))
-
-
-
-## [0.5.9](https://github.com/Torwent/wasp-api/compare/v0.5.8...v0.5.9) (2023-08-17)
-
-
-### Bug Fixes
-
-* ts error ([be69e9a](https://github.com/Torwent/wasp-api/commit/be69e9aa5cd548b7c20f8d5c3cb2c9b676df1f7e))
 
 
 
