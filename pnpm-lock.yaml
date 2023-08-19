@@ -26,9 +26,6 @@ dependencies:
   express-rate-limit:
     specifier: ^6.9.0
     version: 6.9.0(express@4.18.2)
-  module-alias:
-    specifier: ^2.2.3
-    version: 2.2.3
   morgan:
     specifier: ^1.10.0
     version: 1.10.0
@@ -49,6 +46,9 @@ devDependencies:
   '@types/express':
     specifier: ^4.17.17
     version: 4.17.17
+  '@types/module-alias':
+    specifier: ^2.0.2
+    version: 2.0.2
   '@types/morgan':
     specifier: ^1.9.4
     version: 1.9.4
@@ -70,6 +70,9 @@ devDependencies:
   eslint-config-prettier:
     specifier: ^8.10.0
     version: 8.10.0(eslint@8.47.0)
+  module-alias:
+    specifier: ^2.2.3
+    version: 2.2.3
   openapi-types:
     specifier: ^12.1.3
     version: 12.1.3
@@ -145,7 +148,7 @@ packages:
       discord-api-types: 0.37.53
       fast-deep-equal: 3.1.3
       ts-mixer: 6.0.3
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: false
 
   /@discordjs/collection@1.5.2:
@@ -170,7 +173,7 @@ packages:
       '@sapphire/snowflake': 3.5.1
       discord-api-types: 0.37.53
       file-type: 18.5.0
-      tslib: 2.6.1
+      tslib: 2.6.2
       undici: 5.23.0
     dev: false
 
@@ -195,7 +198,7 @@ packages:
       '@types/ws': 8.5.5
       '@vladfrangu/async_event_emitter': 2.2.2
       discord-api-types: 0.37.53
-      tslib: 2.6.1
+      tslib: 2.6.2
       ws: 8.13.0
     transitivePeerDependencies:
       - bufferutil
@@ -468,6 +471,10 @@ packages:
 
   /@types/mime@3.0.1:
     resolution: {integrity: sha512-Y4XFY5VJAuw0FgAqPNd6NNoV44jbq9Bz2L7Rh/J6jLTiHBSBJa9fxqQIvkIld4GsoDOcCbvzOUAbLPsSKKg+uA==}
+    dev: true
+
+  /@types/module-alias@2.0.2:
+    resolution: {integrity: sha512-Oeo5NEjAceFgN8OzGiLXPswgv2GBmrDGuTnLS0sQ8g4Mq5sB5c97Hu5B+n9Gu/j+5Y+oUb4TSawHXkZ8MENGyw==}
     dev: true
 
   /@types/morgan@1.9.4:
@@ -1069,7 +1076,7 @@ packages:
       discord-api-types: 0.37.53
       fast-deep-equal: 3.1.3
       lodash.snakecase: 4.1.1
-      tslib: 2.6.1
+      tslib: 2.6.2
       undici: 5.23.0
       ws: 8.13.0
     transitivePeerDependencies:
@@ -1793,7 +1800,7 @@ packages:
 
   /module-alias@2.2.3:
     resolution: {integrity: sha512-23g5BFj4zdQL/b6tor7Ji+QY4pEfNH784BMslY9Qb0UnJWRAt+lQGLYmRaM0KDBwIG23ffEBELhZDP2rhi9f/Q==}
-    dev: false
+    dev: true
 
   /morgan@1.10.0:
     resolution: {integrity: sha512-AbegBVI4sh6El+1gNwvD5YIck7nSA36weD7xvIxG4in80j/UoK8AEGaWnnz8v1GxonMCltmlNs5ZKbGvl9b1XQ==}
@@ -2442,8 +2449,8 @@ packages:
       strip-json-comments: 2.0.1
     dev: true
 
-  /tslib@2.6.1:
-    resolution: {integrity: sha512-t0hLfiEKfMUoqhG+U1oid7Pva4bbDPHYfJNiB7BiIjRkj1pyC++4N3huJfqY6aRH6VTB0rvtzQwjM4K6qpfOig==}
+  /tslib@2.6.2:
+    resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
     dev: false
 
   /type-check@0.4.0:

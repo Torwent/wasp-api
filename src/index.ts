@@ -1,9 +1,10 @@
+import "./lib/alias"
+import env from "$lib/env"
 import express from "express"
 import fs from "fs"
 import swaggerJsDoc from "swagger-jsdoc"
 import swaggerUi from "swagger-ui-express"
 import morgan from "morgan"
-import env from "./lib/env"
 import rateLimiter from "express-rate-limit"
 import cors from "cors"
 

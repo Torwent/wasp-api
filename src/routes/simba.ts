@@ -1,5 +1,5 @@
-import { getScriptData } from "../lib/supabase"
-import { getLatestPackageVersion, getLatestPackageVersions } from "../lib/github"
+import { getScriptData } from "$lib/supabase"
+import { getLatestPackageVersion, getLatestPackageVersions } from "$lib/github"
 import express, { Request, Response } from "express"
 import { Script, ScriptResponse } from "$lib/types/collection"
 const SCRIPT_ID_V4_REGEX =

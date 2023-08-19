@@ -1,19 +1,21 @@
 {
-	"ts-node": {
-		// Do not forget to `npm i -D tsconfig-paths`
-		"require": ["tsconfig-paths/register"]
-	},
+	"ts-node": { "require": ["tsconfig-paths/register"] },
 	"compilerOptions": {
-		"rootDir": "src",
-		"outDir": "dist",
-		"target": "ES2022",
-		"module": "NodeNext",
-		"esModuleInterop": true,
+		"lib": ["ESNext"],
+		"module": "NodeNext", //CommonJs
 		"moduleResolution": "Node",
-		"isolatedModules": true,
+		"target": "ESNext",
+		"outDir": "build",
 		"forceConsistentCasingInFileNames": true,
-		"strict": true,
+		"sourceMap": false,
+		"esModuleInterop": true,
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"allowSyntheticDefaultImports": true,
 		"skipLibCheck": true,
+		"skipDefaultLibCheck": true,
+		"resolveJsonModule": true,
+		"importHelpers": true,
 		"baseUrl": ".",
 		"paths": {
 			"$routes/*": ["src/routes/*"],

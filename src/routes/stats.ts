@@ -1,8 +1,6 @@
-import { deleteData, updatePassword } from "./../lib/supabase"
-
-import { comparePassword, upsertPlayerData, getUserData, hashPassword } from "../lib/supabase"
+import { deleteData, updatePassword } from "$lib/supabase"
+import { comparePassword, upsertPlayerData, getUserData, hashPassword } from "$lib/supabase"
 import express, { Request, Response } from "express"
-
 import rateLimiter from "express-rate-limit"
 import { UserEntry } from "$lib/types/collection"
 

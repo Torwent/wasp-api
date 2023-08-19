@@ -105,7 +105,7 @@ export async function hashPassword(password: string | null | undefined) {
 
 export async function comparePassword(uuid: string, password: string | null | undefined) {
 	const data = await getUserData(uuid)
-	if (data == null) return 400
+	if (!data) return 400
 
 	const storedHash = data.password
 	if (storedHash == null || storedHash === "") return 201
@@ -149,7 +149,7 @@ async function sanitizePayload(rawPayload: RawPayload): Promise<number | Payload
 	rawPayload.gold = results[2]
 	rawPayload.runtime = results[3]
 
-	if (scriptLimits == null) return 402
+	if (!scriptLimits) return 402
 	if (rawPayload.experience < scriptLimits.min_xp) return 403
 	if (rawPayload.experience > scriptLimits.max_xp) return 404
 	if (rawPayload.gold < scriptLimits.min_gp) return 405
@@ -164,7 +164,7 @@ async function sanitizePayload(rawPayload: RawPayload): Promise<number | Payload
 
 async function updateScriptData(script_id: string, payload: Stats) {
 	const oldData = await getScriptEntry(script_id)
-	if (oldData == null) return
+	if (!oldData) return
 
 	const t = Date.now()
 
@@ -220,7 +220,7 @@ export async function upsertPlayerData(id: string, rawPayload: RawPayload) {
 
 	const oldData = await getUserData(id)
 
-	if (oldData != null) {
+	if (oldData) {
 		const validPassword = await comparePasswordFast(oldData.password, rawPayload.password)
 
 		if (!validPassword) return 400
@@ -392,14 +392,12 @@ export async function updateProfileProtected(discord_id: string, roles: string[]
 				tester: roles.includes("907209408860291113"),
 				vip: roles.includes("931167526681972746"),
 				premium: roles.includes("820985772140134440"),
-				developer: roles.includes("864744526894333963"),
 				timeout: roles.includes("1102052216157786192")
 		  }
 		: {
 				moderator: roles.includes("1018906735123124315"),
 				scripter: roles.includes("1069140447647240254"),
 				tester: roles.includes("907209408860291113"),
-				developer: roles.includes("864744526894333963"),
 				timeout: roles.includes("1102052216157786192")
 		  }
 

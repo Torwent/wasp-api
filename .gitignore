@@ -1,6 +1,7 @@
-dist
+build
 node_modules
 .env
 .env.*
+stack.env
 !.env.example
 supabase

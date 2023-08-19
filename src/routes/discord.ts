@@ -1,4 +1,4 @@
-import { CheckDiscord, RefreshDiscord, updateDiscord } from "../lib/discord"
+import { CheckDiscord, RefreshDiscord, updateDiscord } from "$lib/discord"
 import express, { Request, Response } from "express"
 import rateLimiter from "express-rate-limit"
 

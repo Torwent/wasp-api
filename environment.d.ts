@@ -1,6 +1,7 @@
 declare global {
 	namespace NodeJS {
 		interface ProcessEnv {
+			[key: string]: string | undefined
 			SB_URL: string
 			SB_ANON_KEY: string
 			SERVICE_USER: string

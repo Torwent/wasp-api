@@ -2,16 +2,9 @@ version: "3.9"
 
 services:
   wasp-api:
-    container_name: "wasp-api"
+    container_name: wasp-api
     build:
       context: .
-      args:
-        SB_URL: $SB_URL
-        SB_ANON_KEY: $SB_ANON_KEY
-        SERVICE_USER: $SERVICE_USER
-        SERVICE_PASS: $SERVICE_PASS
-        DISCORD_TOKEN: $DISCORD_TOKEN
-        ENVIRONMENT: $ENVIRONMENT
     restart: unless-stopped
     volumes:
       - /docker/etc/letsencrypt/live/waspscripts.com/cert.pem:/etc/letsencrypt/live/waspscripts.com/cert.pem
@@ -20,7 +13,7 @@ services:
     networks:
       - hive
     env_file:
-      - .env
+      - stack.env
 
 networks:
   hive:
