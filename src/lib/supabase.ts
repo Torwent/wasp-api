@@ -396,21 +396,12 @@ export async function updateProfileProtected(discord_id: string, roles: string[]
 	const profile = await getProfileProtected(discord_id)
 	if (profile === 417 || profile === 500) return profile
 
-	const roleObject = profile.subscriptions.external
-		? {
-				moderator: roles.includes("1018906735123124315"),
-				scripter: roles.includes("1069140447647240254"),
-				tester: roles.includes("907209408860291113"),
-				vip: roles.includes("931167526681972746"),
-				premium: roles.includes("820985772140134440"),
-				timeout: roles.includes("1102052216157786192")
-		  }
-		: {
-				moderator: roles.includes("1018906735123124315"),
-				scripter: roles.includes("1069140447647240254"),
-				tester: roles.includes("907209408860291113"),
-				timeout: roles.includes("1102052216157786192")
-		  }
+	const roleObject = {
+		moderator: roles.includes("1018906735123124315"),
+		scripter: roles.includes("1069140447647240254"),
+		tester: roles.includes("907209408860291113"),
+		timeout: roles.includes("1102052216157786192")
+	}
 
 	const { error: updateError } = await supabase
 		.schema("profiles")
