@@ -1,3 +1,12 @@
+## [0.6.4](https://github.com/Torwent/wasp-api/compare/v0.6.3...v0.6.4) (2023-12-31)
+
+
+### Bug Fixes
+
+* remove premium and vip roles ([1f26e99](https://github.com/Torwent/wasp-api/commit/1f26e99772ae87c51ee487dbc4afa2fa225b7db6))
+
+
+
 ## [0.6.3](https://github.com/Torwent/wasp-api/compare/v0.6.2...v0.6.3) (2023-08-19)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * updated the project to my new node template ([1044a2d](https://github.com/Torwent/wasp-api/commit/1044a2d97bae5fa25055c2ed78c3c7cbd28d83e3))
-
-
-
-## [0.5.11](https://github.com/Torwent/wasp-api/compare/v0.5.10...v0.5.11) (2023-08-17)
-
-
-### Bug Fixes
-
-* another major math oversight... ([1c698a3](https://github.com/Torwent/wasp-api/commit/1c698a35a678fec851ec715d4f691c13e345b912))
 
 
 
