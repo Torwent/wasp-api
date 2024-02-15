@@ -1,3 +1,12 @@
+## [0.6.7](https://github.com/Torwent/wasp-api/compare/v0.6.6...v0.6.7) (2024-02-15)
+
+
+### Bug Fixes
+
+* more tweaks to how data is inserted onto de database ([dca3285](https://github.com/Torwent/wasp-api/commit/dca3285efcaff2f1a45498880d711e2814a0ba54))
+
+
+
 ## [0.6.6](https://github.com/Torwent/wasp-api/compare/v0.6.5...v0.6.6) (2024-02-15)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * explicitly settings levels to undefined since they are calculated on the database ([8600184](https://github.com/Torwent/wasp-api/commit/86001841f2205443790e0f229d6fc5e3c4f730ba))
-
-
-
-## [0.6.2](https://github.com/Torwent/wasp-api/compare/v0.6.1...v0.6.2) (2023-08-19)
-
-
-### Bug Fixes
-
-* improved logging ([6f401b1](https://github.com/Torwent/wasp-api/commit/6f401b1172e440cc0e6aac1851130afc8567191b))
 
 
 
