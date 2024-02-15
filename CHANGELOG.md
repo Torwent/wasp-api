@@ -1,3 +1,12 @@
+## [0.6.5](https://github.com/Torwent/wasp-api/compare/v0.6.4...v0.6.5) (2024-02-15)
+
+
+### Bug Fixes
+
+* stop the API from trying to update the levels column since it's an auto-generated one. ([c486c6b](https://github.com/Torwent/wasp-api/commit/c486c6bd55dfde1e5c506f9370665be9cf2fc27a))
+
+
+
 ## [0.6.4](https://github.com/Torwent/wasp-api/compare/v0.6.3...v0.6.4) (2023-12-31)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * more tiny fixes ([64763e2](https://github.com/Torwent/wasp-api/commit/64763e24cf4f7aba53d50ed81d41ed7e053cb592))
-
-
-
-# [0.6.0](https://github.com/Torwent/wasp-api/compare/v0.5.11...v0.6.0) (2023-08-19)
-
-
-### Features
-
-* updated the project to my new node template ([1044a2d](https://github.com/Torwent/wasp-api/commit/1044a2d97bae5fa25055c2ed78c3c7cbd28d83e3))
 
 
 
