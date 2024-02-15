@@ -1,3 +1,12 @@
+## [0.6.8](https://github.com/Torwent/wasp-api/compare/v0.6.7...v0.6.8) (2024-02-15)
+
+
+### Bug Fixes
+
+* more small tweaks to fix minor issues ([5ee30a7](https://github.com/Torwent/wasp-api/commit/5ee30a789e624d46e105e62786d9287ea60b8891))
+
+
+
 ## [0.6.7](https://github.com/Torwent/wasp-api/compare/v0.6.6...v0.6.7) (2024-02-15)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * remove premium and vip roles ([1f26e99](https://github.com/Torwent/wasp-api/commit/1f26e99772ae87c51ee487dbc4afa2fa225b7db6))
-
-
-
-## [0.6.3](https://github.com/Torwent/wasp-api/compare/v0.6.2...v0.6.3) (2023-08-19)
-
-
-### Bug Fixes
-
-* explicitly settings levels to undefined since they are calculated on the database ([8600184](https://github.com/Torwent/wasp-api/commit/86001841f2205443790e0f229d6fc5e3c4f730ba))
 
 
 
