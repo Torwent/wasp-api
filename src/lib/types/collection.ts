@@ -18,7 +18,6 @@ export type Stats = {
 	id: string
 	password: string
 	runtime: number
-	updated_at: string
 	username: string
 }
 
