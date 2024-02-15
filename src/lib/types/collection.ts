@@ -12,7 +12,15 @@ export interface Profile extends ProfileBase {
 	subscriptions: ProfileSubscription
 }
 
-export type Stats = Database["public"]["Tables"]["stats"]["Row"]
+export type Stats = {
+	experience: number
+	gold: number
+	id: string
+	password: string
+	runtime: number
+	updated_at: string
+	username: string
+}
 
 export type ScriptBase = Database["scripts"]["Tables"]["scripts"]["Row"]
 export type ScriptProtected = Database["scripts"]["Tables"]["protected"]["Row"]
