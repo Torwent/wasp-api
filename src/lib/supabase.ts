@@ -29,7 +29,7 @@ async function login(cacheOnly: boolean = true) {
 
 	if (error) {
 		isLoggedIn = false
-		console.error("AUTH getSession error: " + error)
+		console.error("AUTH getSession error: " + JSON.stringify(error))
 		return false
 	}
 
@@ -38,7 +38,7 @@ async function login(cacheOnly: boolean = true) {
 		const { error } = await supabase.auth.signInWithPassword(CREDENTALS)
 		if (error) {
 			isLoggedIn = false
-			console.error("AUTH signInWithPassword error: " + error)
+			console.error("AUTH signInWithPassword error: " + JSON.stringify(error))
 			return false
 		}
 	}
@@ -50,7 +50,16 @@ async function login(cacheOnly: boolean = true) {
 const scriptLimitsArray: ScriptLimits[] = [] //script limits cache for blazing fast execution!
 
 async function getScriptLimits(script_id: string, cacheOnly = true) {
-	const index = scriptLimitsArray.findIndex((script) => script.id === script_id)
+	let index = -1
+
+	for (let i = 0; i < scriptLimitsArray.length; i++) {
+		console.log(scriptLimitsArray[i])
+		if (scriptLimitsArray[i].id === script_id) {
+			index = i
+			break
+		}
+	}
+
 	if (cacheOnly) {
 		if (index != -1) {
 			getScriptLimits(script_id, false) //make a full async, this will update our cache.
@@ -66,7 +75,7 @@ async function getScriptLimits(script_id: string, cacheOnly = true) {
 		.limit(1)
 		.returns<ScriptLimits[]>()
 
-	if (error) return console.error("SELECT scripts.scripts error: " + error)
+	if (error) return console.error("SELECT scripts.scripts error: " + JSON.stringify(error))
 
 	if (index === -1) scriptLimitsArray.push(data[0])
 	else scriptLimitsArray[index] = data[0]
@@ -82,7 +91,7 @@ export async function getScriptEntry(script_id: string) {
 		.limit(1)
 		.returns<ScriptEntry[]>()
 
-	if (error) return console.error("SELECT scripts.stats_simba error: " + error)
+	if (error) return console.error("SELECT scripts.stats_simba error: " + JSON.stringify(error))
 
 	return data[0]
 }
@@ -93,7 +102,7 @@ export async function getUserData(id: string) {
 		.select("password, experience, gold, runtime")
 		.eq("id", id)
 
-	if (error) return console.error("SELECT stats error: " + error)
+	if (error) return console.error("SELECT stats error: " + JSON.stringify(error))
 
 	return data[0] as UserEntry
 }
@@ -217,7 +226,7 @@ async function updateScriptData(script_id: string, payload: Stats) {
 				gold: entry.gold,
 				runtime: entry.runtime
 			})
-		console.error("UPDATE scripts.stats_simba error: " + error)
+		console.error("UPDATE scripts.stats_simba error: " + JSON.stringify(error))
 	}
 }
 
@@ -256,7 +265,9 @@ export async function upsertPlayerData(id: string, rawPayload: RawPayload) {
 
 		const { error } = await supabase.from("stats").insert(entry)
 		if (error) {
-			console.error("INSERT stats error: " + error + " data: " + entry)
+			console.error(
+				"INSERT stats error: " + JSON.stringify(error) + " data: " + JSON.stringify(entry)
+			)
 			return 501
 		}
 
@@ -282,7 +293,7 @@ export async function upsertPlayerData(id: string, rawPayload: RawPayload) {
 				gold: (entry.gold ?? 0) + oldData.gold,
 				runtime: (entry.runtime ?? 0) + oldData.runtime
 			})
-		console.error("UPDATE stats error: " + error)
+		console.error("UPDATE stats error: " + JSON.stringify(error))
 		return 502
 	}
 	const userEntry: Stats = {
@@ -314,7 +325,7 @@ export async function updatePassword(uuid: string, password: string, new_passwor
 	const { error } = await supabase.from("stats").update({ password: new_password }).eq("id", uuid)
 
 	if (error) {
-		console.error("UPDATE stats error: " + error)
+		console.error("UPDATE stats error: " + JSON.stringify(error))
 		return 501
 	}
 
@@ -351,7 +362,7 @@ export async function getScriptData(id: string, cacheOnly = true) {
 		.limit(1)
 		.returns<Script[]>()
 
-	if (error) return console.error("SELECT scripts.scripts error: " + error)
+	if (error) return console.error("SELECT scripts.scripts error: " + JSON.stringify(error))
 	if (data.length === 0) return console.error("Script not found")
 
 	if (index === -1) scriptDataArray.push(data[0])
@@ -374,7 +385,7 @@ export async function getProfileProtected(discord_id: string) {
 		.returns<Profile[]>()
 
 	if (error) {
-		console.error("SELECT profiles.profiles error: " + error)
+		console.error("SELECT profiles.profiles error: " + JSON.stringify(error))
 		return 417
 	}
 
@@ -404,7 +415,7 @@ export async function updateProfileProtected(discord_id: string, roles: string[]
 		.eq("id", profile.id)
 
 	if (updateError) {
-		console.error("UPDATE profiles.roles error: " + updateError)
+		console.error("UPDATE profiles.roles error: " + JSON.stringify(updateError))
 		return 417
 	}
 	return 200
