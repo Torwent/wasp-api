@@ -1,3 +1,12 @@
+## [0.6.6](https://github.com/Torwent/wasp-api/compare/v0.6.5...v0.6.6) (2024-02-15)
+
+
+### Bug Fixes
+
+* better error messages for debugging ([d0c5de5](https://github.com/Torwent/wasp-api/commit/d0c5de5d20eb939260d65f2e43c16ead7c023853))
+
+
+
 ## [0.6.5](https://github.com/Torwent/wasp-api/compare/v0.6.4...v0.6.5) (2024-02-15)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * improved logging ([6f401b1](https://github.com/Torwent/wasp-api/commit/6f401b1172e440cc0e6aac1851130afc8567191b))
-
-
-
-## [0.6.1](https://github.com/Torwent/wasp-api/compare/v0.6.0...v0.6.1) (2023-08-19)
-
-
-### Bug Fixes
-
-* more tiny fixes ([64763e2](https://github.com/Torwent/wasp-api/commit/64763e24cf4f7aba53d50ed81d41ed7e053cb592))
 
 
 
