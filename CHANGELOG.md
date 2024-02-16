@@ -1,3 +1,12 @@
+## [0.6.9](https://github.com/Torwent/wasp-api/compare/v0.6.8...v0.6.9) (2024-02-16)
+
+
+### Bug Fixes
+
+* **stats:** added a switch case to handle 0 experience and 0 gold reports ([096b2d9](https://github.com/Torwent/wasp-api/commit/096b2d96736f5ff2f8a2619b0b800eab3ee9e7cb))
+
+
+
 ## [0.6.8](https://github.com/Torwent/wasp-api/compare/v0.6.7...v0.6.8) (2024-02-15)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * stop the API from trying to update the levels column since it's an auto-generated one. ([c486c6b](https://github.com/Torwent/wasp-api/commit/c486c6bd55dfde1e5c506f9370665be9cf2fc27a))
-
-
-
-## [0.6.4](https://github.com/Torwent/wasp-api/compare/v0.6.3...v0.6.4) (2023-12-31)
-
-
-### Bug Fixes
-
-* remove premium and vip roles ([1f26e99](https://github.com/Torwent/wasp-api/commit/1f26e99772ae87c51ee487dbc4afa2fa225b7db6))
 
 
 
