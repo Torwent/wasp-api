@@ -53,7 +53,6 @@ async function getScriptLimits(script_id: string, cacheOnly = true) {
 	let index = -1
 
 	for (let i = 0; i < scriptLimitsArray.length; i++) {
-		console.log(scriptLimitsArray[i])
 		if (scriptLimitsArray[i].id === script_id) {
 			index = i
 			break
@@ -167,6 +166,7 @@ async function sanitizePayload(rawPayload: RawPayload): Promise<number | Payload
 	if (rawPayload.runtime === 0) rawPayload.runtime = 5000
 	if (rawPayload.runtime <= 1000) return 407
 	if (rawPayload.runtime >= 15 * 60 * 1000) return 408
+	if (rawPayload.gold === 0 && rawPayload.experience === 0) return 409
 
 	return rawPayload as Payload
 }

@@ -256,7 +256,14 @@ router.post("/:UUID", rateLimit, async (req: Request, res: Response) => {
 		case 408:
 			return res
 				.status(400)
-				.send("Response code: 408 - Bad request! Your report runtime is higher than 15mins.")
+				.send("Response code: 408 - Bad request! Your reported runtime is higher than 15mins.")
+
+		case 409:
+			return res
+				.status(400)
+				.send(
+					"Response code: 409 - Bad request! Your reported experience and gold are both 0. If you just started the script this is normal"
+				)
 
 		case 500:
 			return res
