@@ -98,7 +98,7 @@ export async function updateDiscord(userID: string): Promise<500 | 501 | 416 | 4
 
 	const profile = await getProfileProtected(userID)
 
-	if (profile === 417 || profile === 500) return profile
+	if (profile === 417) return profile
 
 	const { roles } = profile
 

@@ -14,38 +14,7 @@ import {
 import { Database, Json } from "./types/supabase"
 
 const OPTIONS = { auth: { autoRefreshToken: true, persistSession: false } }
-const supabase = createClient<Database>(env.SB_URL, env.SB_ANON_KEY, OPTIONS)
-const CREDENTALS = { email: env.SERVICE_USER, password: env.SERVICE_PASS }
-
-let isLoggedIn: boolean = false //login cache.
-
-async function login(cacheOnly: boolean = true) {
-	if (isLoggedIn && cacheOnly) {
-		login(false) //make a full async, this should relog if needed.
-		return true
-	}
-
-	const { data, error } = await supabase.auth.getSession()
-
-	if (error) {
-		isLoggedIn = false
-		console.error("AUTH getSession error: " + JSON.stringify(error))
-		return false
-	}
-
-	if (data.session == null) {
-		console.log("Logging in as service user!")
-		const { error } = await supabase.auth.signInWithPassword(CREDENTALS)
-		if (error) {
-			isLoggedIn = false
-			console.error("AUTH signInWithPassword error: " + JSON.stringify(error))
-			return false
-		}
-	}
-
-	if (!isLoggedIn) isLoggedIn = true
-	return true
-}
+const supabase = createClient<Database>(env.SB_URL, env.SERVICE_KEY, OPTIONS)
 
 const scriptLimitsArray: ScriptLimits[] = [] //script limits cache for blazing fast execution!
 
@@ -231,11 +200,6 @@ async function updateScriptData(script_id: string, payload: Stats) {
 }
 
 export async function upsertPlayerData(id: string, rawPayload: RawPayload) {
-	if (!isLoggedIn) {
-		await login(false)
-		if (!isLoggedIn) return 500
-	}
-
 	const oldData = await getUserData(id)
 
 	if (oldData) {
@@ -309,7 +273,6 @@ export async function upsertPlayerData(id: string, rawPayload: RawPayload) {
 }
 
 export async function updatePassword(uuid: string, password: string, new_password: string) {
-	if (!(await login())) return 500
 	const oldData = await getUserData(uuid)
 	if (!oldData) return 401
 
@@ -333,7 +296,6 @@ export async function updatePassword(uuid: string, password: string, new_passwor
 }
 
 export async function deleteData(id: string, password: string) {
-	if (!(await login())) return 500
 	if (!(await comparePassword(id, password))) return 400
 
 	const { error } = await supabase.from("stats").delete().eq("uuid", id)
@@ -372,10 +334,6 @@ export async function getScriptData(id: string, cacheOnly = true) {
 }
 
 export async function getProfileProtected(discord_id: string) {
-	if (!isLoggedIn) {
-		await login(false)
-		if (!isLoggedIn) return 500
-	}
 	const { data, error } = await supabase
 		.schema("profiles")
 		.from("profiles")
@@ -393,13 +351,8 @@ export async function getProfileProtected(discord_id: string) {
 }
 
 export async function updateProfileProtected(discord_id: string, roles: string[]) {
-	if (!isLoggedIn) {
-		await login(false)
-		if (!isLoggedIn) return 500
-	}
-
 	const profile = await getProfileProtected(discord_id)
-	if (profile === 417 || profile === 500) return profile
+	if (profile === 417) return profile
 
 	const roleObject = {
 		moderator: roles.includes("1018906735123124315"),

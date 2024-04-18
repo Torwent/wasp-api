@@ -190,25 +190,19 @@ router.get("/:UUID", async (req: Request, res: Response) => {
 router.post("/:UUID", rateLimit, async (req: Request, res: Response) => {
 	const { UUID } = req.params
 
-	if (!UUID_V4_REGEX.test(UUID))
-		return res.status(416).send("Response code: 416 - That UUID is not valid!")
+	if (!UUID_V4_REGEX.test(UUID)) return res.status(416).send("That UUID is not valid!")
 
 	const body = req.body
 
-	if (!body)
-		return res
-			.status(400)
-			.send("Response code: 400 - Bad request! The server didn't receive any payload.")
+	if (!body) return res.status(400).send("Bad request! The server didn't receive any payload.")
 
 	const status = await upsertPlayerData(UUID, body)
 
 	switch (status) {
 		case 201:
-			return res
-				.status(201)
-				.send("Response code: 201 - The account was added to the database successfully!")
+			return res.status(201).send("The account was added to the database successfully!")
 		case 202:
-			return res.status(202).send("Response code: 202 - The account was updated succesfully!")
+			return res.status(202).send("The account was updated succesfully!")
 
 		case 400:
 			return res
@@ -217,71 +211,61 @@ router.post("/:UUID", rateLimit, async (req: Request, res: Response) => {
 					"Response code: 400 - Unauthorized! Your password doesn't match the one in the database for this UUID."
 				)
 		case 401:
-			return res.status(400).send("Response code: 401 - Bad request! script_id is missing.")
+			return res.status(400).send("Bad request! script_id is missing.")
 		case 402:
-			return res
-				.status(400)
-				.send("Response code: 402 - Bad request! script_id doesn't match any in waspscripts.")
+			return res.status(400).send("Bad request! script_id doesn't match any in waspscripts.")
 
 		case 403:
 			return res
-				.status(400)
+				.status(450)
 				.send(
-					"Response code: 403 - Bad request! Your reported experience is less than the script request minimum limit."
+					"Bad request! Your reported experience is less than the script request minimum limit."
 				)
 		case 404:
 			return res
-				.status(400)
+				.status(451)
 				.send(
-					"Response code: 404 - Bad request! Your reported experience is more than the script request maximum limit."
+					"Bad request! Your reported experience is more than the script request maximum limit."
 				)
 
 		case 405:
 			return res
-				.status(400)
-				.send(
-					"Response code: 405 - Bad request! Your reported gold is less than the script request minimum limit."
-				)
+				.status(452)
+				.send("Bad request! Your reported gold is less than the script request minimum limit.")
 		case 406:
 			return res
-				.status(400)
-				.send(
-					"Response code: 406 - Bad request! Your reported gold is more than the script request maximum limit."
-				)
+				.status(453)
+				.send("Bad request! Your reported gold is more than the script request maximum limit.")
 
 		case 407:
-			return res
-				.status(400)
-				.send("Response code: 407 - Bad request! Your reported runtime is lower than 1000.")
+			return res.status(454).send(" Bad request! Your reported runtime is lower than 1000.")
 		case 408:
-			return res
-				.status(400)
-				.send("Response code: 408 - Bad request! Your reported runtime is higher than 15mins.")
+			return res.status(455).send("Bad request! Your reported runtime is higher than 15mins.")
 
 		case 409:
 			return res
-				.status(400)
+				.status(456)
 				.send(
-					"Response code: 409 - Bad request! Your reported experience and gold are both 0. If you just started the script this is normal"
+					"Bad request! Your reported experience and gold are both 0. If you just started the script this is normal"
 				)
 
 		case 500:
 			return res
 				.status(500)
 				.send(
-					"Response code: 500 - Server error! The server couldn't login to the database! This is not an issue on your end."
+					"Server error! The server couldn't login to the database! This is not an issue on your end."
 				)
 		case 501:
 			return res
-				.status(500)
+				.status(501)
 				.send(
-					"Response code: 501 - Server error! The server couldn't insert your row into stats table. This is not an issue on your end."
+					"Server error! The server couldn't insert your row into stats table. This is not an issue on your end."
 				)
 		case 502:
 			return res
-				.status(500)
+				.status(502)
 				.send(
-					"Response code: 502 - Server error! The server couldn't update your row in stats table. This is not an issue on your end."
+					"Server error! The server couldn't update your row in stats table. This is not an issue on your end."
 				)
 	}
 })
@@ -401,8 +385,7 @@ router.post("/auth/check/:UUID", async (req: Request, res: Response) => {
 router.post("/auth/update/:UUID", async (req: Request, res: Response) => {
 	const { UUID } = req.params
 
-	if (!UUID_V4_REGEX.test(UUID))
-		return res.status(416).send("Response code: 416 - That UUID is not valid!")
+	if (!UUID_V4_REGEX.test(UUID)) return res.status(416).send("That UUID is not valid!")
 	let { password } = req.body
 	const { new_password } = req.body
 
@@ -410,21 +393,13 @@ router.post("/auth/update/:UUID", async (req: Request, res: Response) => {
 
 	switch (await updatePassword(UUID, password, new_password)) {
 		case 401:
-			return res
-				.status(401)
-				.send("Response code: 401 - That UUID doesn't exist in waspscripts database!")
+			return res.status(401).send("That UUID doesn't exist in waspscripts database!")
 		case 409:
-			return res.status(409).send("Response code: 409 - Current password does not match!")
+			return res.status(409).send("Current password does not match!")
 		case 417:
-			return res.status(417).send("Response code: 417 - New password empty!")
+			return res.status(417).send("New password empty!")
 		case 202:
-			return res.status(200).send("Response code: 200 - Password for that UUID was updated!")
-		case 500:
-			return res
-				.status(500)
-				.send(
-					"Response code: 500 - The server couldn't login to the database. This issue is not on your end."
-				)
+			return res.status(202).send("Password for that UUID was updated!")
 		case 501:
 			return res
 				.status(501)
@@ -462,33 +437,26 @@ router.post("/auth/update/:UUID", async (req: Request, res: Response) => {
 router.post("/delete/:UUID", async (req: Request, res: Response) => {
 	const { UUID } = req.params
 
-	if (!UUID_V4_REGEX.test(UUID))
-		return res.status(416).send("Response code: 416 - That UUID is not valid!")
+	if (!UUID_V4_REGEX.test(UUID)) return res.status(416).send("That UUID is not valid!")
 
 	const { password } = req.body
 
 	const hash = await hashPassword(password)
 
-	if (!hash) return res.status(417).send("Response code: 417 - Password empty!")
+	if (!hash) return res.status(417).send("Password empty!")
 
 	const status = await deleteData(UUID, password)
 
 	switch (status) {
 		case 200:
-			return res.status(200).send("Response code: 200 - Entry deleted!")
+			return res.status(200).send("Entry deleted!")
 		case 400:
-			return res.status(400).send("Response code: 400 - Password does not match!")
-		case 500:
-			return res
-				.status(500)
-				.send(
-					"Response code: 500 - The server couldn't login to the database! This is not an issue on your end."
-				)
+			return res.status(400).send("Password does not match!")
 		case 501:
 			return res
 				.status(501)
 				.send(
-					"Response code: 501 - The server couldn't delete the entry from the database! This is not an issue on your end."
+					"The server couldn't delete the entry from the database! This is not an issue on your end."
 				)
 	}
 })
