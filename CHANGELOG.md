@@ -1,3 +1,12 @@
+## [0.6.10](https://github.com/Torwent/wasp-api/compare/v0.6.9...v0.6.10) (2024-04-18)
+
+
+### Bug Fixes
+
+* change API to use the service key ([0d2dbb5](https://github.com/Torwent/wasp-api/commit/0d2dbb562bd7b9fc86a9475c914af01511553ed5))
+
+
+
 ## [0.6.9](https://github.com/Torwent/wasp-api/compare/v0.6.8...v0.6.9) (2024-02-16)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * better error messages for debugging ([d0c5de5](https://github.com/Torwent/wasp-api/commit/d0c5de5d20eb939260d65f2e43c16ead7c023853))
-
-
-
-## [0.6.5](https://github.com/Torwent/wasp-api/compare/v0.6.4...v0.6.5) (2024-02-15)
-
-
-### Bug Fixes
-
-* stop the API from trying to update the levels column since it's an auto-generated one. ([c486c6b](https://github.com/Torwent/wasp-api/commit/c486c6bd55dfde1e5c506f9370665be9cf2fc27a))
 
 
 
