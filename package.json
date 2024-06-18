@@ -5,7 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "gentypes": "bun run supabase gen types typescript --linked > src/lib/types/supabase.ts",
-    "dev": "bun run --watch src/index.ts"
+    "dev": "bun run --watch src/index.ts",
+    "build": "bun build src/index.ts"
   },
   "dependencies": {
     "@elysiajs/server-timing": "^1.0.2",
