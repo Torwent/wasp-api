@@ -62,7 +62,7 @@ app.use(
 app.use(serverTiming())
 
 app.listen({
-	hostname: process.env.ENVIRONMENT === "production" ? "api.waspscripts.com" : "localhost",
+	hostname: process.env.ENVIRONMENT === "production" ? process.env.DOMAIN : "localhost",
 	port: process.env.PORT ?? 3000,
 	maxRequestBodySize: Number.MAX_SAFE_INTEGER
 })
