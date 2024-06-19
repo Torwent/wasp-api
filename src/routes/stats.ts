@@ -28,6 +28,7 @@ export default (app: ElysiaApp) =>
 				errorResponse: "⚙️ You've reached the 100 requests/min limit."
 			})
 		)
+
 		.get(
 			":id",
 			async ({ error, params: { id } }) => {

@@ -48,7 +48,7 @@ export default (app: ElysiaApp) =>
 				const data = await getScript(id)
 
 				if (data.error) return error(data.status, data.error)
-				if (!data.script) return error("Internal Server Error", "Unexpected Server Error!")
+				if (!data.script) return error("Internal Server Error", "⚠️Unexpected Server Error!")
 
 				return { revision: data.script.protected.revision }
 			},
@@ -59,8 +59,11 @@ export default (app: ElysiaApp) =>
 			"package/:name",
 			async ({ error, params: { name } }) => {
 				const data = await getPackageVersion(name)
+
 				if (data.error) return error(data.status, data.error)
-				return { version: data?.version }
+				if (!data.version) return error("Internal Server Error", "⚠️Unexpected Server Error!")
+
+				return { version: data.version }
 			},
 			{ params: t.Object({ name: t.String({ pattern: "srl-t|SRL-T|wasplib|WaspLib" }) }) }
 		)

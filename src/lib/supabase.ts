@@ -217,7 +217,7 @@ async function updateScriptStats(payload: ScriptStats) {
 	const onlineUsers: Json[] = []
 
 	let found = false
-	for (let i = scriptStats.online_users.length; i > 0; i--) {
+	for (let i = 0; i < scriptStats.online_users.length; i++) {
 		if (scriptStats.online_users[i].id === user) {
 			onlineUsers.push(user)
 			found = true
