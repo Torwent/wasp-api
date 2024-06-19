@@ -21,7 +21,7 @@ const logger = new Logestic({
 		onSuccess({ time, ip, userAgent, method, path, status, duration }) {
 			const emoji = status === 200 ? "💯" : "✅"
 			const timestamp = time.toISOString().replace("T", " ").replace("Z", "")
-			return `${emoji} <${status}>[${timestamp}]: ${userAgent} - ${ip} - ${method} ${path} - ${duration}μs`
+			return `${emoji} [${status}] [${timestamp}]: ${userAgent} - ${ip} - ${method} ${path} - ${duration}μs`
 		},
 		onFailure({ error, code }) {
 			return `⚠️ Oops, ${error} was thrown with code: ${code}`

@@ -8,7 +8,7 @@ import {
 	ScriptStats,
 	StatsPayload
 } from "./types/collection"
-import bcrypt from "bcrypt"
+import bcrypt from "bcryptjs"
 
 export const CACHE_TIMEOUT = 2 * 60 * 1000
 
