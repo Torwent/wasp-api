@@ -2,9 +2,9 @@ import { Elysia } from "elysia"
 export { t } from "elysia"
 import { swagger } from "@elysiajs/swagger"
 import { serverTiming } from "@elysiajs/server-timing"
-import { autoroutes } from "elysia-autoroutes"
 import { Logestic } from "logestic"
 import { rateLimit } from "elysia-rate-limit"
+import { autoload } from "elysia-autoload"
 export { rateLimit } from "elysia-rate-limit"
 
 console.log(`🔥 wasp-api is starting...`)
@@ -19,15 +19,19 @@ const logger = new Logestic({
 	.use(["time", "ip", "userAgent", "method", "path", "duration", "status", "referer"])
 	.format({
 		onSuccess({ time, ip, userAgent, method, path, status, duration }) {
-			return `✅ [${status}] [${time.toISOString()}] - ${userAgent} - ${ip} - ${method} ${path} - ${duration}`
+			const emoji = status === 200 ? "💯" : "✅"
+			const timestamp = time.toISOString().replace("T", " ").replace("Z", "")
+			return `${emoji} <${status}>[${timestamp}]: ${userAgent} - ${ip} - ${method} ${path} - ${duration}μs`
 		},
 		onFailure({ error, code }) {
-			return `❌ Oops, ${error} was thrown with code: ${code}`
+			return `⚠️ Oops, ${error} was thrown with code: ${code}`
 		}
 	})
 
 app.use(logger)
 app.use(rateLimit())
+app.use(await autoload())
+app.use(serverTiming())
 
 app.use(
 	swagger({
@@ -51,15 +55,6 @@ app.use(
 		exclude: ["/docs", "/docs/json"]
 	})
 )
-
-app.use(
-	autoroutes({
-		routesDir: "./routes",
-		generateTags: false // -> optional, defaults to true
-	})
-)
-
-app.use(serverTiming())
 
 app.listen({
 	hostname: process.env.DOMAIN ?? "localhost",
