@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   wasp-api:
     container_name: wasp-api
