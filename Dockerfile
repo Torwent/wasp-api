@@ -8,6 +8,7 @@ COPY bun.lockb .
 RUN bun install --production
 
 COPY src src
+COPY stack.env ./.env
 COPY tsconfig.json .
 
 ENV NODE_ENV production
