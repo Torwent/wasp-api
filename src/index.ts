@@ -71,7 +71,9 @@ app.use(
 		exclude: ["/docs", "/docs/json"]
 	})
 )
-
+app.onRequest(({request}) => {
+	console.log(request.headers)
+})
 app.listen({
 	
 	hostname: process.env.DOMAIN ?? "0.0.0.0",
