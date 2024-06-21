@@ -5,6 +5,7 @@ import { serverTiming } from "@elysiajs/server-timing"
 import { Logestic } from "logestic"
 import { rateLimit } from "elysia-rate-limit"
 import { autoload } from "elysia-autoload"
+import type { Server } from "bun"
 export { rateLimit } from "elysia-rate-limit"
 
 
@@ -27,11 +28,10 @@ const logger = new Logestic({
 		onFailure({ error, code }) {return `⚠️ Oops, ${error} was thrown with code: ${code}`}		
 	})
 
+export const generator = (req: Request, server: Server | null) => req.headers.get('X-Forwarded-For') ?? req.headers.get('CF-Connecting-IP') ?? server?.requestIP(req)?.address ?? ""
+
 app.use(logger)
-app.use(rateLimit({generator: (req, server) =>
-  req.headers.get('X-Forwarded-For') ?? req.headers.get('CF-Connecting-IP') ??
-  server?.requestIP(req)?.address ??
-  ''}))
+app.use(rateLimit())
 app.use(await autoload())
 app.use(serverTiming())
 

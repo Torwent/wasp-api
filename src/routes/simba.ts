@@ -1,4 +1,4 @@
-import { rateLimit, t, type ElysiaApp } from "$src/index"
+import { generator, rateLimit, t, type ElysiaApp } from "$src/index"
 import { CACHE_TIMEOUT, getScript } from "$lib/supabase"
 
 const BASE_URL = "https://api.github.com/repos/Torwent/"
@@ -38,7 +38,8 @@ export default (app: ElysiaApp) =>
 			rateLimit({
 				duration: 60 * 1000,
 				max: 100,
-				errorResponse: "🦁 You've reached the 100 requests/min limit."
+				errorResponse: "🦁 You've reached the 100 requests/min limit.",	
+				generator: generator
 			})
 		)
 

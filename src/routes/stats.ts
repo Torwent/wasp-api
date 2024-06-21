@@ -1,4 +1,4 @@
-import { ElysiaApp, rateLimit, t } from "$src/index"
+import { ElysiaApp, generator, rateLimit, t } from "$src/index"
 import {
 	checkPassword,
 	deleteUser,
@@ -25,7 +25,8 @@ export default (app: ElysiaApp) =>
 			rateLimit({
 				duration: 3 * 60 * 1000,
 				max: 3,
-				errorResponse: "⚙️ You've reached the 100 requests/min limit."
+				errorResponse: "⚙️ You've reached the 100 requests/min limit.",
+				generator: generator
 			})
 		)
 
