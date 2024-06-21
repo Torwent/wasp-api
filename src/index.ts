@@ -11,29 +11,27 @@ console.log(`🔥 wasp-api is starting...`)
 
 const app = new Elysia()
 
-const logger = new Logestic({
-	httpLogging: false,
-	explicitLogging: true,
-	showLevel: true
-})
-	.use(["time", "userAgent", "method", "path", "duration", "status"])
-	.format({
-		onSuccess({ time, userAgent, method, path, status, duration }) {
-			const timestamp = time.toISOString().replace("T", " ").replace("Z", "")
-			if (path === "/docs") return ""
-			return `${status === 200 ? "💯" : "✅"} [${status}] [${timestamp}]: ${userAgent} - ${method} ${path} - ${duration}ms`
-		},
-		onFailure({ error, code }) {
-			return `⚠️ Oops, ${error} was thrown with code: ${code}`
-		}
-	})
-
 export const generator = async (req: Request, server: Server | null) =>
 	Bun.hash(
 		JSON.stringify(req.headers.get("cf-connecting-ip") ?? server?.requestIP(req)?.address ?? "")
 	).toString()
 
-app.use(logger)
+app.onResponse((response) => {
+	const {
+		request,
+		path,
+		set: { status }
+	} = response
+	if (path === "/docs" || path === "/docs/") return
+	const ip = request.headers.get("cf-connecting-ip")
+	const userAgent = request.headers.get("user-agent")
+	const timestamp = new Date().toISOString().replace("T", " ").replace("Z", "")
+
+	console.log(
+		`${status === 200 ? "💯" : "✅"} [${status}] [${timestamp}]: ${userAgent} ${ip} - ${request.method} ${path}`
+	)
+})
+
 app.use(
 	rateLimit({
 		scoping: "global",
