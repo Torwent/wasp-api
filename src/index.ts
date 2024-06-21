@@ -6,7 +6,6 @@ import { Logestic } from "logestic"
 import { rateLimit } from "elysia-rate-limit"
 import { autoload } from "elysia-autoload"
 import type { Server } from "bun"
-export { rateLimit } from "elysia-rate-limit"
 
 
 console.log(`🔥 wasp-api is starting...`)
@@ -28,10 +27,25 @@ const logger = new Logestic({
 		onFailure({ error, code }) {return `⚠️ Oops, ${error} was thrown with code: ${code}`}		
 	})
 
-export const generator = (req: Request, server: Server | null) => req.headers.get('X-Forwarded-For') ?? req.headers.get('CF-Connecting-IP') ?? server?.requestIP(req)?.address ?? ""
+export const generator = (req: Request, server: Server | null) => {
+	return req.headers.get('X-Forwarded-For') ?? 
+		   req.headers.get('CF-Connecting-IP') ?? 
+		   req.headers.get('X-Real-IP') ?? 
+		   req.headers.get('X-Client-IP') ??
+		   req.headers.get('X-Forwarded') ?? 
+		   req.headers.get('Forwarded-For') ??
+		   req.headers.get('Forwarded ') ?? 
+		   req.headers.get('cf-pseudo-ipv4') ?? 
+		   server?.requestIP(req)?.address ?? ""
+}
 
 app.use(logger)
-app.use(rateLimit())
+app.use(rateLimit({
+	duration: 60 * 1000,
+	max: 300,
+	errorResponse: "👋 You've reached the 300 requests/min limit.",
+	generator: generator
+}))
 app.use(await autoload())
 app.use(serverTiming())
 

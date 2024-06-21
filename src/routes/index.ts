@@ -1,4 +1,5 @@
-import { generator, rateLimit, type ElysiaApp } from "$src/index"
+import { generator, type ElysiaApp } from "$src/index"
+import { rateLimit } from "elysia-rate-limit"
 
 export default (app: ElysiaApp) =>
 	app

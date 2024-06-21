@@ -1,5 +1,6 @@
-import { generator, rateLimit, t, type ElysiaApp } from "$src/index"
+import { generator, t, type ElysiaApp } from "$src/index"
 import { CACHE_TIMEOUT, getScript } from "$lib/supabase"
+import { rateLimit } from "elysia-rate-limit"
 
 const BASE_URL = "https://api.github.com/repos/Torwent/"
 

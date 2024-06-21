@@ -1,5 +1,6 @@
-import { generator, rateLimit, t, type ElysiaApp } from "$src/index"
+import { generator, t, type ElysiaApp } from "$src/index"
 import { checkDiscord, refreshDiscord, updateDiscord } from "$lib/discord"
+import { rateLimit } from "elysia-rate-limit"
 
 const DISCORD_ID_REGEX = "[0-9]{16,20}"
 

@@ -1,4 +1,4 @@
-import { ElysiaApp, generator, rateLimit, t } from "$src/index"
+import { ElysiaApp, generator, t } from "$src/index"
 import {
 	checkPassword,
 	deleteUser,
@@ -8,6 +8,7 @@ import {
 	upsertStats
 } from "$lib/supabase"
 import { StatsSchema } from "$src/lib/types/collection"
+import { rateLimit } from "elysia-rate-limit"
 
 const uuid = t.Object({
 	id: t.String({
