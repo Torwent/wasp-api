@@ -5,7 +5,9 @@ declare global {
       SB_URL: string
       SERVICE_KEY: string
       DISCORD_TOKEN: string
-      ENVIRONMENT: "development" | "production" | "debug"
+      DOMAIN: string | undefined,
+      PORT: number | undefined
+      NODE_ENV: "development" | "production" | "debug"
     }
   }
 }
