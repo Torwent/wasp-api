@@ -24,10 +24,12 @@ export default (app: ElysiaApp) =>
 	app
 		.use(
 			rateLimit({
+				scoping: "scoped",
 				duration: 3 * 60 * 1000,
 				max: 3,
 				errorResponse: "⚙️ You've reached the 100 requests/min limit.",
-				generator: generator
+				generator: generator,
+				injectServer: () => app.server
 			})
 		)
 

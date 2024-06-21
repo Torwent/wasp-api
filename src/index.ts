@@ -20,8 +20,7 @@ const logger = new Logestic({
 	.format({
 		onSuccess({ time, userAgent, method, path, status, duration }) {
 			const timestamp = time.toISOString().replace("T", " ").replace("Z", "")
-			if (path === "/docs")
-				return `📚 [${status}] [${timestamp}]: ${userAgent} - ${method} ${path} - ${duration}ms`
+			if (path === "/docs") return ""
 			return `${status === 200 ? "💯" : "✅"} [${status}] [${timestamp}]: ${userAgent} - ${method} ${path} - ${duration}ms`
 		},
 		onFailure({ error, code }) {
@@ -29,16 +28,20 @@ const logger = new Logestic({
 		}
 	})
 
-export const generator = (req: Request, server: Server | null) =>
-	req.headers.get("cf-connecting-ip") ?? server?.requestIP(req)?.address ?? ""
+export const generator = async (req: Request, server: Server | null) =>
+	Bun.hash(
+		JSON.stringify(req.headers.get("cf-connecting-ip") ?? server?.requestIP(req)?.address ?? "")
+	).toString()
 
 app.use(logger)
 app.use(
 	rateLimit({
+		scoping: "global",
 		duration: 60 * 1000,
 		max: 300,
 		errorResponse: "👋 You've reached the 300 requests/min limit.",
-		generator: generator
+		generator: generator,
+		injectServer: () => app.server
 	})
 )
 app.use(await autoload())
