@@ -29,20 +29,8 @@ const logger = new Logestic({
 		}
 	})
 
-export const generator = (req: Request, server: Server | null) => {
-	return (
-		req.headers.get("X-Forwarded-For") ??
-		req.headers.get("CF-Connecting-IP") ??
-		req.headers.get("X-Real-IP") ??
-		req.headers.get("X-Client-IP") ??
-		req.headers.get("X-Forwarded") ??
-		req.headers.get("Forwarded-For") ??
-		req.headers.get("Forwarded") ??
-		req.headers.get("cf-pseudo-ipv4") ??
-		server?.requestIP(req)?.address ??
-		""
-	)
-}
+export const generator = (req: Request, server: Server | null) =>
+	req.headers.get("cf-connecting-ip") ?? server?.requestIP(req)?.address ?? ""
 
 app.use(logger)
 app.use(
@@ -78,9 +66,7 @@ app.use(
 		exclude: ["/docs", "/docs/json"]
 	})
 )
-app.onRequest(({ request }) => {
-	console.log(request.headers)
-})
+
 app.listen({
 	hostname: process.env.DOMAIN ?? "0.0.0.0",
 	port: process.env.PORT ?? 3000,
