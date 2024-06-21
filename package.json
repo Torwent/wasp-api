@@ -14,12 +14,11 @@
     "@elysiajs/swagger": "^0.8.5",
     "@supabase/supabase-js": "^2.43.5",
     "bcryptjs": "^2.4.3",
+    "bun": "^1.1.15",
     "discord.js": "^14.15.3",
     "elysia": "latest",
-    "elysia-autoload": "^1.0.1",
     "elysia-autoroutes": "^0.5.0",
-    "elysia-rate-limit": "^4.1.0",
-    "logestic": "^1.2.0"
+    "elysia-rate-limit": "^4.1.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
