@@ -1,17 +1,14 @@
 import { Elysia } from "elysia"
-export { t } from "elysia"
 import { swagger } from "@elysiajs/swagger"
 import { serverTiming } from "@elysiajs/server-timing"
-import { rateLimit } from "elysia-rate-limit"
 import { autoroutes } from "elysia-autoroutes"
-import type { Server } from "bun"
+import { ip } from "elysia-ip"
+export { t } from "elysia"
+export { rateLimit } from "elysia-rate-limit"
 
 console.log(`🔥 wasp-api is starting...`)
 
 const app = new Elysia()
-
-export const generator = async (req: Request, server: Server | null) =>
-	req.headers.get("cf-connecting-ip") ?? server?.requestIP(req)?.address ?? ""
 
 app.onResponse((response) => {
 	const {
@@ -19,28 +16,20 @@ app.onResponse((response) => {
 		path,
 		set: { status }
 	} = response
-	if (path === "/docs" || path === "/docs/") return
+	if (path === "/docs" || path === "/docs/" || path === "/docs/json" || path === "/docs/json/")
+		return
 	const ip = request.headers.get("cf-connecting-ip")
 	const userAgent = request.headers.get("user-agent")
 	const timestamp = new Date().toISOString().replace("T", " ").replace("Z", "")
 
 	console.log(
-		`${status === 200 ? "💯" : "✅"} [${status}] [${timestamp}]: ${userAgent} ${ip + " " ?? ""}- ${request.method} ${path}`
+		`[${timestamp}]: [${status === 200 ? "💯" : "✅"} ${status}] ${userAgent} ${ip + " " ?? ""}- ${request.method} ${path}`
 	)
 })
 
-app.use(
-	rateLimit({
-		scoping: "global",
-		duration: 60 * 1000,
-		max: 300,
-		errorResponse: "👋 You've reached the 300 requests/min limit.",
-		generator: generator,
-		injectServer: () => app.server
-	})
-)
+app.use(ip({ headersOnly: true }))
+
 app.use(autoroutes())
-app.use(serverTiming())
 
 app.use(
 	swagger({
@@ -57,11 +46,12 @@ app.use(
 				license: { name: "GPLv3", url: "https://github.com/Torwent/wasp-api/LICENSE" }
 			}
 		},
-
+		scalarConfig: { spec: { url: "/docs/json" } },
 		path: "/docs",
 		exclude: ["/docs", "/docs/json"]
 	})
 )
+app.use(serverTiming())
 
 app.listen({
 	hostname: process.env.DOMAIN ?? "0.0.0.0",
@@ -71,5 +61,5 @@ app.listen({
 
 export type ElysiaApp = typeof app
 
-console.log(`🦊 wasp-api is running at http://${app.server?.hostname}:${app.server?.port}`)
-console.log(`📚 Documentation live at http://${app.server?.hostname}:${app.server?.port}/docs`)
+console.log(`🦊 wasp-api is running at http://${app.server!.url}`)
+console.log(`📚 Documentation live at http://${app.server!.url}docs`)

@@ -1,7 +1,5 @@
-import { generator, t, type ElysiaApp } from "$src/index"
+import { rateLimit, t, type ElysiaApp } from "$src/index"
 import { CACHE_TIMEOUT, getScript } from "$lib/supabase"
-import { rateLimit } from "elysia-rate-limit"
-
 const BASE_URL = "https://api.github.com/repos/Torwent/"
 
 interface CachedVersion {
@@ -41,7 +39,7 @@ export default (app: ElysiaApp) =>
 				duration: 60 * 1000,
 				max: 100,
 				errorResponse: "🦁 You've reached the 100 requests/min limit.",
-				generator: generator,
+				generator: async (req, server, { ip }) => Bun.hash(JSON.stringify(ip)).toString(),
 				injectServer: () => app.server
 			})
 		)

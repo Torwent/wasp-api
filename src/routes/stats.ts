@@ -1,4 +1,4 @@
-import { ElysiaApp, generator, t } from "$src/index"
+import { ElysiaApp, rateLimit, t } from "$src/index"
 import {
 	checkPassword,
 	deleteUser,
@@ -8,7 +8,6 @@ import {
 	upsertStats
 } from "$lib/supabase"
 import { StatsSchema } from "$src/lib/types/collection"
-import { rateLimit } from "elysia-rate-limit"
 
 const uuid = t.Object({
 	id: t.String({
@@ -28,7 +27,7 @@ export default (app: ElysiaApp) =>
 				duration: 3 * 60 * 1000,
 				max: 3,
 				errorResponse: "⚙️ You've reached the 100 requests/min limit.",
-				generator: generator,
+				generator: async (req, server, { ip }) => Bun.hash(JSON.stringify(ip)).toString(),
 				injectServer: () => app.server
 			})
 		)
