@@ -260,7 +260,39 @@ async function updateScriptStats(payload: ScriptStats) {
 }
 
 export async function upsertStats(id: string, statsPayload: StatsPayload) {
-	const old = await getStatsEx(id)
+	const promises = await Promise.all([getStatsEx(id), getLimits(statsPayload.script_id)])
+
+	const old = promises[0]
+	const { limit, error, status } = promises[1]
+
+	if (!limit || error) {
+		return {
+			status,
+			error: error ?? "Unexpected error returning script limits."
+		}
+	}
+
+	if (statsPayload.experience < limit.min_xp || statsPayload.experience > limit.max_xp) {
+		return {
+			status: 403,
+			error: "Reported experience is not within the script aproved limits!"
+		}
+	}
+
+	if (statsPayload.gold < limit.min_gp || statsPayload.gold > limit.max_gp) {
+		return {
+			status: 403,
+			error: "Reported gold is not within the script aproved limits!"
+		}
+	}
+
+	if (statsPayload.runtime === 0) statsPayload.runtime = 5000
+	if (statsPayload.runtime < 1000 || statsPayload.gold > 15 * 60 * 1000) {
+		return {
+			status: 403,
+			error: "Reported runtime is not within the aproved limits!"
+		}
+	}
 
 	const scriptStats = {
 		id: statsPayload.script_id,
@@ -270,7 +302,7 @@ export async function upsertStats(id: string, statsPayload: StatsPayload) {
 		runtime: statsPayload.runtime
 	}
 
-	let userStats: any
+	let userStats
 
 	let errUser: PostgrestError | null
 	if (!old) {
