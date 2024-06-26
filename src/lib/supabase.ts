@@ -310,16 +310,8 @@ export async function upsertStats(id: string, statsPayload: StatsPayload) {
 	}
 
 	console.log(
-		"User: ",
-		id,
-		" Script: ",
-		statsPayload.script_id,
-		" XP: ",
-		statsPayload.experience,
-		" GP: ",
-		statsPayload.gold,
-		" Runtime: ",
-		statsPayload.runtime
+		`User: ${id} Script:  ${statsPayload.script_id} XP:  ${statsPayload.experience} GP:  ${statsPayload.gold} Runtime:  ${statsPayload.runtime}
+		"Old xp: ${old?.experience ?? -1} Old gp: ${old?.gold ?? -1} Old: ${old?.runtime ?? -1}`
 	)
 
 	let userStats
