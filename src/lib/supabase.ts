@@ -294,6 +294,13 @@ export async function upsertStats(id: string, statsPayload: StatsPayload) {
 		}
 	}
 
+	if (statsPayload.experience === 0 && statsPayload.gold === 0) {
+		return {
+			status: 403,
+			error: "No experience nor gold was reported!"
+		}
+	}
+
 	const scriptStats = {
 		id: statsPayload.script_id,
 		user_id: id,
