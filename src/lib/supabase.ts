@@ -287,7 +287,7 @@ export async function upsertStats(id: string, statsPayload: StatsPayload) {
 	}
 
 	if (statsPayload.runtime === 0) statsPayload.runtime = 5000
-	if (statsPayload.runtime < 1000 || statsPayload.gold > 15 * 60 * 1000) {
+	if (statsPayload.runtime < 1000 || statsPayload.runtime > 15 * 60 * 1000) {
 		return {
 			status: 403,
 			error: "Reported runtime is not within the aproved limits!"
@@ -301,6 +301,19 @@ export async function upsertStats(id: string, statsPayload: StatsPayload) {
 		gold: statsPayload.gold,
 		runtime: statsPayload.runtime
 	}
+
+	console.log(
+		"User: ",
+		id,
+		" Script: ",
+		statsPayload.script_id,
+		" XP: ",
+		statsPayload.experience,
+		" GP: ",
+		statsPayload.gold,
+		" Runtime: ",
+		statsPayload.runtime
+	)
 
 	let userStats
 

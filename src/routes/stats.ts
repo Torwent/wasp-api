@@ -54,7 +54,7 @@ export default (app: ElysiaApp) =>
 					set.status = status
 					return err ?? "Something unexpected happened."
 				} else if (err) {
-					error(status, err)
+					return error(status, err)
 				}
 
 				return "✅ User and script stats were successfully updated!"
