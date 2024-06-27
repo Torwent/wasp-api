@@ -8,7 +8,6 @@ import {
 	ScriptStats,
 	StatsPayload
 } from "./types/collection"
-import bcrypt from "bcryptjs"
 
 export const CACHE_TIMEOUT = 2 * 60 * 1000
 
@@ -31,7 +30,7 @@ async function getPassword(id: string) {
 
 export async function hashPassword(password: string | null | undefined) {
 	if (password == null) return ""
-	return await bcrypt.hash(password, 10)
+	return await Bun.password.hash(password, { algorithm: "bcrypt", cost: 10 })
 }
 
 export async function checkPassword(id: string, password: string) {
@@ -39,7 +38,7 @@ export async function checkPassword(id: string, password: string) {
 	if (!stored || error) return { status: 403, error }
 	if (stored === "" && password === "") return { status: 200, error }
 
-	if (await bcrypt.compare(password, stored)) return { status: 200, error }
+	if (await Bun.password.verify(password, stored, "bcrypt")) return { status: 200, error }
 	return { status: 401, error: "⚠️ Wrong password." }
 }
 
@@ -51,7 +50,7 @@ async function comparePasswords(
 	if (password1 === "" && password2 === "") return true
 	if (password2 == null) return false
 
-	return await bcrypt.compare(password2, password1)
+	return await Bun.password.verify(password2, password1, "bcrypt")
 }
 
 export async function updatePassword(id: string, old: string, password: string) {
@@ -297,8 +296,10 @@ export async function upsertStats(id: string, statsPayload: StatsPayload) {
 		runtime: statsPayload.runtime
 	}
 
+	const hash = (Math.random() + 1).toString(36).substring(7)
+
 	console.log(
-		`User: ${id} Script:  ${statsPayload.script_id} XP:  ${statsPayload.experience} GP:  ${statsPayload.gold} Runtime:  ${statsPayload.runtime}`
+		`Hash: ${hash} User: ${id} Script:  ${statsPayload.script_id} XP:  ${statsPayload.experience} GP:  ${statsPayload.gold} Runtime:  ${statsPayload.runtime}`
 	)
 
 	let userStats
@@ -319,14 +320,17 @@ export async function upsertStats(id: string, statsPayload: StatsPayload) {
 		const validPassword = await comparePasswords(old.password, statsPayload.password)
 		if (!validPassword) return { status: 401, error: "⚠️ Wrong password." }
 
-		console.log(`Old xp: ${old.experience} Old gp: ${old.gold} Old runtime: ${old.runtime}`)
 		userStats = {
 			experience: statsPayload.experience + old.experience,
 			gold: statsPayload.gold + old.gold,
 			runtime: statsPayload.runtime + old.runtime
 		}
+
 		console.log(
-			`New xp: ${userStats.experience} New gp: ${userStats.gold} New runtime: ${userStats.runtime}`
+			`Hash: ${hash} Old xp: ${old.experience} Old gp: ${old.gold} Old runtime: ${old.runtime}`
+		)
+		console.log(
+			`Hash: ${hash} New xp: ${userStats.experience} New gp: ${userStats.gold} New runtime: ${userStats.runtime}`
 		)
 
 		const { error } = await supabase.from("stats").update(userStats).eq("id", id)
