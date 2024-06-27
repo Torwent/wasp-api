@@ -22,8 +22,17 @@ app.onResponse((response) => {
 	const userAgent = request.headers.get("user-agent")
 	const timestamp = new Date().toISOString().replace("T", " ").replace("Z", "")
 
+	let icon = "💯"
+	if (status) {
+		const n = status as number
+		if (n > 200 && n < 300) icon = "✅"
+		else if (n >= 300 && n < 400) icon = "💨"
+		else if (n >= 400 && n < 500) icon = "⚠️"
+		else if (n >= 500) icon = "❌"
+	}
+
 	console.log(
-		`[${timestamp}]: [${status === 200 ? "💯" : "✅"} ${status}] ${userAgent} ${ip + " " ?? ""}- ${request.method} ${path}`
+		`[${timestamp}]: [${icon} ${status}] ${userAgent} ${ip + " " ?? ""}- ${request.method} ${path}`
 	)
 })
 
