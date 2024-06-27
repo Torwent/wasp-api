@@ -307,7 +307,6 @@ export async function upsertStats(id: string, statsPayload: StatsPayload) {
 
 	let userStats
 
-	let errUser: PostgrestError | null
 	if (!old) {
 		userStats = {
 			id: id,
@@ -317,8 +316,28 @@ export async function upsertStats(id: string, statsPayload: StatsPayload) {
 			password: await hashPassword(statsPayload.password)
 		}
 
-		const { error } = await supabase.from("stats").insert(userStats)
-		errUser = error
+		const promises = await Promise.all([
+			supabase.from("stats").insert(userStats),
+			updateScriptStats(scriptStats)
+		])
+
+		const { error: errUser } = promises[0]
+		const { error: errScript, status } = promises[1]
+		if (errUser) {
+			return {
+				status,
+				error:
+					"INSERT stats data" + errScript
+						? " and script data"
+						: "" +
+							": " +
+							JSON.stringify(userStats) +
+							" gave the following error: " +
+							JSON.stringify(errUser)
+			}
+		}
+
+		return promises[1]
 	} else {
 		const validPassword = await comparePasswords(old.password, statsPayload.password)
 		if (!validPassword) return { status: 401, error: "⚠️ Wrong password." }
@@ -338,22 +357,29 @@ export async function upsertStats(id: string, statsPayload: StatsPayload) {
 			)
 		}
 
-		const { error } = await supabase.from("stats").update(userStats).eq("id", id)
-		errUser = error
-	}
+		const promises = await Promise.all([
+			supabase.from("stats").update(userStats).eq("id", id),
+			updateScriptStats(scriptStats)
+		])
 
-	if (errUser) {
-		return {
-			status: 500,
-			error:
-				"UPDATE stats data: " +
-				JSON.stringify(userStats) +
-				" gave the following error: " +
-				JSON.stringify(errUser)
+		const { error: errUser } = promises[0]
+		const { error: errScript, status } = promises[1]
+		if (errUser) {
+			return {
+				status,
+				error:
+					"UPDATE stats data" + errScript
+						? " and script data"
+						: "" +
+							": " +
+							JSON.stringify(userStats) +
+							" gave the following error: " +
+							JSON.stringify(errUser)
+			}
 		}
-	}
 
-	return await updateScriptStats(scriptStats)
+		return promises[1]
+	}
 }
 
 export async function deleteUser(id: string, password: string) {
