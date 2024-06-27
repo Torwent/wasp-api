@@ -1,3 +1,12 @@
+## [0.7.1](https://github.com/Torwent/wasp-api/compare/v0.7.0...v0.7.1) (2024-06-27)
+
+
+### Bug Fixes
+
+* optimized updating stats further ([440dad0](https://github.com/Torwent/wasp-api/commit/440dad01fbe63e189862b26058c268ce298e3ec6))
+
+
+
 # [0.7.0](https://github.com/Torwent/wasp-api/compare/v0.6.10...v0.7.0) (2024-06-27)
 
 
@@ -60,15 +69,6 @@
 ### Bug Fixes
 
 * more small tweaks to fix minor issues ([5ee30a7](https://github.com/Torwent/wasp-api/commit/5ee30a789e624d46e105e62786d9287ea60b8891))
-
-
-
-## [0.6.7](https://github.com/Torwent/wasp-api/compare/v0.6.6...v0.6.7) (2024-02-15)
-
-
-### Bug Fixes
-
-* more tweaks to how data is inserted onto de database ([dca3285](https://github.com/Torwent/wasp-api/commit/dca3285efcaff2f1a45498880d711e2814a0ba54))
 
 
 
