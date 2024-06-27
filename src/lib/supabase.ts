@@ -296,11 +296,12 @@ export async function upsertStats(id: string, statsPayload: StatsPayload) {
 		runtime: statsPayload.runtime
 	}
 
-	const hash = (Math.random() + 1).toString(36).substring(7)
+	let requestHash = ""
 
 	if (process.env.NODE_ENV !== "production") {
+		requestHash = (Math.random() + 1).toString(36).substring(7)
 		console.log(
-			`Hash: ${hash} User: ${id} Script:  ${statsPayload.script_id} XP:  ${statsPayload.experience} GP:  ${statsPayload.gold} Runtime:  ${statsPayload.runtime}`
+			`Hash: ${requestHash} User: ${id} Script:  ${statsPayload.script_id} XP:  ${statsPayload.experience} GP:  ${statsPayload.gold} Runtime:  ${statsPayload.runtime}`
 		)
 	}
 
@@ -330,10 +331,10 @@ export async function upsertStats(id: string, statsPayload: StatsPayload) {
 
 		if (process.env.NODE_ENV !== "production") {
 			console.log(
-				`Hash: ${hash} Old xp: ${old.experience} Old gp: ${old.gold} Old runtime: ${old.runtime}`
+				`Hash: ${requestHash} Old xp: ${old.experience} Old gp: ${old.gold} Old runtime: ${old.runtime}`
 			)
 			console.log(
-				`Hash: ${hash} New xp: ${userStats.experience} New gp: ${userStats.gold} New runtime: ${userStats.runtime}`
+				`Hash: ${requestHash} New xp: ${userStats.experience} New gp: ${userStats.gold} New runtime: ${userStats.runtime}`
 			)
 		}
 
