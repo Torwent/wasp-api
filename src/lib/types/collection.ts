@@ -36,9 +36,9 @@ export const StatsSchema = t.Object({
 	script_id: t.String({ format: "uuid" }),
 	username: t.Optional(t.String()),
 	password: t.String(),
-	experience: t.Numeric({ minimum: 0 }),
-	gold: t.Numeric(),
-	runtime: t.Numeric({ maximum: 15 * 60 * 1000 })
+	experience: t.Number({ minimum: 0 }),
+	gold: t.Number(),
+	runtime: t.Number({ minimum: 0, maximum: 15 * 60 * 1000 })
 })
 
 export type StatsPayload = Static<typeof StatsSchema>
