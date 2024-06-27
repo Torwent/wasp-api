@@ -298,9 +298,11 @@ export async function upsertStats(id: string, statsPayload: StatsPayload) {
 
 	const hash = (Math.random() + 1).toString(36).substring(7)
 
-	console.log(
-		`Hash: ${hash} User: ${id} Script:  ${statsPayload.script_id} XP:  ${statsPayload.experience} GP:  ${statsPayload.gold} Runtime:  ${statsPayload.runtime}`
-	)
+	if (process.env.NODE_ENV !== "production") {
+		console.log(
+			`Hash: ${hash} User: ${id} Script:  ${statsPayload.script_id} XP:  ${statsPayload.experience} GP:  ${statsPayload.gold} Runtime:  ${statsPayload.runtime}`
+		)
+	}
 
 	let userStats
 
@@ -326,12 +328,14 @@ export async function upsertStats(id: string, statsPayload: StatsPayload) {
 			runtime: statsPayload.runtime + old.runtime
 		}
 
-		console.log(
-			`Hash: ${hash} Old xp: ${old.experience} Old gp: ${old.gold} Old runtime: ${old.runtime}`
-		)
-		console.log(
-			`Hash: ${hash} New xp: ${userStats.experience} New gp: ${userStats.gold} New runtime: ${userStats.runtime}`
-		)
+		if (process.env.NODE_ENV !== "production") {
+			console.log(
+				`Hash: ${hash} Old xp: ${old.experience} Old gp: ${old.gold} Old runtime: ${old.runtime}`
+			)
+			console.log(
+				`Hash: ${hash} New xp: ${userStats.experience} New gp: ${userStats.gold} New runtime: ${userStats.runtime}`
+			)
+		}
 
 		const { error } = await supabase.from("stats").update(userStats).eq("id", id)
 		errUser = error
