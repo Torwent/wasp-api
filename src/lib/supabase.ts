@@ -273,32 +273,20 @@ export async function upsertStats(id: string, statsPayload: StatsPayload) {
 	}
 
 	if (statsPayload.experience < limit.min_xp || statsPayload.experience > limit.max_xp) {
-		return {
-			status: 403,
-			error: "Reported experience is not within the script aproved limits!"
-		}
+		return { status: 403, error: "Reported experience is not within the script aproved limits!" }
 	}
 
 	if (statsPayload.gold < limit.min_gp || statsPayload.gold > limit.max_gp) {
-		return {
-			status: 403,
-			error: "Reported gold is not within the script aproved limits!"
-		}
+		return { status: 403, error: "Reported gold is not within the script aproved limits!" }
 	}
 
 	if (statsPayload.runtime === 0) statsPayload.runtime = 5000
 	if (statsPayload.runtime < 1000 || statsPayload.runtime > 15 * 60 * 1000) {
-		return {
-			status: 403,
-			error: "Reported runtime is not within the aproved limits!"
-		}
+		return { status: 403, error: "Reported runtime is not within the aproved limits!" }
 	}
 
 	if (statsPayload.experience === 0 && statsPayload.gold === 0) {
-		return {
-			status: 403,
-			error: "No experience nor gold was reported!"
-		}
+		return { status: 403, error: "No experience nor gold was reported!" }
 	}
 
 	const scriptStats = {
@@ -310,8 +298,7 @@ export async function upsertStats(id: string, statsPayload: StatsPayload) {
 	}
 
 	console.log(
-		`User: ${id} Script:  ${statsPayload.script_id} XP:  ${statsPayload.experience} GP:  ${statsPayload.gold} Runtime:  ${statsPayload.runtime}
-		"Old xp: ${old?.experience ?? -1} Old gp: ${old?.gold ?? -1} Old: ${old?.runtime ?? -1}`
+		`User: ${id} Script:  ${statsPayload.script_id} XP:  ${statsPayload.experience} GP:  ${statsPayload.gold} Runtime:  ${statsPayload.runtime}`
 	)
 
 	let userStats
@@ -332,11 +319,15 @@ export async function upsertStats(id: string, statsPayload: StatsPayload) {
 		const validPassword = await comparePasswords(old.password, statsPayload.password)
 		if (!validPassword) return { status: 401, error: "⚠️ Wrong password." }
 
+		console.log(`Old xp: ${old.experience} Old gp: ${old.gold} Old runtime: ${old.runtime}`)
 		userStats = {
 			experience: statsPayload.experience + old.experience,
 			gold: statsPayload.gold + old.gold,
 			runtime: statsPayload.runtime + old.runtime
 		}
+		console.log(
+			`New xp: ${userStats.experience} New gp: ${userStats.gold} New runtime: ${userStats.runtime}`
+		)
 
 		const { error } = await supabase.from("stats").update(userStats).eq("id", id)
 		errUser = error
