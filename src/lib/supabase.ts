@@ -11,7 +11,7 @@ import {
 
 export const CACHE_TIMEOUT = 2 * 60 * 1000
 
-const supabase = createClient<Database>(process.env.SB_URL, process.env.SERVICE_KEY, {
+const supabase = createClient<Database>(process.env.URL, process.env.SERVICE_KEY, {
 	auth: { autoRefreshToken: true, persistSession: false }
 })
 

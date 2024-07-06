@@ -70,5 +70,5 @@ app.listen({
 
 export type ElysiaApp = typeof app
 
-console.log(`🦊 wasp-api is running at http://${app.server!.url}`)
-console.log(`📚 Documentation live at http://${app.server!.url}docs`)
+console.log(`🦊 wasp-api is running at ${app.server!.url}`)
+console.log(`📚 Documentation live at ${app.server!.url}docs`)
