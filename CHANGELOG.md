@@ -1,3 +1,12 @@
+# [0.8.0](https://github.com/Torwent/wasp-api/compare/v0.7.1...v0.8.0) (2024-07-06)
+
+
+### Features
+
+* the base endpoint now returns the database url and anon key ([0c15495](https://github.com/Torwent/wasp-api/commit/0c1549503a00f2d0f09a661db050a666fecf8160))
+
+
+
 ## [0.7.1](https://github.com/Torwent/wasp-api/compare/v0.7.0...v0.7.1) (2024-06-27)
 
 
@@ -60,15 +69,6 @@
 ### Bug Fixes
 
 * **stats:** added a switch case to handle 0 experience and 0 gold reports ([096b2d9](https://github.com/Torwent/wasp-api/commit/096b2d96736f5ff2f8a2619b0b800eab3ee9e7cb))
-
-
-
-## [0.6.8](https://github.com/Torwent/wasp-api/compare/v0.6.7...v0.6.8) (2024-02-15)
-
-
-### Bug Fixes
-
-* more small tweaks to fix minor issues ([5ee30a7](https://github.com/Torwent/wasp-api/commit/5ee30a789e624d46e105e62786d9287ea60b8891))
 
 
 
