@@ -1,3 +1,12 @@
+## [0.8.2](https://github.com/Torwent/wasp-api/compare/v0.8.1...v0.8.2) (2025-06-22)
+
+
+### Bug Fixes
+
+* typos ([098a028](https://github.com/Torwent/wasp-api/commit/098a0281708dbc518f984ef988ffff7e736aa474))
+
+
+
 ## [0.8.1](https://github.com/Torwent/wasp-api/compare/v0.8.0...v0.8.1) (2025-06-22)
 
 
@@ -60,15 +69,6 @@
 * convert the API to run on bun and elysiajs ([c8f04cf](https://github.com/Torwent/wasp-api/commit/c8f04cfa6c3795af01c781bca31f4e7e8dbabeae))
 * Create Dockerfile ([a371e78](https://github.com/Torwent/wasp-api/commit/a371e7870a4dd42f52136aa7de16f9e3cc25257e))
 * release bun rework ([40abee5](https://github.com/Torwent/wasp-api/commit/40abee58b788699c738959f77104d86fc66a9933))
-
-
-
-## [0.6.10](https://github.com/Torwent/wasp-api/compare/v0.6.9...v0.6.10) (2024-04-18)
-
-
-### Bug Fixes
-
-* change API to use the service key ([0d2dbb5](https://github.com/Torwent/wasp-api/commit/0d2dbb562bd7b9fc86a9475c914af01511553ed5))
 
 
 
