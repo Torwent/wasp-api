@@ -1,3 +1,12 @@
+## [0.8.1](https://github.com/Torwent/wasp-api/compare/v0.8.0...v0.8.1) (2025-06-22)
+
+
+### Bug Fixes
+
+* remove all the discord stuff which is not used anymore ([2193926](https://github.com/Torwent/wasp-api/commit/21939265987f488a93a471686a06f99d107dc4eb))
+
+
+
 # [0.8.0](https://github.com/Torwent/wasp-api/compare/v0.7.1...v0.8.0) (2024-07-06)
 
 
@@ -60,15 +69,6 @@
 ### Bug Fixes
 
 * change API to use the service key ([0d2dbb5](https://github.com/Torwent/wasp-api/commit/0d2dbb562bd7b9fc86a9475c914af01511553ed5))
-
-
-
-## [0.6.9](https://github.com/Torwent/wasp-api/compare/v0.6.8...v0.6.9) (2024-02-16)
-
-
-### Bug Fixes
-
-* **stats:** added a switch case to handle 0 experience and 0 gold reports ([096b2d9](https://github.com/Torwent/wasp-api/commit/096b2d96736f5ff2f8a2619b0b800eab3ee9e7cb))
 
 
 
