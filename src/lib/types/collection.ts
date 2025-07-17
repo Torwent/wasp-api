@@ -11,10 +11,10 @@ export interface Script {
 }
 
 export interface Limit {
-	min_xp: number
-	max_xp: number
-	min_gp: number
-	max_gp: number
+	xp_min: number
+	xp_max: number
+	gp_min: number
+	gp_max: number
 }
 
 export interface ProfileRoles {

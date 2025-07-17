@@ -1,4 +1,4 @@
-import { PostgrestError, createClient } from "@supabase/supabase-js"
+import { createClient } from "@supabase/supabase-js"
 import { Database, Json } from "./types/supabase"
 import {
 	CachedLimit,
@@ -105,8 +105,8 @@ export async function getLimits(id: string) {
 
 	const { data, error } = await supabase
 		.schema("scripts")
-		.from("scripts")
-		.select("min_xp, max_xp, min_gp, max_gp")
+		.from("stats_limits")
+		.select("xp_min, xp_max, gp_min, gp_max")
 		.eq("id", id)
 		.limit(1)
 		.single()
@@ -271,12 +271,20 @@ export async function upsertStats(id: string, statsPayload: StatsPayload) {
 		}
 	}
 
-	if (statsPayload.experience < limit.min_xp || statsPayload.experience > limit.max_xp) {
-		return { status: 403, error: "Reported experience is not within the script aproved limits!" }
+	if (statsPayload.experience < limit.xp_min) {
+		return { status: 403, error: "Reported experience is less than the script aproved limits!" }
 	}
 
-	if (statsPayload.gold < limit.min_gp || statsPayload.gold > limit.max_gp) {
-		return { status: 403, error: "Reported gold is not within the script aproved limits!" }
+	if (statsPayload.experience > limit.xp_max) {
+		return { status: 403, error: "Reported experience is more than the script aproved limits!" }
+	}
+
+	if (statsPayload.gold < limit.gp_min) {
+		return { status: 403, error: "Reported gold is less than the script aproved limits!" }
+	}
+
+	if (statsPayload.gold > limit.gp_max) {
+		return { status: 403, error: "Reported gold is more than the script aproved limits!" }
 	}
 
 	if (statsPayload.runtime === 0) statsPayload.runtime = 5000
