@@ -1,3 +1,12 @@
+## [0.8.4](https://github.com/Torwent/wasp-api/compare/v0.8.3...v0.8.4) (2026-01-04)
+
+
+### Bug Fixes
+
+* run the ts file directly instead of the compiled js ([fb31a9a](https://github.com/Torwent/wasp-api/commit/fb31a9a3fd6cf5a0baddc526ddb672adb3ab8415))
+
+
+
 ## [0.8.3](https://github.com/Torwent/wasp-api/compare/v0.8.2...v0.8.3) (2025-07-17)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * the base endpoint now returns the database url and anon key ([0c15495](https://github.com/Torwent/wasp-api/commit/0c1549503a00f2d0f09a661db050a666fecf8160))
-
-
-
-## [0.7.1](https://github.com/Torwent/wasp-api/compare/v0.7.0...v0.7.1) (2024-06-27)
-
-
-### Bug Fixes
-
-* optimized updating stats further ([440dad0](https://github.com/Torwent/wasp-api/commit/440dad01fbe63e189862b26058c268ce298e3ec6))
 
 
 
