@@ -1,7 +1,7 @@
 import { Elysia } from "elysia"
 import { swagger } from "@elysiajs/swagger"
 import { serverTiming } from "@elysiajs/server-timing"
-import { autoroutes } from "elysia-autoroutes"
+import { autoload } from "elysia-autoload"
 import { ip } from "elysia-ip"
 export { t } from "elysia"
 export { rateLimit } from "elysia-rate-limit"
@@ -32,13 +32,18 @@ app.onResponse((response) => {
 	}
 
 	console.log(
-		`[${timestamp}]: [${icon} ${status}] ${userAgent} ${ip + " " ?? ""}- ${request.method} ${path}`
+		`[${timestamp}]: [${icon} ${status}] ${userAgent} ${ip ? ip + " " : ""}- ${request.method} ${path}`
 	)
 })
 
 app.use(ip({ headersOnly: true }))
 
-app.use(autoroutes())
+app.use(
+	await autoload({
+		dir: "./routes",
+		ignore: ["**/*.test.ts", "**/*.spec.ts"]
+	})
+)
 
 app.use(
 	swagger({
