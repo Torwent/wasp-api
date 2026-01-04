@@ -1,3 +1,12 @@
+## [0.8.5](https://github.com/Torwent/wasp-api/compare/v0.8.4...v0.8.5) (2026-01-04)
+
+
+### Bug Fixes
+
+* proper building ([75045ef](https://github.com/Torwent/wasp-api/commit/75045efea46d8485d41ad974f93c225710b869de))
+
+
+
 ## [0.8.4](https://github.com/Torwent/wasp-api/compare/v0.8.3...v0.8.4) (2026-01-04)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * remove all the discord stuff which is not used anymore ([2193926](https://github.com/Torwent/wasp-api/commit/21939265987f488a93a471686a06f99d107dc4eb))
-
-
-
-# [0.8.0](https://github.com/Torwent/wasp-api/compare/v0.7.1...v0.8.0) (2024-07-06)
-
-
-### Features
-
-* the base endpoint now returns the database url and anon key ([0c15495](https://github.com/Torwent/wasp-api/commit/0c1549503a00f2d0f09a661db050a666fecf8160))
 
 
 
