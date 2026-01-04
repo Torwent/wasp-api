@@ -6,8 +6,8 @@
 		"test": "bun test",
 		"gentypes": "bun run supabase gen types typescript --linked > src/lib/types/supabase.ts",
 		"dev": "bun run --watch src/index.ts",
-		"build": "bun build src/index.ts --outdir build",
-		"start": "NODE_ENV=production bun src/index.ts"
+		"build": "bun build src/index.ts --outdir build --target=bun",
+		"start": "NODE_ENV=production bun run build/index.js"
 	},
 	"dependencies": {
 		"@elysiajs/server-timing": "^1.0.2",
